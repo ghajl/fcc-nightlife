@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack-dev-server --config webpack.config.js",
     "build:lib": "babel server --out-dir lib/server",
-    "server": "npm run build:lib && node lib/server/server.js"
+    "server": "node lib/server/server.js"
   },
   "author": "",
   "license": "ISC",
