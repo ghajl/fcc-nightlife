@@ -1,0 +1,53 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom'
+import Button from 'material-ui/Button';
+import AppBar from 'material-ui/AppBar';
+import Toolbar from 'material-ui/Toolbar';
+import Typography from 'material-ui/Typography';
+
+import { withStyles } from 'material-ui/styles';
+
+const styles = {
+    nav: {
+    	display: 'flex',
+    	width:'100%',
+    	overflow: 'hidden',
+    	color: 'blue',
+    },
+    logo: {
+    	flex: 1,
+    	'text-transform': 'none',
+    	fontWeight: 900,
+    	fontSize: '1.5em',
+    },
+    login: {
+    	margin: 5,
+    	// alignSelf: 'flex-end',
+    }
+}
+
+const Header = ({classes}) => {
+
+
+	return (
+        <div className={classes.nav}>
+        	<AppBar color="default">
+        		<Toolbar>
+					<Typography color="primary" component={Link} to="/" type="title" className={classes.logo}>
+		                NightLife
+		            </Typography>
+		            <div className={classes.login}>
+		        		<Button component={Link} to="/login">
+						    LOGIN
+						</Button>
+		        	</div>
+        		</Toolbar>
+        	</AppBar>
+        	
+        	
+        </div>
+    ) 
+}
+
+export default withStyles(styles)(Header);

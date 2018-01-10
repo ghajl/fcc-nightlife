@@ -1,0 +1,51 @@
+{
+  "name": "fcc-nightlife",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack-dev-server --config webpack.config.js",
+    "build:lib": "babel server --out-dir lib/server",
+    "server": "npm run build:lib && node lib/server/server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.18.2",
+    "connect-mongo": "^2.0.1",
+    "cookie-parser": "^1.4.3",
+    "express-session": "^1.15.6",
+    "history": "^4.7.2",
+    "html-webpack-plugin": "^2.30.1",
+    "material-ui": "^1.0.0-beta.26",
+    "mongoose": "^4.13.9",
+    "normalize.css": "^7.0.0",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-jss": "^8.2.1",
+    "react-redux": "^5.0.6",
+    "react-router-dom": "^4.2.2",
+    "react-router-redux": "^5.0.0-alpha.9",
+    "redux": "^3.7.2",
+    "redux-saga": "^0.16.0",
+    "redux-thunk": "^2.2.0",
+    "webpack": "^3.10.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "css-loader": "^0.28.8",
+    "nodemon": "^1.14.10",
+    "style-loader": "^0.19.1",
+    "webpack-dev-server": "^2.9.7",
+    "webpack-hot-middleware": "^2.21.0"
+  }
+}

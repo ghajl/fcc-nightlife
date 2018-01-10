@@ -1,0 +1,9 @@
+html {
+    background: white;
+    height: 100%;
+    font-size: 14px;
+}
+a {
+    text-decoration: none !important;
+    outline: none;
+}
