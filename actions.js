@@ -1,24 +1,19 @@
 import { push } from 'react-router-redux';
-
+import axios from "axios";
 
 export const actionTypes = {
-	FAILURE: 'FAILURE',
-	MANUAL_LOGIN_USER = 'MANUAL_LOGIN_USER',
-	LOGIN_SUCCESS_USER = 'LOGIN_SUCCESS_USER',
-	LOGIN_ERROR_USER = 'LOGIN_ERROR_USER',
-	SIGNUP_USER = 'SIGNUP_USER',
-	SIGNUP_SUCCESS_USER = 'SIGNUP_SUCCESS_USER',
-	SIGNUP_ERROR_USER = 'SIGNUP_ERROR_USER',
-	LOGOUT_USER = 'LOGOUT_USER',
-	LOGOUT_SUCCESS_USER = 'LOGOUT_SUCCESS_USER',
-	LOGOUT_ERROR_USER = 'LOGOUT_ERROR_USER',
+	MANUAL_LOGIN_USER:  'MANUAL_LOGIN_USER',
+	LOGIN_SUCCESS_USER:  'LOGIN_SUCCESS_USER',
+	LOGIN_ERROR_USER:  'LOGIN_ERROR_USER',
+	SIGNUP_USER:  'SIGNUP_USER',
+	SIGNUP_SUCCESS_USER:  'SIGNUP_SUCCESS_USER',
+	SIGNUP_ERROR_USER:  'SIGNUP_ERROR_USER',
+	LOGOUT_USER:  'LOGOUT_USER',
+	LOGOUT_SUCCESS_USER:  'LOGOUT_SUCCESS_USER',
+	LOGOUT_ERROR_USER:  'LOGOUT_ERROR_USER',
 }
 
-export function failure (error) {
-    return {
-	    type: actionTypes.FAILURE
-    }
-}
+
 
 function beginLogin() {
   return { type: actionTypes.MANUAL_LOGIN_USER };
@@ -69,6 +64,23 @@ function logoutError() {
 }
 
 export function manualLogin(data) {
+	return (dispatch) => {
+		dispatch(beginLogin());
+
+		return axios.post('/login', data)
+			.then(response => {
+				if (response.data.success) {					
+					dispatch(loginSuccess(data));
+					dispatch(push('/'));
+				} else {					
+					dispatch(loginError('Invalid username or password'))
+					let loginMessage = response.data.message
+					return loginMessage					
+				}
+			})
+			.catch((err) => {
+		        dispatch(loginError('Invalid username or password'));
+		    });
 
 }
 
