@@ -7,9 +7,9 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 import webpackConfig from '../../webpack.config.js';
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import bcrypt from "bcrypt-nodejs";
 import session from "express-session";
 import connectMongo from "connect-mongo";
+import initRoutes from './init/routes';
 
 const app = express();
 const compiler = webpack(webpackConfig);
@@ -37,35 +37,8 @@ db.on("error", console.error)
 db.on("disconnected", connect)
 
 
-const UserSchema = new mongoose.Schema({
-	username: { 
-		type: String,
-		unique: true
-	},
-	password: String	
-})
 
-const User = mongoose.model('User', UserSchema);
-UserSchema.pre("save", function(next) {
-	var user = this
-	if (!user.isModified("password")) return next()
-	bcrypt.genSalt((err, salt) => {
-		if (err) return next(err)
-		bcrypt.hash(user.password, salt, null, (err, hash) => {
-			if (err) return next(err)
-			user.password = hash
-			next()
-		})
-	})
-})
-UserSchema.methods = {
- 	comparePassword: function(candidatePassword, cb) {
- 		bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
- 			if (err) return cb(err)
- 			cb(null, isMatch)
- 		})
- 	}
-}
+
 passport.use(new LocalStrategy(
     function(username, password, cb) {
 	    User.findOne({ username: username }, function(err, user) {
@@ -110,6 +83,31 @@ app.use(session({
 // session.
 app.use(passport.initialize());
 app.use(passport.session());
+
+initRoutes(app);
+
+app.get("*", (req, res, next) => {	
+
+	const appHTML = 
+	`<!doctype html>
+	<html lang="">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+		<link type="text/css" rel="stylesheet" href="public/main.css">
+	    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"/>
+		<title></title>
+		
+	</head>
+	<body>
+		<div id="root"></div>
+		<script src="/bundle.js"></script>
+	</body>
+	</html>`
+
+	res.status(200).end(appHTML)
+
+})
 app.listen(3000, function () {
     console.log('app listening on port 3000!\n');
 });
+
