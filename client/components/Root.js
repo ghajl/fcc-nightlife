@@ -2,7 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Provider } from 'react-redux'
 import { Route } from 'react-router'
-import Home from './Home'
+import Home from './Home';
+import Login from './Login';
 import { ConnectedRouter } from 'react-router-redux'
 
 const Root = ({ store, history }) => (
@@ -11,6 +12,7 @@ const Root = ({ store, history }) => (
 	    <ConnectedRouter history={history}>
 	      <div>
 	        <Route exact path="/" component={Home}/>
+	        <Route path="/login" component={Login}/>
 	      </div>
 	    </ConnectedRouter>
 	</Provider>

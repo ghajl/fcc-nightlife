@@ -69,19 +69,20 @@ export function manualLogin(data) {
 
 		return axios.post('/login', data)
 			.then(response => {
-				if (response.data.success) {					
-					dispatch(loginSuccess(data));
-					dispatch(push('/'));
-				} else {					
-					dispatch(loginError('Invalid username or password'))
-					let loginMessage = response.data.message
-					return loginMessage					
-				}
+				// if (response.data.success) {					
+				// 	dispatch(loginSuccess(data));
+				// 	dispatch(push('/'));
+				// } else {					
+				// 	dispatch(loginError('Invalid username or password'))
+				// 	let loginMessage = response.data.message
+				// 	return loginMessage					
+				// }
+				console.log(response)
 			})
 			.catch((err) => {
 		        dispatch(loginError('Invalid username or password'));
 		    });
-
+}
 }
 
 export function signUp(data) {
