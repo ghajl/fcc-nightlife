@@ -1,16 +1,16 @@
 import React from 'react';
 import {render} from 'react-dom';
 import 'normalize.css';
-// import {BrowserRouter as Router, Route} from 'react-router-dom';
-
-// import { Provider } from 'react-redux';
+// import {browserHistory} from 'react-router';
+import createHistory from 'history/createBrowserHistory';
+// import { syncHistoryWithStore } from 'react-router-redux';
 import { configureStore } from './store';
-import Root from './components/Root'
-
-let {store, history} = configureStore();
-
+import Root from './client/components/Root'
+const history = createHistory();
+const {store, persistor} = configureStore(history);
+// const history = syncHistoryWithStore(browserHistory, store);
 render(
-  <Root store={store} history={history}/>,
+  <Root store={store} history={history} persistor={persistor}/>,
   document.getElementById('root')
 )
 

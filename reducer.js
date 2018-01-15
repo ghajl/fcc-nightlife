@@ -10,7 +10,7 @@ export const initialState = {
 }
 
 
-export function reducer (state = initialState, action) {
+export function user (state = initialState, action) {
   switch (action.type) {
     case actionTypes.LOGOUT_USER:
     case actionTypes.SIGNUP_USER:
@@ -25,7 +25,8 @@ export function reducer (state = initialState, action) {
         ...state,
         ...{ isWaiting: false,
               authenticated: true,
-              username: action.username }
+              username: action.username,
+              message:  action.message}
 
       }
     case actionTypes.SIGNUP_ERROR_USER:
@@ -54,7 +55,7 @@ export function reducer (state = initialState, action) {
   }
 }
 
-export default reducer
+export default user;
 
 // const message = (
 //   state = '',

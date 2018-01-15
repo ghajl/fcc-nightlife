@@ -27,8 +27,12 @@ const styles = {
     }
 }
 
-const Header = ({classes}) => {
+const Header = ({classes, isAuthenticated, logOut}) => {
+    const _logout = (event) => {
 
+        event.preventDefault();
+        logOut();
+    };
 
 	return (
         <div className={classes.nav}>
@@ -38,9 +42,23 @@ const Header = ({classes}) => {
 		                NightLife
 		            </Typography>
 		            <div className={classes.login}>
-		        		<Button component={Link} to="/login">
-						    LOGIN
-						</Button>
+                        {isAuthenticated ? (
+
+                                <Button component={Link} to="/logout" onClick={_logout}>
+                                    LOG OUT
+                                </Button>
+                                ) : (
+                                <React.Fragment>
+                                    <Button component={Link} to="/login">
+                                        LOG IN
+                                    </Button>
+                                    <Button component={Link} to="/signup">
+                                        SIGN UP
+                                    </Button>
+                                </React.Fragment>
+                                )}
+		        		
+                        
 		        	</div>
         		</Toolbar>
         	</AppBar>

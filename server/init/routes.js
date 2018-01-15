@@ -1,8 +1,8 @@
-import users from "../controllers/users"
+import {login, logout, register} from "../controllers/users"
 
 
 export default (app) => {
-	app.post("/login", users.login);
-	app.get("/logout", users.logout);
-	app.post("/register", users.register);
+	app.post("/login", login);
+	app.get("/logout", logout);
+	app.post("/signup", register);
 }

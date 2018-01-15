@@ -19,10 +19,11 @@ function beginLogin() {
   return { type: actionTypes.MANUAL_LOGIN_USER };
 }
 
-function loginSuccess(message) {
+function loginSuccess(username, message) {
   return {
     type: actionTypes.LOGIN_SUCCESS_USER,
-    message
+    message,
+    username
   };
 }
 
@@ -44,10 +45,11 @@ function beginSignUp() {
   return { type: actionTypes.SIGNUP_USER };
 }
 
-function signUpSuccess(message) {
+function signUpSuccess(username, message) {
   return {
     type: actionTypes.SIGNUP_SUCCESS_USER,
-    message
+    message,
+    username
   };
 }
 
@@ -68,27 +70,45 @@ export function manualLogin(data) {
 		dispatch(beginLogin());
 
 		return axios.post('/login', data)
-			.then(response => {
-				// if (response.data.success) {					
-				// 	dispatch(loginSuccess(data));
-				// 	dispatch(push('/'));
-				// } else {					
-				// 	dispatch(loginError('Invalid username or password'))
-				// 	let loginMessage = response.data.message
-				// 	return loginMessage					
-				// }
-				console.log(response)
-			})
-			.catch((err) => {
+			 .then((response) => {
+		          dispatch(loginSuccess(data.username, 'You have been successfully logged in'));
+		          dispatch(push('/'));
+		      })
+		      .catch((err) => {
 		        dispatch(loginError('Invalid username or password'));
-		    });
-}
+		      });
+		}
 }
 
 export function signUp(data) {
-
+    return (dispatch) => {
+	    dispatch(beginSignUp());
+		return axios.post('/signup', data)
+			.then(response => {
+		        dispatch(signUpSuccess(data.username, 'You have successfully registered an account!'));
+		        dispatch(push('/'));
+		    })
+		    .catch((err) => {
+		        dispatch(signUpError('Something went wrong when signing up'));
+		    });
+	};
 }
 
 export function logOut() {
 
+	return (dispatch) => {
+
+	    dispatch(beginLogout());
+
+	    return axios.get('/logout')
+	      .then((response) => {
+
+	          dispatch(logoutSuccess());
+				dispatch(push('/'));
+	      })
+	      .catch((err) => {
+
+	        dispatch(logoutError());
+	      });
+	  };
 }

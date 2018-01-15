@@ -2,61 +2,54 @@ import mongoose from "mongoose"
 import passport from "passport"
 import User from "../models/user"
 
-// -------------------------------------------
 
-exports.login = function(req, res, next) {
-	// Do email and password validation for the server
+export function login(req, res, next) {
 	passport.authenticate("local", function(err, user, info) {		
-
+		console.log(user);
 		if(err) return next(err)
 		if(!user) {
-			return res.json({ success: false, message: info.message })			
+			return res.sendStatus(401);		
 		}
-		// ***********************************************************************
-		// "Note that when using a custom callback, it becomes the application's
-		// responsibility to establish a session (by calling req.login()) and send
-		// a response."
-		// Source: http://passportjs.org/docs
-		// ***********************************************************************		
-		// Passport exposes a login() function on req (also aliased as logIn())
-		// that can be used to establish a login session		
 		req.logIn(user, loginErr => {
 			if(loginErr) {
-				return res.json({ success: false, message: loginErr })
+				return res.sendStatus(401);
 			}
-			return res.json({ success: true, message: "authentication succeeded" })
+			return  res.sendStatus(200);
 		})
 	})(req, res, next)
 }
 
 // -------------------------------------------
 
-exports.logout = function(req, res, next) {
+export function logout(req, res, next) {
 	// the logout method is added to the request object automatically by Passport
+	console.log("out")
 	req.logout()
-	return res.json({ success: true })
+	return res.sendStatus(200);
 }
 
 // -------------------------------------------
 
-exports.register = function(req, res, next) {
-	
+export function register(req, res, next) {
+	const newUser = new User({
+	    username: req.body.username,
+	    password: req.body.password
+	});	
 	User.findOne({ username: req.body.username }, (err, user) => {
 		// is username already in use?
 		if (user) {			
-			res.json({ success: false, message: "username already in use" })
-			return 
+			
+			return res.sendStatus(409);
 		}
 		// go ahead and create the new user
 		else {
-			User.create(req.body, (err) => {
+			newUser.save((err) => {
 				if (err) {
-					console.error(err)
-					res.json({ success: false })
-					return
+					
+					return res.sendStatus(401);
 				}
-				res.json({ success: true })
-				return 
+				
+				return res.sendStatus(200);
 			})
 		}
 	})

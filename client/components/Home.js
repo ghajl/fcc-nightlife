@@ -1,10 +1,12 @@
 import React from 'react'
-import Header from './Header'
-const Home = () => (
+import Header from '../containers/Header'
+const Home = (props) => {
+	console.log(props);
+	return (
   <div>
   	<Header />
-  	Hello!
+  	<div style={{marginTop:80}}>Hello {props.username}!</div>
   </div>
 )
-
+}
 export default Home

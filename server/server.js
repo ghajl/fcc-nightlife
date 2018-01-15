@@ -8,8 +8,10 @@ import webpackConfig from '../../webpack.config.js';
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import session from "express-session";
+import bodyParser from "body-parser";
 import connectMongo from "connect-mongo";
 import initRoutes from './init/routes';
+import User from "./models/user";
 
 const app = express();
 const compiler = webpack(webpackConfig);
@@ -17,6 +19,8 @@ app.use(webpackDevMiddleware(compiler, {
   publicPath: webpackConfig.output.publicPath
 }));
 app.use(webpackHotMiddleware(compiler));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/public', express.static(process.cwd() + '/public'));
 const mongoDB = config.MONGOLAB_URI;
 const connect = () => {
@@ -31,7 +35,7 @@ const connect = () => {
 	});
 }
 connect();
-// mongoose.Promise = global.Promise;
+mongoose.Promise = global.Promise;
 const db = mongoose.connection;
 db.on("error", console.error)
 db.on("disconnected", connect)
@@ -100,6 +104,7 @@ app.get("*", (req, res, next) => {
 	</head>
 	<body>
 		<div id="root"></div>
+
 		<script src="/bundle.js"></script>
 	</body>
 	</html>`
