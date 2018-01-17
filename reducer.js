@@ -7,11 +7,19 @@ export const initialState = {
   username: "Guest",
   message: "",
   router: null,
+  bars: null,
+  location: "San Francisco, CA",
+  lat: 37.774,
+  lng: -122.4194,
 }
+
+
+
 
 
 export function user (state = initialState, action) {
   switch (action.type) {
+    case actionTypes.FIND_PLACES:
     case actionTypes.LOGOUT_USER:
     case actionTypes.SIGNUP_USER:
     case actionTypes.MANUAL_LOGIN_USER:
@@ -49,6 +57,21 @@ export function user (state = initialState, action) {
         ...{ isWaiting: false,
               authenticated: false,
               username: "Guest" }
+      }
+    case actionTypes.FIND_PLACES_SUCCESS:
+      return {
+        ...state,
+        ...{ isWaiting: false,
+              bars: action.data,
+              location: action.location,
+              lat: action.lat,
+              lng: action.lng }
+      }
+    case actionTypes.FIND_PLACES_ERROR:  
+      return {
+        ...state,
+        ...{ isWaiting: false,
+              message: action.message}
       }
     default:
       return state

@@ -8,7 +8,7 @@ import Typography from 'material-ui/Typography';
 
 import { withStyles } from 'material-ui/styles';
 
-const styles = {
+const styles = theme => ({
     nav: {
     	display: 'flex',
     	width:'100%',
@@ -24,10 +24,11 @@ const styles = {
     login: {
     	margin: 5,
     	// alignSelf: 'flex-end',
-    }
-}
+    },
+    text: theme.typography.button,
+})
 
-const Header = ({classes, isAuthenticated, logOut}) => {
+const Header = ({classes, isAuthenticated, logOut, username}) => {
     const _logout = (event) => {
 
         event.preventDefault();
@@ -41,6 +42,7 @@ const Header = ({classes, isAuthenticated, logOut}) => {
 					<Typography color="primary" component={Link} to="/" type="title" className={classes.logo}>
 		                NightLife
 		            </Typography>
+                    <div className={classes.text}>Hello, {username}!</div>
 		            <div className={classes.login}>
                         {isAuthenticated ? (
 

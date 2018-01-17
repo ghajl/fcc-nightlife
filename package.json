@@ -7,11 +7,13 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack-dev-server --config webpack.config.js",
     "build": "babel server --out-dir lib/server",
-    "server": "npm run build && node lib/server/server.js"
+    "start": "npm run build && node lib/server/server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/googlemaps": "^3.30.4",
+    "@types/markerclustererplus": "^2.1.33",
     "axios": "^0.17.1",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.18.2",
@@ -27,10 +29,13 @@
     "passport-local": "^1.0.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-google-maps": "^9.4.5",
     "react-jss": "^8.2.1",
+    "react-places-autocomplete": "^5.4.3",
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.2.2",
     "react-router-redux": "^5.0.0-alpha.9",
+    "recompose": "^0.26.0",
     "redux": "^3.7.2",
     "redux-persist": "^5.4.0",
     "redux-saga": "^0.16.0",
@@ -48,6 +53,7 @@
     "css-loader": "^0.28.8",
     "nodemon": "^1.14.10",
     "style-loader": "^0.19.1",
+    "url-loader": "^0.6.2",
     "webpack-dev-server": "^2.9.7",
     "webpack-hot-middleware": "^2.21.0"
   }

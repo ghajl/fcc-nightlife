@@ -1,7 +1,7 @@
 import Header from "../components/Header"
 import { connect } from 'react-redux';
 import { logOut } from '../../actions';
-const mapStateToProps = ({reducer}) =>({isAuthenticated: reducer.user.authenticated});
+const mapStateToProps = ({reducer}) =>({username: reducer.user.username, isAuthenticated: reducer.user.authenticated});
 
 
 // {

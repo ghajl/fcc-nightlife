@@ -9,6 +9,7 @@ import Root from './client/components/Root'
 const history = createHistory();
 const {store, persistor} = configureStore(history);
 // const history = syncHistoryWithStore(browserHistory, store);
+
 render(
   <Root store={store} history={history} persistor={persistor}/>,
   document.getElementById('root')

@@ -29,6 +29,12 @@ export function logout(req, res, next) {
 }
 
 // -------------------------------------------
+export function addPlace(req, res, next) {
+	// the logout method is added to the request object automatically by Passport
+	console.log("out")
+	// req.logout()
+	return res.sendStatus(200);
+}
 
 export function register(req, res, next) {
 	const newUser = new User({

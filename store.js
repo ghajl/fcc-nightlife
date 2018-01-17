@@ -6,6 +6,7 @@ import { routerReducer as router, routerMiddleware } from 'react-router-redux';
 import thunk from 'redux-thunk';
 import { persistStore, persistCombineReducers } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import sessionStorage from 'redux-persist/lib/storage/session';
 // Create a history of your choosing (we're using a browser history in this case)
 // const history = createHistory();
 // const middleware = routerMiddleware(history);
@@ -13,7 +14,7 @@ import storage from 'redux-persist/lib/storage';
 
 const config = {
   key: 'root',
-  storage,
+  storage: sessionStorage,
 }
 let combReducers = combineReducers({
 	    user,
@@ -21,6 +22,7 @@ let combReducers = combineReducers({
 	  });
 const reducers = persistCombineReducers(config, {reducer: combReducers});
 
+let persistor = null;
 // Add the reducer to your store on the `router` key
 // Also apply our middleware for navigating
 export function configureStore (history){
@@ -30,10 +32,14 @@ export function configureStore (history){
 	  undefined,
 	  applyMiddleware(...middleware)
 	);
-	const persistor = persistStore(store);
+
+	persistor = persistStore(store);
     return {store, persistor};
 }
 
+export function getPersistor(){
+	return persistor;
+}
 
 
 

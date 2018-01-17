@@ -1,13 +1,7 @@
 import Home from "../components/Home"
 import { connect } from 'react-redux';
-const mapStateToProps = ({reducer}) =>({username: reducer.user.username, message: reducer.user.message});
+import { findPlace, showPlaces } from '../../actions';
+const mapStateToProps = ({reducer}) =>({message: reducer.user.message});
 
 
-// {
-//   return {
-//     user
-//   };
-// }
-
-
-export default connect(mapStateToProps)(Home);
+export default connect(mapStateToProps, { findPlace, showPlaces })(Home);

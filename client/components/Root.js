@@ -11,6 +11,7 @@ import { PersistGate } from 'redux-persist/es/integration/react';
 
 const Root = ({ store, history, persistor }) => {
 	
+
 	return	(
 		
 	<Provider store={store}>
@@ -27,7 +28,7 @@ const Root = ({ store, history, persistor }) => {
 	    </ConnectedRouter>
 	</PersistGate>
 	</Provider>
-	
+
 )
 }
 	        // <Route path="/about" component={About}/>
