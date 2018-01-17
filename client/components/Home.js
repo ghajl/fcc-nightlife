@@ -38,10 +38,10 @@ class Home extends Component{
 	submitSearch(address){
 
 		const service = new google.maps.places.PlacesService(this.map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED);
-		const lat = this.map.props.center.lat;
-		const lng = this.map.props.center.lng;
+		// const lat = this.map.props.center.lat;
+		// const lng = this.map.props.center.lng;
 		console.log(this.map.props)
-		this.props.showPlaces( address, lat, lng, service);
+		this.props.showPlaces(service);
 	}
 
 	render() {

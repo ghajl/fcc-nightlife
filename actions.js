@@ -13,11 +13,14 @@ export const actionTypes = {
 	LOGOUT_USER:  'LOGOUT_USER',
 	LOGOUT_SUCCESS_USER:  'LOGOUT_SUCCESS_USER',
 	LOGOUT_ERROR_USER:  'LOGOUT_ERROR_USER',
+	FIND_LOCATION: 'FIND_LOCATION',
+	FIND_LOCATION_SUCCESS: 'FIND_LOCATION_SUCCESS',
+	FIND_LOCATION_ERROR: 'FIND_LOCATION_ERROR',
 	FIND_PLACES: 'FIND_PLACES',
 	FIND_PLACES_SUCCESS: 'FIND_PLACES_SUCCESS',
 	FIND_PLACES_ERROR: 'FIND_PLACES_ERROR',
+	SET_MAP_HEIGHT: 'SET_MAP_HEIGHT',
 }
-
 
 
 function beginLogin() {
@@ -70,22 +73,43 @@ function logoutError() {
   return { type: actionTypes.LOGOUT_ERROR_USER };
 }
 
-function beginSearch() {
-	return { type: actionTypes.FIND_PLACES };
+function beginLocationSearch() {
+	return { type: actionTypes.FIND_LOCATION };
 }
 
-function searchSuccess(address, lat, lng) {
-	return { type: actionTypes.FIND_PLACES_SUCCESS,
-			data: [],
+function searchLocationSuccess(address, lat, lng) {
+	return { type: actionTypes.FIND_LOCATION_SUCCESS,
 			location: address,
 			lat,
 			lng
 		 };
 }
 
-function searchError(message) {
+function searchLocationError(message) {
+	return { type: actionTypes.FIND_LOCATION_ERROR,
+			message
+		 };
+}
+
+function beginPlacesSearch() {
+	return { type: actionTypes.FIND_PLACES };
+}
+
+function searchPlacesSuccess(data) {
+	return { type: actionTypes.FIND_PLACES_SUCCESS,
+			data
+		 };
+}
+
+function searchPlacesError(message) {
 	return { type: actionTypes.FIND_PLACES_ERROR,
 			message
+		 };
+}
+
+export function setHeight(data) {
+	return { type: actionTypes.SET_MAP_HEIGHT,
+			data
 		 };
 }
 
@@ -140,40 +164,41 @@ export function logOut(persistStore) {
 export function findPlace(address) {
 	return (dispatch) => {
 
-	    dispatch(beginSearch());
+	    dispatch(beginLocationSearch());
 
 	    return geocodeByAddress(address)
 		    .then(results => getLatLng(results[0]))
 		    .then(({ lat, lng }) => {
-		    				dispatch(searchSuccess(address, lat, lng))
+		    				dispatch(searchLocationSuccess(address, lat, lng))
 		    			})
 		    .catch((err) => {
-		        dispatch(searchError("Something wrong with address"));
+		        dispatch(searchLocationError("Something wrong with address"));
             })
 	}
 }
 
-export function showPlaces(address, lat, lng, service) {
-	return (dispatch) => {
-		dispatch(beginSearch());
+export function showPlaces(service) {
+	return (dispatch, getState) => {
+		dispatch(beginPlacesSearch());
+		const {lat, lng, location} = getState().reducer.user;
+		// const { lat, lng, location } = getState().user;
+		// console.log(location)
 		const loc = new google.maps.LatLng(lat,lng);
 		const request = {
                     location: loc,
 				    radius: '1000',
-                    type: ['bar'],
-                    
+				    type: ['bar'],
+                    // keyword: ['bar'],
+                    // rankBy: google.maps.places.RankBy.DISTANCE,
                 };
 		
-		service.nearbySearch(request, (results, status) => {
-		  if (status == google.maps.places.PlacesServiceStatus.OK) {
-		    for (var i = 0; i < results.length; i++) {
-		    	console.log(results[i])
-		      // var place = results[i];
-		      // createMarker(results[i]);
-		    }
-		  } else {
-		  	console.log(google.maps.places.PlacesServiceStatus)
-		  }});
-		dispatch(push('/places'));
+		service.nearbySearch(request, (results, status, pagination) => {
+			if (status == google.maps.places.PlacesServiceStatus.OK) {
+			    dispatch(searchPlacesSuccess(results));
+			    dispatch(push('/places'));
+			} else {
+			  	dispatch(searchPlacesError("Can't show results"));
+			}});
+		
 	}
 }

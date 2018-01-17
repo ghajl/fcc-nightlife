@@ -5,6 +5,7 @@ import { Route, Switch } from 'react-router-dom'
 import Home from '../containers/Home';
 import Login from '../containers/Login';
 import Signup from '../containers/Signup';
+import Places from '../containers/Places';
 import { ConnectedRouter } from 'react-router-redux';
 import { PersistGate } from 'redux-persist/es/integration/react';
 
@@ -24,6 +25,7 @@ const Root = ({ store, history, persistor }) => {
 	        <Route exact path="/" component={Home}/>
 	        <Route path="/login" component={Login}/>
 	        <Route path="/signup" component={Signup}/>
+	        <Route path="/places" component={Places}/>
 	      </Switch>
 	    </ConnectedRouter>
 	</PersistGate>

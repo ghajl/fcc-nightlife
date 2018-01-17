@@ -11,6 +11,7 @@ export const initialState = {
   location: "San Francisco, CA",
   lat: 37.774,
   lng: -122.4194,
+  height: 0,
 }
 
 
@@ -19,7 +20,7 @@ export const initialState = {
 
 export function user (state = initialState, action) {
   switch (action.type) {
-    case actionTypes.FIND_PLACES:
+    case actionTypes.FIND_LOCATION:
     case actionTypes.LOGOUT_USER:
     case actionTypes.SIGNUP_USER:
     case actionTypes.MANUAL_LOGIN_USER:
@@ -58,20 +59,31 @@ export function user (state = initialState, action) {
               authenticated: false,
               username: "Guest" }
       }
-    case actionTypes.FIND_PLACES_SUCCESS:
+    case actionTypes.FIND_LOCATION_SUCCESS:
       return {
         ...state,
         ...{ isWaiting: false,
-              bars: action.data,
               location: action.location,
               lat: action.lat,
               lng: action.lng }
       }
+    case actionTypes.FIND_PLACES_SUCCESS:
+      return {
+        ...state,
+        ...{ isWaiting: false,
+              bars: action.data }
+      }
+    case actionTypes.FIND_LOCATION_ERROR: 
     case actionTypes.FIND_PLACES_ERROR:  
       return {
         ...state,
         ...{ isWaiting: false,
               message: action.message}
+      }
+    case actionTypes.SET_MAP_HEIGHT:
+      return {
+        ...state,
+        ...{ height: action.data}
       }
     default:
       return state
