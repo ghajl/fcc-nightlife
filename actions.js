@@ -20,6 +20,10 @@ export const actionTypes = {
 	FIND_PLACES_SUCCESS: 'FIND_PLACES_SUCCESS',
 	FIND_PLACES_ERROR: 'FIND_PLACES_ERROR',
 	SET_MAP_HEIGHT: 'SET_MAP_HEIGHT',
+	ADD_PLACE: 'ADD_PLACE',
+	ADD_PLACE_SUCCESS: 'ADD_PLACE_SUCCESS',
+	ADD_PLACE_ERROR: 'ADD_PLACE_ERROR',
+	SAVE_PATH: 'SAVE_PATH'
 }
 
 
@@ -27,11 +31,12 @@ function beginLogin() {
   return { type: actionTypes.MANUAL_LOGIN_USER };
 }
 
-function loginSuccess(username, message) {
+function loginSuccess(username, userID, message) {
   return {
     type: actionTypes.LOGIN_SUCCESS_USER,
     message,
-    username
+    username,
+    userID
   };
 }
 
@@ -53,11 +58,12 @@ function beginSignUp() {
   return { type: actionTypes.SIGNUP_USER };
 }
 
-function signUpSuccess(username, message) {
+function signUpSuccess(username, userID, message) {
   return {
     type: actionTypes.SIGNUP_SUCCESS_USER,
     message,
-    username
+    username,
+    userID
   };
 }
 
@@ -107,6 +113,29 @@ function searchPlacesError(message) {
 		 };
 }
 
+function beginAddPlace() {
+	return { type: actionTypes.ADD_PLACE };
+}
+
+function addPlaceSuccess(message) {
+	return { type: actionTypes.ADD_PLACE_SUCCESS,
+			message
+		 };
+}
+
+function addPlaceError(message) {
+	return { type: actionTypes.ADD_PLACE_ERROR,
+			message
+		 };
+}
+
+function saveCurrentPath(path) {
+	return {
+	    type: actionTypes.SAVE_PATH,
+	    path
+    };
+}
+
 export function setHeight(data) {
 	return { type: actionTypes.SET_MAP_HEIGHT,
 			data
@@ -114,13 +143,15 @@ export function setHeight(data) {
 }
 
 export function manualLogin(data) {
-	return (dispatch) => {
+	return (dispatch, getState) => {
+		const path = getState().reducer.user.loginReturnPath;
+		console.log(getState())
 		dispatch(beginLogin());
 
 		return axios.post('/login', data)
 			 .then((response) => {
-		          dispatch(loginSuccess(data.username, 'You have been successfully logged in'));
-		          dispatch(push('/'));
+		          dispatch(loginSuccess(data.username, response.data.userID, 'You have been successfully logged in'));
+		          dispatch(push(path));
 		      })
 		      .catch((err) => {
 		        dispatch(loginError('Invalid username or password'));
@@ -129,12 +160,15 @@ export function manualLogin(data) {
 }
 
 export function signUp(data) {
-    return (dispatch) => {
+    return (dispatch, getState) => {
+    	const path = getState().reducer.user.loginReturnPath;
+    	console.log(getState())
 	    dispatch(beginSignUp());
 		return axios.post('/signup', data)
 			.then(response => {
-		        dispatch(signUpSuccess(data.username, 'You have successfully registered an account!'));
-		        dispatch(push('/'));
+				// console.log(response)
+		        dispatch(signUpSuccess(data.username, response.data.userID, 'You have successfully registered an account!'));
+		        dispatch(push(path));
 		    })
 		    .catch((err) => {
 		        dispatch(signUpError('Something went wrong when signing up'));
@@ -142,7 +176,7 @@ export function signUp(data) {
 	};
 }
 
-export function logOut(persistStore) {
+export function logOut() {
 	
 	return (dispatch) => {
 
@@ -152,7 +186,7 @@ export function logOut(persistStore) {
 	      .then((response) => {
 	      		getPersistor().purge();
 	            dispatch(logoutSuccess());
-				dispatch(push('/'));
+				// dispatch(push('/'));
 	      })
 	      .catch((err) => {
 
@@ -186,7 +220,7 @@ export function showPlaces(service) {
 		const loc = new google.maps.LatLng(lat,lng);
 		const request = {
                     location: loc,
-				    radius: '1000',
+				    radius: '3000',
 				    type: ['bar'],
                     // keyword: ['bar'],
                     // rankBy: google.maps.places.RankBy.DISTANCE,
@@ -201,4 +235,30 @@ export function showPlaces(service) {
 			}});
 		
 	}
+}
+
+export function addPlace(data) {
+
+    return (dispatch) => {
+	    dispatch(beginAddPlace());
+		return axios.post('/places', data)
+			.then(response => {
+				console.log(data)
+		        dispatch(addPlaceSuccess('You have successfully registered an account!'));
+		        // dispatch(push('/'));
+		    })
+		    .catch((err) => {
+		        dispatch(addPlaceError('Something went wrong when signing up'));
+		    });
+	};
+}
+
+export function savePath(path) {
+	return (dispatch) => {
+		console.log("sav")
+		dispatch(saveCurrentPath(path));
+		dispatch(push("/login"));
+	}
+	
+
 }

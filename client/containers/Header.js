@@ -1,6 +1,6 @@
 import Header from "../components/Header"
 import { connect } from 'react-redux';
-import { logOut } from '../../actions';
+import { logOut, savePath } from '../../actions';
 const mapStateToProps = ({reducer}) =>({username: reducer.user.username, isAuthenticated: reducer.user.authenticated});
 
 
@@ -11,4 +11,4 @@ const mapStateToProps = ({reducer}) =>({username: reducer.user.username, isAuthe
 // }
 
 
-export default connect(mapStateToProps, { logOut })(Header);
+export default connect(mapStateToProps, { logOut, savePath })(Header);

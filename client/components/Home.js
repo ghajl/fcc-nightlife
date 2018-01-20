@@ -40,7 +40,7 @@ class Home extends Component{
 		const service = new google.maps.places.PlacesService(this.map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED);
 		// const lat = this.map.props.center.lat;
 		// const lng = this.map.props.center.lng;
-		console.log(this.map.props)
+		// console.log(this.map.props)
 		this.props.showPlaces(service);
 	}
 
@@ -48,7 +48,6 @@ class Home extends Component{
 	
 		return (
 		  <div>
-		  	<Header />
 		  	<div className={this.props.classes.map}>
 		  	<HomeMap mapRef={el => {this.map = el}} isMarkerShown />
 		  	</div>

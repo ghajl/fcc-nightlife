@@ -5,8 +5,8 @@ import { withScriptjs, withGoogleMap, GoogleMap, Marker } from "react-google-map
 const MapComponent = compose(
   withProps({
     loadingElement: <div style={{ height: `100%` }} />,
-    containerElement: <div style={{ height: `100%`, width: '100%' }} />,
-    
+    containerElement: <div style={{ height: window.innerHeight - 60, width: '100%' }} />,
+    mapElement: <div style={{ height: window.innerHeight - 60, opacity: '.8' }} />
   }),
   withGoogleMap
 )((props) => {
@@ -16,9 +16,17 @@ const MapComponent = compose(
     defaultZoom={13}
     defaultCenter={{ lat: +props.lat, lng:  +props.lng }}
     center={{ lat: +props.lat, lng:  +props.lng }}
-    
+    options={{ scrollwheel: false}}
   >
-    {props.isMarkerShown && <Marker position={{ lat: +props.lat, lng: +props.lng }} />}
+    {props.markers.map((marker, index) => {
+      let lat = isNaN(marker.lat) ?  marker.lat() : marker.lat;
+      let lng = isNaN(marker.lng) ?  marker.lng() : marker.lng;
+      return (
+          <Marker key={index} position={{ lat: lat, lng: lng }} />
+        )
+    }
+      
+    )}
   </GoogleMap>
   )
 }

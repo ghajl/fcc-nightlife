@@ -5,6 +5,7 @@ export const initialState = {
   isWaiting: false,
   authenticated: false,
   username: "Guest",
+  userID: null,
   message: "",
   router: null,
   bars: null,
@@ -12,6 +13,7 @@ export const initialState = {
   lat: 37.774,
   lng: -122.4194,
   height: 0,
+  loginReturnPath: "/",
 }
 
 
@@ -20,6 +22,7 @@ export const initialState = {
 
 export function user (state = initialState, action) {
   switch (action.type) {
+    case actionTypes.ADD_PLACE:
     case actionTypes.FIND_LOCATION:
     case actionTypes.LOGOUT_USER:
     case actionTypes.SIGNUP_USER:
@@ -35,6 +38,7 @@ export function user (state = initialState, action) {
         ...{ isWaiting: false,
               authenticated: true,
               username: action.username,
+              userID: action.userID,
               message:  action.message}
 
       }
@@ -57,7 +61,8 @@ export function user (state = initialState, action) {
         ...state,
         ...{ isWaiting: false,
               authenticated: false,
-              username: "Guest" }
+              username: "Guest",
+              userID: null }
       }
     case actionTypes.FIND_LOCATION_SUCCESS:
       return {
@@ -73,6 +78,8 @@ export function user (state = initialState, action) {
         ...{ isWaiting: false,
               bars: action.data }
       }
+    case actionTypes.ADD_PLACE_ERROR:
+    case actionTypes.ADD_PLACE_SUCCESS:
     case actionTypes.FIND_LOCATION_ERROR: 
     case actionTypes.FIND_PLACES_ERROR:  
       return {
@@ -84,6 +91,11 @@ export function user (state = initialState, action) {
       return {
         ...state,
         ...{ height: action.data}
+      }
+    case actionTypes.SAVE_PATH:
+      return {
+        ...state,
+        ...{ loginReturnPath: action.path}
       }
     default:
       return state

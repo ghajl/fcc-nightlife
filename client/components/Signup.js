@@ -20,7 +20,6 @@ const Signup = (props) => {
 	console.log(props);
 	return (
 	  <div>
-	  	<Header />
 	  	<div style={{marginTop:80}}>
 			<h2>Sign Up</h2>		
 			<form onSubmit={_onSignupSubmit}>

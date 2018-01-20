@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Header from '../containers/Header';
 import MapComponent from '../containers/MapComponent';
-import PlaceComponent from './PlaceComponent';
+import PlaceComponent from '../containers/PlaceComponent';
 import injectSheet from 'react-jss';
 import SearchForm from '../containers/SearchForm';
 
@@ -36,9 +36,12 @@ const styles = {
 	margin: '20px',
 	},
 	map: {
-		// overflow:'auto',
-		height: '100%',
+		
+		height: window.innerHeight - 60,
 		marginTop: '60px',
+		position: 'fixed',
+		top: 0,
+		width: '100%',
 	}
 }
 
@@ -55,29 +58,29 @@ class Places extends Component{
     
 	// }
 	
-	setHeight(elem) {
-		let height;
-		if(elem){
-				height = elem.clientHeight > window.innerHeight - 60  ? elem.clientHeight : window.innerHeight - 60;
-				this.props.setHeight(height)
-			}
-	} 
+	// setHeight(elem) {
+	// 	let height;
+	// 	if(elem){
+	// 			height =  window.innerHeight - 60;
+	// 			this.props.setHeight(height)
+	// 		}
+	// } 
 	// console.log(height)
 	render() {
 		const bars = this.props.bars;
-		const height = this.props.height;
-		console.log(height) 
-		console.log(height)
+		const height = window.innerHeight - 60;
+		console.log(bars) 
+		// console.log(height)
 		return (
 			<div className={this.props.classes.root} style={{height: height}}>
-			  	<Header />
 			  	<div className={this.props.classes.map}>
 				  	<MapComponent 
-				  		isMarkerShown 
-				  		mapElement={<div style={{ height: height, opacity: '.8' }} />}
+					  	isMarkerShown
+				  		markers={bars.map(item => item.geometry.location)}
+				  		
 				  		/>
 			  	</div>
-			  	<div className={this.props.classes.placesList} ref={elem => this.setHeight(elem)}  style={{marginTop: - height - 60}}>
+			  	<div className={this.props.classes.placesList} style={{marginTop: '60px'}}>
 				  	{bars.map((item, index) =>
 				  		
 				        <PlaceComponent key={index}

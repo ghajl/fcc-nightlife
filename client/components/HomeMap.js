@@ -19,7 +19,8 @@ const HomeMap = compose(
     center={{ lat: +props.lat, lng:  +props.lng }}
     ref={props.mapRef}
   >
-    {props.isMarkerShown && <Marker position={{ lat: +props.lat, lng: +props.lng }} />}
+    <Marker position={{ lat: +props.lat, lng: +props.lng }} />
+    
   </GoogleMap>
   )
 }

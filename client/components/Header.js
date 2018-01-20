@@ -28,13 +28,24 @@ const styles = theme => ({
     text: theme.typography.button,
 })
 
-const Header = ({classes, isAuthenticated, logOut, username}) => {
+const Header = ({classes, isAuthenticated, logOut, savePath, username, ...props}) => {
     const _logout = (event) => {
 
         event.preventDefault();
         logOut();
     };
+    const _toLogIn = (event) => {
 
+        event.preventDefault();
+        console.log(props)
+        console.log("props")
+        savePath(props.locationPathname);
+    };
+    const _toSignUp = (event) => {
+
+        event.preventDefault();
+        savePath(props.location.pathname);
+    };
 	return (
         <div className={classes.nav}>
         	<AppBar color="default">
@@ -51,10 +62,10 @@ const Header = ({classes, isAuthenticated, logOut, username}) => {
                                 </Button>
                                 ) : (
                                 <React.Fragment>
-                                    <Button component={Link} to="/login">
+                                    <Button component={Link} to="/login" onClick={_toLogIn}>
                                         LOG IN
                                     </Button>
-                                    <Button component={Link} to="/signup">
+                                    <Button component={Link} to="/signup" onClick={_toSignUp}>
                                         SIGN UP
                                     </Button>
                                 </React.Fragment>

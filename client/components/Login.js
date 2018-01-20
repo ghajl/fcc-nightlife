@@ -21,7 +21,6 @@ const Login = (props) => {
 	console.log(props);
 	return (
   <div>
-  	<Header />
   	<div style={{marginTop:80}}>
 		<h2>Log in</h2>		
 		<form onSubmit={_onLoginSubmit}>
