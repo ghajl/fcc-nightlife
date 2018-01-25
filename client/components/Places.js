@@ -4,6 +4,7 @@ import MapComponent from '../containers/MapComponent';
 import PlaceComponent from '../containers/PlaceComponent';
 import injectSheet from 'react-jss';
 import SearchForm from '../containers/SearchForm';
+import UsersListDialog from './UsersListDialog';
 
 const styles = {
 	root: {
@@ -12,7 +13,7 @@ const styles = {
 	},
     placesList: {
 		// width: '400px',
-		// maxWidth: '80%',
+		maxWidth: '80%',
 		// height: '120px',
 		float: 'left',
 		// backgroundColor: 'white',
@@ -45,16 +46,34 @@ const styles = {
 	}
 }
 
-
+// const Places = (props) => {
 class Places extends Component{
-	// constructor(props){
-	// 	super(props);
+	constructor(props){
+		super(props);
 
 	// }
+		this.handleClickOpen = this.handleClickOpen.bind(this);
+		this.handleClose = this.handleClose.bind(this);
+		 this.state = {
+	    open: false,
+	    list: []
+	  };
+	}
+  handleClickOpen(list) {
+    this.setState({
+      open: true,
+      list: list
+    });
+  }
+    handleClose() {
+    this.setState({ open: false, list: [] });
+  }
 
 	// shouldComponentUpdate(nextProps,nextState){
-	// 	console.log(this.state.height !== nextState.height)
- //      return this.state.height !== nextState.height 
+	// 	let idList = this.props.bars.map(item => item.id).sort()
+	// 	let newIdList = nextProps.bars.map(item => item.id).sort()
+		
+	// 	return JSON.stringify(idList) !== JSON.stringify(newIdList)
     
 	// }
 	
@@ -67,24 +86,30 @@ class Places extends Component{
 	// } 
 	// console.log(height)
 	render() {
-		const bars = this.props.bars;
+		const { classes, bars, location} = this.props;
+		// const bars = props.bars;
 		const height = window.innerHeight - 60;
-		console.log(bars) 
-		// console.log(height)
+		// console.log(this.props) 
+		console.log("height")
 		return (
-			<div className={this.props.classes.root} style={{height: height}}>
-			  	<div className={this.props.classes.map}>
+			<div className={classes.root} style={{height: height}}>
+			  	<div className={classes.map}>
 				  	<MapComponent 
 					  	isMarkerShown
-				  		markers={bars.map(item => item.geometry.location)}
+				  		markers={bars.map(item => item.location)}
 				  		
 				  		/>
 			  	</div>
-			  	<div className={this.props.classes.placesList} style={{marginTop: '60px'}}>
+			  	<div className={classes.placesList} style={{marginTop: '60px'}}>
 				  	{bars.map((item, index) =>
 				  		
-				        <PlaceComponent key={index}
-				                  data={item} />
+				        <PlaceComponent 
+				        	key={index}
+				            data={item} 
+				            locationPathname={location.pathname}
+				            openShowListDialog={this.handleClickOpen}	
+	            
+				            />
 				        
 				      )}
 			  	
@@ -92,6 +117,11 @@ class Places extends Component{
 			  	
 			  	
 			  	</div>
+			  	<UsersListDialog
+            	usersList={this.state.list}
+            	open={this.state.open}
+	            onClose={this.handleClose}
+	        />
 			</div>
 		)
 	}

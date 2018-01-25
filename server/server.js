@@ -15,10 +15,19 @@ import User from "./models/user";
 
 const app = express();
 const compiler = webpack(webpackConfig);
+const cors = require('cors');
+
+//app.use(cors());
+
+
 app.use(webpackDevMiddleware(compiler, {
   publicPath: webpackConfig.output.publicPath
 }));
 app.use(webpackHotMiddleware(compiler));
+app.use(cors({
+  origin: 'http://localhost:3000/',
+  credentials: true
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/public', express.static(process.cwd() + '/public'));
@@ -87,10 +96,10 @@ app.use(session({
 // session.
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.options('*', cors()) 
 initRoutes(app);
 
-app.get("*", (req, res, next) => {	
+app.all("*", (req, res, next) => {	
 
 	const appHTML = 
 	`<!doctype html>

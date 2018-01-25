@@ -1,9 +1,11 @@
-import {login, logout, register, addPlace} from "../controllers/users"
+import {login, logout, register, modifyPlaceList, getUsersBarsData, getPhoto} from "../controllers/users"
 
 
 export default (app) => {
 	app.post("/login", login);
 	app.get("/logout", logout);
 	app.post("/signup", register);
-	app.post("/places", addPlace)
+	app.post("/places", modifyPlaceList);
+	app.get("/data", getUsersBarsData);
+	app.get("/photo", getPhoto);
 }

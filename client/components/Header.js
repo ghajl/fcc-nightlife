@@ -28,7 +28,7 @@ const styles = theme => ({
     text: theme.typography.button,
 })
 
-const Header = ({classes, isAuthenticated, logOut, savePath, username, ...props}) => {
+const Header = ({classes, isAuthenticated, logOut, toLogIn, toSignUp, username, ...props}) => {
     const _logout = (event) => {
 
         event.preventDefault();
@@ -37,14 +37,15 @@ const Header = ({classes, isAuthenticated, logOut, savePath, username, ...props}
     const _toLogIn = (event) => {
 
         event.preventDefault();
-        console.log(props)
-        console.log("props")
-        savePath(props.locationPathname);
+        // console.log(props)
+        // console.log("props")
+        props.openLoginDialog()
+        // toLogIn(props.locationPathname);
     };
     const _toSignUp = (event) => {
 
         event.preventDefault();
-        savePath(props.location.pathname);
+        toSignUp(props.locationPathname);
     };
 	return (
         <div className={classes.nav}>
@@ -62,7 +63,7 @@ const Header = ({classes, isAuthenticated, logOut, savePath, username, ...props}
                                 </Button>
                                 ) : (
                                 <React.Fragment>
-                                    <Button component={Link} to="/login" onClick={_toLogIn}>
+                                    <Button onClick={props.openLoginDialog}>
                                         LOG IN
                                     </Button>
                                     <Button component={Link} to="/signup" onClick={_toSignUp}>

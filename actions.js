@@ -23,7 +23,13 @@ export const actionTypes = {
 	ADD_PLACE: 'ADD_PLACE',
 	ADD_PLACE_SUCCESS: 'ADD_PLACE_SUCCESS',
 	ADD_PLACE_ERROR: 'ADD_PLACE_ERROR',
-	SAVE_PATH: 'SAVE_PATH'
+	REMOVE_PLACE: 'REMOVE_PLACE',
+	REMOVE_PLACE_SUCCESS: 'REMOVE_PLACE_SUCCESS',
+	REMOVE_PLACE_ERROR: 'REMOVE_PLACE_ERROR',
+	SAVE_PATH: 'SAVE_PATH',
+	SAVE_GUEST_BAR: 'SAVE_GUEST_BAR',
+	OPEN_LOGIN: 'OPEN_LOGIN',
+	CLOSE_LOGIN: 'CLOSE_LOGIN'
 }
 
 
@@ -31,12 +37,12 @@ function beginLogin() {
   return { type: actionTypes.MANUAL_LOGIN_USER };
 }
 
-function loginSuccess(username, userID, message) {
+function loginSuccess(username, places, message) {
   return {
     type: actionTypes.LOGIN_SUCCESS_USER,
     message,
     username,
-    userID
+    places
   };
 }
 
@@ -58,12 +64,12 @@ function beginSignUp() {
   return { type: actionTypes.SIGNUP_USER };
 }
 
-function signUpSuccess(username, userID, message) {
+function signUpSuccess(username, places, message) {
   return {
     type: actionTypes.SIGNUP_SUCCESS_USER,
     message,
     username,
-    userID
+    places
   };
 }
 
@@ -117,14 +123,34 @@ function beginAddPlace() {
 	return { type: actionTypes.ADD_PLACE };
 }
 
-function addPlaceSuccess(message) {
+function addPlaceSuccess(placeID, message) {
+	console.log(placeID)
 	return { type: actionTypes.ADD_PLACE_SUCCESS,
+			placeID,
 			message
 		 };
 }
 
 function addPlaceError(message) {
 	return { type: actionTypes.ADD_PLACE_ERROR,
+			message
+		 };
+}
+
+function beginRemovePlace() {
+	return { type: actionTypes.REMOVE_PLACE };
+}
+
+function removePlaceSuccess(placeID, message) {
+	console.log(placeID)
+	return { type: actionTypes.REMOVE_PLACE_SUCCESS,
+			placeID,
+			message
+		 };
+}
+
+function removePlaceError(message) {
+	return { type: actionTypes.REMOVE_PLACE_ERROR,
 			message
 		 };
 }
@@ -136,22 +162,70 @@ function saveCurrentPath(path) {
     };
 }
 
+function saveGuestBar(placeID) {
+	return {
+	    type: actionTypes.SAVE_GUEST_BAR,
+	    placeID
+    };
+}
+
 export function setHeight(data) {
 	return { type: actionTypes.SET_MAP_HEIGHT,
 			data
 		 };
 }
 
+export function openLoginDialog() {
+	console.log("open")
+	return { type: actionTypes.OPEN_LOGIN
+		 };
+}
+
+export function closeLoginDialog() {
+	return { type: actionTypes.CLOSE_LOGIN
+		 };
+}
+// export function loginAndAdd(userData, placeID){
+// 	if(!placeID) {
+// 		manualLogin(userData)
+// 	} else {
+
+// 	}
+// }
+
 export function manualLogin(data) {
+
 	return (dispatch, getState) => {
-		const path = getState().reducer.user.loginReturnPath;
+		// const path = getState().reducer.user.loginReturnPath;
+		console.log("22")
 		console.log(getState())
 		dispatch(beginLogin());
 
 		return axios.post('/login', data)
 			 .then((response) => {
-		          dispatch(loginSuccess(data.username, response.data.userID, 'You have been successfully logged in'));
-		          dispatch(push(path));
+			 		// console.log(response)
+		            dispatch(loginSuccess(data.username, response.data.places, 'You have been successfully logged in'));
+		            //user came here from add button
+		            if(getState().reducer.user.guestBar){
+		            	const addData = {
+				        	placeID: getState().reducer.user.guestBar,
+				        	username: data.username,
+				        	operation: 'ADD'
+				        }
+		            	dispatch(beginAddPlace());
+					    
+						return axios.post('/places', addData)
+							.then(response => {
+								dispatch(addPlaceSuccess(addData.placeID, 'You have successfully registered an account!'));
+						        dispatch(push(path));
+						    })
+						    .catch((err) => {
+						        dispatch(addPlaceError("Error while adding the bar"));
+						    });
+		            } else {
+		            	// dispatch(push(path));
+		            }
+		            
 		      })
 		      .catch((err) => {
 		        dispatch(loginError('Invalid username or password'));
@@ -167,7 +241,7 @@ export function signUp(data) {
 		return axios.post('/signup', data)
 			.then(response => {
 				// console.log(response)
-		        dispatch(signUpSuccess(data.username, response.data.userID, 'You have successfully registered an account!'));
+		        dispatch(signUpSuccess(data.username, [], 'You have successfully registered an account!'));
 		        dispatch(push(path));
 		    })
 		    .catch((err) => {
@@ -214,7 +288,7 @@ export function findPlace(address) {
 export function showPlaces(service) {
 	return (dispatch, getState) => {
 		dispatch(beginPlacesSearch());
-		const {lat, lng, location} = getState().reducer.user;
+		const {lat, lng, location, username} = getState().reducer.user;
 		// const { lat, lng, location } = getState().user;
 		// console.log(location)
 		const loc = new google.maps.LatLng(lat,lng);
@@ -228,8 +302,54 @@ export function showPlaces(service) {
 		
 		service.nearbySearch(request, (results, status, pagination) => {
 			if (status == google.maps.places.PlacesServiceStatus.OK) {
-			    dispatch(searchPlacesSuccess(results));
-			    dispatch(push('/places'));
+				// console.log(results.map(item=>item.id))
+				return axios.get('/data', {
+								    params: {
+								        bars: results.map(item=>item.id)
+								    }
+								}).then(response => {
+									console.log(results);
+									let res = results.map(item => {
+										let photoUrl = item.photos && item.photos[0] && item.photos[0].getUrl && item.photos[0].getUrl instanceof Function && item.photos[0].getUrl({'maxWidth': 200, 'maxHeight': 200});
+										return {id: item.id, 
+												name: item.name,
+												photoUrl, 
+												rating: item.rating,
+												location: item.geometry.location, 
+												address: item.vicinity, 
+												users:[]}
+											});
+									// let x = results[0].reference;
+									// return axios.get('/photo', {
+									// 	params: {
+									// 		ref: x
+									// 	}
+									// }).then(res => {
+									// 	  // response.data.pipe(fs.createWriteStream('ada_lovelace.jpg'))
+										  response.data.places.forEach(item => {
+									// 	// console.log(item);
+													for(let i in res){
+														// console.log(i);
+														if(item.placeID === res[i].id){
+															// console.log("response");
+												
+															res[i].users = item.users.slice(0);
+															break;
+														}
+													}
+												})
+									// 			// console.log(res);
+												
+									// 	});
+									dispatch(searchPlacesSuccess(res));
+											    dispatch(push('/places'));
+									
+								}
+
+								).catch((err) => {
+							        dispatch(searchPlacesError("Can't show results"));
+							    });
+			    
 			} else {
 			  	dispatch(searchPlacesError("Can't show results"));
 			}});
@@ -240,11 +360,14 @@ export function showPlaces(service) {
 export function addPlace(data) {
 
     return (dispatch) => {
+    	const addData = {...data, ...{ operation: 'ADD' }};
 	    dispatch(beginAddPlace());
-		return axios.post('/places', data)
+	    
+		return axios.post('/places', addData)
 			.then(response => {
-				console.log(data)
-		        dispatch(addPlaceSuccess('You have successfully registered an account!'));
+				// console.log(data);
+
+		        dispatch(addPlaceSuccess(data.placeID, 'You have successfully registered an account!'));
 		        // dispatch(push('/'));
 		    })
 		    .catch((err) => {
@@ -253,12 +376,44 @@ export function addPlace(data) {
 	};
 }
 
-export function savePath(path) {
+export function removePlace(data) {
+
+    return (dispatch) => {
+    	const removeData = {...data, ...{ operation: 'REMOVE' }};
+	    dispatch(beginRemovePlace());
+		return axios.post('/places', removeData)
+			.then(response => {
+				// console.log(data);
+
+		        dispatch(removePlaceSuccess(data.placeID, 'You have successfully registered an account!'));
+		        // dispatch(push('/'));
+		    })
+		    .catch((err) => {
+		        dispatch(removePlaceError('Something went wrong when signing up'));
+		    });
+	};
+}
+
+export function toLogIn(path) {
 	return (dispatch) => {
-		console.log("sav")
+		// console.log("sav")
 		dispatch(saveCurrentPath(path));
 		dispatch(push("/login"));
 	}
-	
+}
 
+export function toSignUp(path) {
+	return (dispatch) => {
+		// console.log("sav")
+		dispatch(saveCurrentPath(path));
+		dispatch(push("/signup"));
+	}
+}
+
+export function loginAndAdd(path, placeID) {
+	return (dispatch) => {
+		// console.log("sav")
+		dispatch(saveGuestBar(placeID));
+		dispatch(toLogIn(path));
+	}
 }
