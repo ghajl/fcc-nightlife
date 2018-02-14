@@ -34,6 +34,7 @@
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.4",
     "css-loader": "^0.28.8",
+    "express":"*",
     "express-session": "^1.15.6",
     "history": "^4.7.2",
     "html-webpack-plugin": "^2.30.1",
