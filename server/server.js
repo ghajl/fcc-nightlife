@@ -16,7 +16,7 @@ const User = require("./models/user");
 
 const app = express();
 // const compiler = webpack(webpackConfig);
-// const cors = require('cors');
+const cors = require('cors');
 
 
 
