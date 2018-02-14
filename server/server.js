@@ -2,10 +2,10 @@ require("babel-register");
 const express = require("express");
 const mongoose = require("mongoose");
 // const {config} = require("./config");
-const webpack = require('webpack');
-const webpackDevMiddleware = require('webpack-dev-middleware');
-const webpackHotMiddleware = require('webpack-hot-middleware');
-const webpackConfig = require('../../webpack.prod.js');
+// const webpack = require('webpack');
+// const webpackDevMiddleware = require('webpack-dev-middleware');
+// const webpackHotMiddleware = require('webpack-hot-middleware');
+// const webpackConfig = require('../../webpack.prod.js');
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const session = require("express-session");
@@ -15,19 +15,19 @@ const initRoutes = require('./init/routes');
 const User = require("./models/user");
 
 const app = express();
-const compiler = webpack(webpackConfig);
-const cors = require('cors');
+// const compiler = webpack(webpackConfig);
+// const cors = require('cors');
 
 
 
-app.use(webpackDevMiddleware(compiler, {
-    publicPath: webpackConfig.output.publicPath
-}));
-app.use(webpackHotMiddleware(compiler));
-app.use(cors({
-    origin: 'http://localhost:3000/',
-    credentials: true
-}));
+// app.use(webpackDevMiddleware(compiler, {
+//     publicPath: webpackConfig.output.publicPath
+// }));
+// app.use(webpackHotMiddleware(compiler));
+// app.use(cors({
+//     origin: 'http://localhost:3000/',
+//     credentials: true
+// }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/public', express.static(process.cwd() + '/public'));
@@ -123,8 +123,9 @@ app.all("*", (req, res, next) => {
 	res.status(200).end(appHTML)
 
 })
-app.listen(3000, function () {
-    console.log('app listening on port 3000!\n');
+var port = process.env.PORT || 3000;
+app.listen( port, function () {
+    console.log('app listening on port ' + port + '\n');
 });
 
 		
