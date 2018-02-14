@@ -31,7 +31,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/public', express.static(process.cwd() + '/public'));
-const mongoDB = MONGOLAB_URI;
+const mongoDB = process.env.MONGOLAB_URI;
 const connect = () => {
 	mongoose.connect(mongoDB, {
 	    useMongoClient: true
