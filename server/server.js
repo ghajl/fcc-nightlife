@@ -17,7 +17,6 @@ const app = express();
 const compiler = webpack(webpackConfig);
 const cors = require('cors');
 
-//app.use(cors());
 
 
 app.use(webpackDevMiddleware(compiler, {
@@ -109,7 +108,8 @@ app.all("*", (req, res, next) => {
 		<link type="text/css" rel="stylesheet" href="public/main.css">
 	    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"/>
 	    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPQYCvM0i495Py8i7GV3wn2odaGbwGPPo&libraries=geometry,drawing,places"></script>
-		<title></title>
+
+	    <title></title>
 		
 	</head>
 	<body>
@@ -126,3 +126,5 @@ app.listen(3000, function () {
     console.log('app listening on port 3000!\n');
 });
 
+// <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPQYCvM0i495Py8i7GV3wn2odaGbwGPPo&libraries=geometry,drawing,places"></script>
+		

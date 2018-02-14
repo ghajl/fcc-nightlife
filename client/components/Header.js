@@ -13,7 +13,7 @@ const styles = theme => ({
     	display: 'flex',
     	width:'100%',
     	overflow: 'hidden',
-    	color: 'blue',
+    	
     },
     logo: {
     	flex: 1,
@@ -23,50 +23,47 @@ const styles = theme => ({
     },
     login: {
     	margin: 5,
-    	// alignSelf: 'flex-end',
+    	
     },
     text: theme.typography.button,
 })
 
-const Header = ({classes, isAuthenticated, logOut, toLogIn, toSignUp, username, ...props}) => {
-    const _logout = (event) => {
+const Header = ({classes, isAuthenticated, logOut, toSignUp, username, ...props}) => {
+    const logout = (event) => {
 
         event.preventDefault();
         logOut();
     };
-    const _toLogIn = (event) => {
+    const toLogIn = (event) => {
 
         event.preventDefault();
-        // console.log(props)
-        // console.log("props")
         props.openLoginDialog()
-        // toLogIn(props.locationPathname);
     };
-    const _toSignUp = (event) => {
+    const signUp = (event) => {
 
         event.preventDefault();
-        toSignUp(props.locationPathname);
+        toSignUp(props.path);
     };
 	return (
         <div className={classes.nav}>
-        	<AppBar color="default">
+        	<AppBar color="secondary">
         		<Toolbar>
-					<Typography color="primary" component={Link} to="/" type="title" className={classes.logo}>
-		                NightLife
+					<Typography color="secondary" component={Link} to="/" type="title" className={classes.logo}>
+		                BarCoordinator
 		            </Typography>
                     <div className={classes.text}>Hello, {username}!</div>
 		            <div className={classes.login}>
                         {isAuthenticated ? (
 
-                                <Button component={Link} to="/logout" onClick={_logout}>
+                                <Button component={Link} to="/logout" onClick={logout}>
                                     LOG OUT
                                 </Button>
                                 ) : (
                                 <React.Fragment>
-                                    <Button onClick={props.openLoginDialog}>
+                                    <Button onClick={toLogIn}>
                                         LOG IN
                                     </Button>
-                                    <Button component={Link} to="/signup" onClick={_toSignUp}>
+                                    <Button component={Link} to="/signup" onClick={signUp}>
                                         SIGN UP
                                     </Button>
                                 </React.Fragment>

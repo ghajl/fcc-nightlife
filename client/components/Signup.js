@@ -6,42 +6,39 @@ import { withStyles } from 'material-ui/styles';
 
 const styles = theme => ({
 	root: {
-display: 'flex',
-justifyContent: 'center',
+		display: 'flex',
+		justifyContent: 'center',
 	},
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 500,
-    maxWidth: '100%'
-  },
-  form: {
-  	display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 500,
-    maxWidth: '100%'
-  },
-  textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-    width: 300,
-    maxWidth: '100%'
-  },
-  menu: {
-    width: 200,
-  },
-  button: {
-  	// alignSelf: 'flex-end'
-  	marginTop:50
-  }
+    container: {
+	    display: 'flex',
+	    flexDirection: 'column',
+	    alignItems: 'center',
+	    width: 500,
+	    maxWidth: '100%'
+    },
+    form: {
+	  	display: 'flex',
+	    flexDirection: 'column',
+	    justifyContent: 'center',
+	    alignItems: 'center',
+	    width: 500,
+	    maxWidth: '100%'
+    },
+    textField: {
+	    marginLeft: theme.spacing.unit,
+	    marginRight: theme.spacing.unit,
+	    width: 300,
+	    maxWidth: '100%'
+    },
+    menu: {
+	    width: 200,
+    },
+    button: {
+  	  	marginTop:50
+    }
 });
 
 class Signup extends Component{
-// const Signup = (props) => {
 
 	constructor() {
 		super();
@@ -56,7 +53,7 @@ class Signup extends Component{
 	}
 
 
-	_onSignupSubmit = (event) => {		
+	onSignupSubmit = (event) => {		
 		event.preventDefault()
 		const username = this.usernameInput.value;
 		const password = this.passwordInput.value;
@@ -69,22 +66,15 @@ class Signup extends Component{
 				passwordConfirmErrorMessage: passwordConfirmError
 			})
 		} else {
-			this.props.signUp({ // this function is passed in via react-redux
+			this.props.signUp({ 
 				username,
 				password,
 				confirm			
 			}) 
 		}
-
-		// const passwordConfirm = passwordConfirmInput.value;
-		// Passed in via react-redux. Returns a promise.
-		// holds the path to redirect to after login (if any)
-		
-
 	};
 	render(){
 		const { classes} = this.props;
-		// console.log(props);
 		return (
 		  <div className={classes.root}>
 		  	<div className={classes.container} style={{marginTop:200}}>
@@ -125,7 +115,7 @@ class Signup extends Component{
 	                />
 				</form>	
 				<div className={classes.button}>
-				<Button raised color="accent" onClick={this._onSignupSubmit}>
+				<Button raised color="accent" onClick={this.onSignupSubmit}>
 	                sign up
 	            </Button>
 	               </div>
@@ -137,9 +127,6 @@ class Signup extends Component{
 }
 export default withStyles(styles)(Signup)
 
-				// <input type="text" ref={(input) => { usernameInput = input; }} placeholder="Username"/ ><br/>
-				// <input type="password" ref={(input) => { passwordInput = input; }} placeholder="Password" /><br/>
-				// <input type="submit" value="Submit" /> 
 
 function inputFieldErrors(username, password, confirm) {
 	return !username || !password || !confirm || password != confirm

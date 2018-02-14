@@ -5,16 +5,14 @@ import { withStyles } from 'material-ui/styles';
 
 const styles = theme => ({
 	placeCart: {
-
-		width: '600px',
+		width: '300px',
 		maxWidth: '80%',
-		// height: 'auto',
 		opacity: '.9',
-		backgroundColor: 'white',
 		boxShadow: '5px 1px 10px #888888',
 		margin: '20px',
 		padding: '10px',
-		 color: "#673AB7"
+		color: "#673AB7",
+		cursor: 'pointer'
 	},
 	button: {
 		marginTop: "5px"
@@ -23,20 +21,16 @@ const styles = theme => ({
 	me: {
 		color: 'red'
 	},
-	image: {
-		// display: 'inline-block'
-	},
-	desc: {
-		// display: 'inline-block'
-	}
+	
 })
 
 
 const PlaceComponent = (props) => {
 
-    const _add = (event) => {
+    const add = (event) => {
 
         event.preventDefault();
+        event.stopPropagation();
         const data = {
         	placeID: props.placeID,
         	username: props.username,
@@ -45,9 +39,10 @@ const PlaceComponent = (props) => {
 		props.addPlace(data); 
     }
 
-    const _remove = (event) => {
+    const remove = (event) => {
 
         event.preventDefault();
+        event.stopPropagation();
         const data = {
         	placeID: props.placeID,
         	username: props.username,
@@ -55,31 +50,8 @@ const PlaceComponent = (props) => {
         }
 		props.removePlace(data); 
     }
-
-    const _loginAndAdd = (event) => {
-
-        event.preventDefault();
-        
-        props.loginAndAdd(props.locationPathname, props.placeID);
-    }
-
-    const goingNumber = props.isUserGoing ? props.usersInBar.length - 1 : props.usersInBar.length;    
-    const GoingLabel = () => {
-    	//({'maxWidth': 100, 'maxHeight': 100})
-    	// if(props.photo){
-    	// 	console.log(props.photo.getUrl({'maxWidth': 200, 'maxHeight': 200}))
-    	// }
-    	// console.log(props.photo)
-    	
-    	return props.isUserGoing ? goingNumber <= 0 ? 
-	    					
-	    						<span className={props.classes.me}>me</span>
-	    					: 
-	    						<React.Fragment>{goingNumber} <span className={props.classes.me}> and me</span></React.Fragment>
-	    					 : 
-	    						<span>{goingNumber}</span>	
-    }
-    const usersList = () => {
+	
+	const usersList = () => {
     	if (props.isUserGoing) {
     		let i = props.usersInBar.indexOf(props.username);
     		let list = [...props.usersInBar];
@@ -90,29 +62,61 @@ const PlaceComponent = (props) => {
     	
     	
     }
+    
+    const showList = (event) => {
+    	event.preventDefault();
+        event.stopPropagation();
+        props.openShowListDialog(usersList())
+    }
+    const loginAndAdd = (event) => {
 
-	return (
-		<div className={`${props.classes.placeCart} ${props.classes.text}`}>
+        event.preventDefault();
+        event.stopPropagation();
+        props.loginAndAdd(props.placeID);
+    }
+	const cartClick = () => {
 
-			{props.photo && <div className={props.classes.image}>
+        props.markerClick(props.placeID);
+    }
+
+    //make label about how many people are going to specific bar
+    //if current user also is going - subtract from  the number and add label 'and me' or just 'me' 
+    //if only he is only one in the list
+    const goingNumber = props.isUserGoing ? props.usersInBar.length - 1 : props.usersInBar.length;    
+    const GoingLabel = () => {
+    	
+    	return props.isUserGoing ? goingNumber <= 0 ? 
+	    					
+	    						<span className={props.classes.me}>me</span>
+	    					: 
+	    						<React.Fragment>{goingNumber} <span className={props.classes.me}> and me</span></React.Fragment>
+	    					: 
+	    						<span>{goingNumber}</span>	
+    }
+    
+    return (
+
+		<div onClick={cartClick} className={`${props.classes.placeCart} ${props.classes.text}`} style={props.isHighlighted ? {backgroundColor: 'palegreen'} : {backgroundColor: 'white'}}>
+		
+			{props.photo && 
 			<img src={props.photo}/>
-			</div>}
-			<div className={props.classes.desc}>
+			}
+			
 			<div>{props.name}</div>
 			<div>Address: {props.address}</div>
-			{ props.rating ? (<div>Rating: {props.rating}</div>) : (<div></div>)}
+			{ props.rating && <div>Rating: {props.rating}</div>}
 			<div>Going: <GoingLabel /></div>
 			{ props.authenticated ? ( <div>
 				{props.isUserGoing ? (
 					<div className={props.classes.button}>
-									<Button raised color="accent" dense={true} onClick={_remove}>
+									<Button raised color="accent" dense={true} onClick={remove}>
 						                Remove
 						            </Button>
 						            
 						            </div>
 					            ) : (
 								<div className={props.classes.button}>
-									<Button raised color="accent" dense={true} onClick={_add}>
+									<Button raised color="accent" dense={true} onClick={add}>
 						                Add
 						            </Button>
 						            
@@ -120,18 +124,20 @@ const PlaceComponent = (props) => {
 					            
 						            	{goingNumber > 0 && 
 						            	(<div className={props.classes.button}>
-						            		<Button raised color="accent" dense={true} onClick={() => props.openShowListDialog(usersList())}>
-								                show
+						            		<Button raised color="accent" dense={true} onClick={showList}>
+								                List
 								            </Button>
 						            	</div>)}	
 						            
-						            </div>)
-				            : (<div><Button raised color="accent" dense={true} onClick={props.openLoginDialog}>
-						                Add
-						            </Button></div>)}
-            </div>
+						            </div>
+				            ) : (
+				            <div><Button raised color="accent" dense={true} onClick={loginAndAdd}>
+				                Add
+				            </Button></div>)}
+            
             
 		</div>
+
 	)
 }
 

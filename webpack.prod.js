@@ -1,5 +1,6 @@
-const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+const path = require('path');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
@@ -9,12 +10,14 @@ module.exports = {
         path: path.resolve(process.cwd(),  'public'),
         publicPath: '/'
     },
-    devServer: {
-        port: 3000,
-        contentBase: './dist',
-        
-        historyApiFallback: true,
-    },
+    plugins: [
+        new UglifyJSPlugin({
+           sourceMap: true
+        }),
+        new webpack.DefinePlugin({
+           'process.env.NODE_ENV': JSON.stringify('production')
+        })
+    ],
     module: {
         rules: [
             {

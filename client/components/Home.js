@@ -3,6 +3,9 @@ import Header from '../containers/Header';
 import HomeMap from '../containers/HomeMap'
 import injectSheet from 'react-jss';
 import SearchForm from '../containers/SearchForm';
+import qs from 'query-string';
+import {defaultLocation} from '../../util/locations';
+ 
 
 const styles = {
     searchBar: {
@@ -16,10 +19,10 @@ const styles = {
 		left: '50%',
 		boxShadow: '5px 1px 10px #888888',
 		transform: 'translate(-50%, -50%)',	
-		// overflow: 'hidden',
+		
 	},
 	form: {
-opacity: 1,
+		opacity: 1,
 		width: '80%',
 		padding: '10px',
 
@@ -32,37 +35,48 @@ opacity: 1,
 class Home extends Component{
 	constructor(props){
 		super(props);
-		// this.map = null;
+		
+		this.location = qs.parse(props.location.search);
+    	
+    	//set location from url
+    	if(!this.location.loc){
+    		props.replaceLocation(defaultLocation.address, props.location.pathname)
+    	} else {
+    		props.findLocation(this.location.loc);
+    	}
+    	
 	}
 
-	submitSearch(address){
+	
+	componentWillReceiveProps(nextProps){
+		if(this.props.location.search != nextProps.location.search){
 
-		const service = new google.maps.places.PlacesService(this.map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED);
-		// const lat = this.map.props.center.lat;
-		// const lng = this.map.props.center.lng;
-		// console.log(this.map.props)
-		this.props.showPlaces(service);
+			this.location = qs.parse(nextProps.location.search);
+	
+			//set location from url
+	    	if(!this.location.loc){
+	    		this.props.replaceLocation(defaultLocation.address, this.props.location.pathname)
+	    	} else {
+	    		this.props.findLocation(this.location.loc);
+	    	}
+		}
 	}
 
 	render() {
-	
 		return (
-		  <div>
-		  	<div className={this.props.classes.map}>
-		  	<HomeMap mapRef={el => {this.map = el}} isMarkerShown />
-		  	</div>
-		  	<div className={this.props.classes.searchBar}>
-		  	<div className={this.props.classes.form}>
-		  	Enter your location:
-		  	<SearchForm submitSearch={(adr) => this.submitSearch(adr)} />
-		  	</div>
-		  	</div>
-		  </div>
+			<div>
+			  	<div className={this.props.classes.map}>
+			  	<HomeMap isMarkerShown />
+			  	</div>
+			  	<div className={this.props.classes.searchBar}>
+				  	<div className={this.props.classes.form}>
+				  	<SearchForm urlLocation={this.props.location} path={this.props.match.path} placeLocation={this.location.loc} />
+				  	</div>
+			  	</div>
+			  	
+			</div>
 		)
 	}
 }
-export default injectSheet(styles)(Home);
 
-// <div>
-//   	<MapComponent isMarkerShown={false} />
-//   	</div>
+export default injectSheet(styles)(Home);

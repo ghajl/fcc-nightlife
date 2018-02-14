@@ -5,110 +5,134 @@ import PlaceComponent from '../containers/PlaceComponent';
 import injectSheet from 'react-jss';
 import SearchForm from '../containers/SearchForm';
 import UsersListDialog from './UsersListDialog';
+import qs from 'query-string';
+import {defaultLocation} from '../../util/locations';
+
+
 
 const styles = {
-	root: {
-		// display: 'flex',
-		// overflow: 'auto',
-	},
     placesList: {
-		// width: '400px',
 		maxWidth: '80%',
-		// height: '120px',
 		float: 'left',
-		// backgroundColor: 'white',
-		// opacity: '.9',
 		marginTop: - window.innerHeight - 60,
 		paddingTop: '150px',
-		// top: '0',
-		// overflow: 'visible',
-  // position: 'relative',
-		// left: '0',
-		// boxShadow: '5px 1px 10px #888888',
-		// transform: 'translate(-50%, -50%)',	
-		// overflow: 'hidden',
 		marginLeft: '20px',
 	},
 	item: {
-// opacity: 1,
-// 		width: '80%',
-// 		padding: '10px',
-
-	margin: '20px',
+		margin: '20px',
 	},
 	map: {
-		
 		height: window.innerHeight - 60,
 		marginTop: '60px',
 		position: 'fixed',
 		top: 0,
 		width: '100%',
-	}
+	},
+	searchBar: {
+		width: '400px',
+		maxWidth: '80%',
+		height: '120px',
+		position: 'fixed',
+		backgroundColor: 'white',
+		top: '20%',
+		'z-index': 1000,
+		left: '80%',
+		boxShadow: '5px 1px 10px #888888',
+		transform: 'translate(-50%, -50%)',	
+	},
+	form: {
+		opacity: 1,
+		width: '80%',
+		padding: '10px',
+	},
 }
 
-// const Places = (props) => {
 class Places extends Component{
 	constructor(props){
 		super(props);
-
-	// }
-		this.handleClickOpen = this.handleClickOpen.bind(this);
-		this.handleClose = this.handleClose.bind(this);
-		 this.state = {
-	    open: false,
-	    list: []
-	  };
-	}
-  handleClickOpen(list) {
-    this.setState({
-      open: true,
-      list: list
-    });
-  }
-    handleClose() {
-    this.setState({ open: false, list: [] });
-  }
-
-	// shouldComponentUpdate(nextProps,nextState){
-	// 	let idList = this.props.bars.map(item => item.id).sort()
-	// 	let newIdList = nextProps.bars.map(item => item.id).sort()
+		this.placeLocation = qs.parse(props.location.search);
+		//if there isn't parameter 'loc' in the url - replace url with default location
+    	if(!this.placeLocation.loc){
+    		props.replaceLocation(defaultLocation.address, props.location.pathname)
+    	}
 		
-	// 	return JSON.stringify(idList) !== JSON.stringify(newIdList)
-    
-	// }
+		this.state = {
+		    open: false,
+		    list: []
+	    };
+	}
 	
-	// setHeight(elem) {
-	// 	let height;
-	// 	if(elem){
-	// 			height =  window.innerHeight - 60;
-	// 			this.props.setHeight(height)
-	// 		}
-	// } 
-	// console.log(height)
+	//dialog with list of users that are going to the bar
+	handleClickOpen = list => {
+	    this.setState({
+	      open: true,
+	      list: list
+	    });
+	}
+    
+    handleClose = () => {
+	    this.setState({ open: false, list: [] });
+    }
+	
+	//show choosed bar on map and in list of bar cards
+	markerClick = placeID => {
+		this.props.highlightPlace(placeID);
+	}
+
+	componentWillReceiveProps(nextProps){
+		if(this.props.location.search != nextProps.location.search){
+			
+			this.placeLocation = qs.parse(nextProps.location.search);
+			//if there is 'bar' parameter in url - show list of bars
+			//if there is only 'loc' parameter - show location on the map
+			if(!this.placeLocation.bar && this.placeLocation.loc){
+		    	this.props.findLocation(this.placeLocation.loc);
+		    } else if(this.placeLocation.bar && this.placeLocation.loc){
+		    	this.props.showPlaces(this.service, this.placeLocation.loc);
+		    }
+		}
+	}
+	
+	setMap = (el) => {
+		if(!this.map){
+			this.map = el
+			this.service = new google.maps.places.PlacesService(this.map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED);
+			this.placeLocation = qs.parse(this.props.location.search);
+			if(this.placeLocation.bar && this.placeLocation.loc){
+		    	this.props.showPlaces(this.service, this.placeLocation.loc);
+		    }
+		}
+	}
+
 	render() {
 		const { classes, bars, location} = this.props;
-		// const bars = props.bars;
 		const height = window.innerHeight - 60;
-		// console.log(this.props) 
-		console.log("height")
+
 		return (
 			<div className={classes.root} style={{height: height}}>
 			  	<div className={classes.map}>
 				  	<MapComponent 
 					  	isMarkerShown
-				  		markers={bars.map(item => item.location)}
-				  		
+				  		markers={bars}
+				  		mapRef={el => this.setMap(el)}
+			  			markerClick={this.markerClick}
 				  		/>
 			  	</div>
+			  	<div className={this.props.classes.searchBar}>
+			  	<div className={this.props.classes.form}>
+			  	
+			  	<SearchForm urlLocation={location} path={this.props.match.path} placeLocation={this.placeLocation.loc}/>
+			  	</div>
+			  	</div>
 			  	<div className={classes.placesList} style={{marginTop: '60px'}}>
-				  	{bars.map((item, index) =>
+				  	{bars && bars.map((item, index) =>
 				  		
 				        <PlaceComponent 
 				        	key={index}
 				            data={item} 
-				            locationPathname={location.pathname}
+				            path={this.props.match.url}
 				            openShowListDialog={this.handleClickOpen}	
-	            
+	            			markerClick={this.markerClick}
 				            />
 				        
 				      )}
@@ -122,6 +146,7 @@ class Places extends Component{
             	open={this.state.open}
 	            onClose={this.handleClose}
 	        />
+	        
 			</div>
 		)
 	}

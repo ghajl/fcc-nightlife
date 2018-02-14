@@ -1,7 +1,5 @@
 import SearchForm from "../components/SearchForm"
 import { connect } from 'react-redux';
-import { findPlace, showPlaces } from '../../actions';
-const mapStateToProps = ({reducer}) =>({location: reducer.user.location});
+import { showPlaces, setLocation, setPlacesLocation } from '../../actions';
 
-
-export default connect(mapStateToProps, { findPlace, showPlaces })(SearchForm);
+export default connect(() => ({}), { showPlaces, setLocation, setPlacesLocation })(SearchForm);

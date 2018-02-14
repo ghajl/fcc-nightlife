@@ -1,7 +1,5 @@
 import Home from "../components/Home"
 import { connect } from 'react-redux';
-import { findPlace, showPlaces } from '../../actions';
-const mapStateToProps = ({reducer}) =>({message: reducer.user.message});
+import { findLocation, showPlaces, replaceLocation } from '../../actions';
 
-
-export default connect(mapStateToProps, { findPlace, showPlaces })(Home);
+export default connect(() => ({}), { findLocation, showPlaces, replaceLocation })(Home);

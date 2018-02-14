@@ -1,4 +1,4 @@
-import { push } from 'react-router-redux';
+import { push, replace } from 'react-router-redux';
 import axios from "axios";
 import { getPersistor} from './store';
 import { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
@@ -19,17 +19,19 @@ export const actionTypes = {
 	FIND_PLACES: 'FIND_PLACES',
 	FIND_PLACES_SUCCESS: 'FIND_PLACES_SUCCESS',
 	FIND_PLACES_ERROR: 'FIND_PLACES_ERROR',
-	SET_MAP_HEIGHT: 'SET_MAP_HEIGHT',
-	ADD_PLACE: 'ADD_PLACE',
-	ADD_PLACE_SUCCESS: 'ADD_PLACE_SUCCESS',
-	ADD_PLACE_ERROR: 'ADD_PLACE_ERROR',
-	REMOVE_PLACE: 'REMOVE_PLACE',
-	REMOVE_PLACE_SUCCESS: 'REMOVE_PLACE_SUCCESS',
-	REMOVE_PLACE_ERROR: 'REMOVE_PLACE_ERROR',
+	ADD_TO_LIST: 'ADD_TO_LIST',
+	ADD_TO_LIST_SUCCESS: 'ADD_TO_LIST_SUCCESS',
+	ADD_TO_LIST_ERROR: 'ADD_TO_LIST_ERROR',
+	REMOVE_FROM_LIST: 'REMOVE_FROM_LIST',
+	REMOVE_FROM_LIST_SUCCESS: 'REMOVE_FROM_LIST_SUCCESS',
+	REMOVE_FROM_LIST_ERROR: 'REMOVE_FROM_LIST_ERROR',
 	SAVE_PATH: 'SAVE_PATH',
 	SAVE_GUEST_BAR: 'SAVE_GUEST_BAR',
-	OPEN_LOGIN: 'OPEN_LOGIN',
-	CLOSE_LOGIN: 'CLOSE_LOGIN'
+	OPEN_LOGIN_DIALOG: 'OPEN_LOGIN_DIALOG',
+	CLOSE_LOGIN_DIALOG: 'CLOSE_LOGIN_DIALOG',
+	SHOW_MESSAGE_DIALOG: 'SHOW_MESSAGE_DIALOG',
+	CLOSE_MESSAGE_DIALOG: 'CLOSE_MESSAGE_DIALOG',
+	HIGHLIGHT_PLACE: 'HIGHLIGHT_PLACE'
 }
 
 
@@ -107,9 +109,12 @@ function beginPlacesSearch() {
 	return { type: actionTypes.FIND_PLACES };
 }
 
-function searchPlacesSuccess(data) {
+function searchPlacesSuccess(data, address, lat, lng) {
 	return { type: actionTypes.FIND_PLACES_SUCCESS,
-			data
+			data, 
+			address, 
+			lat, 
+			lng
 		 };
 }
 
@@ -119,38 +124,38 @@ function searchPlacesError(message) {
 		 };
 }
 
-function beginAddPlace() {
-	return { type: actionTypes.ADD_PLACE };
+function beginAddToList() {
+	return { type: actionTypes.ADD_TO_LIST };
 }
 
-function addPlaceSuccess(placeID, message) {
+function addToListSuccess(placeID, message) {
 	console.log(placeID)
-	return { type: actionTypes.ADD_PLACE_SUCCESS,
+	return { type: actionTypes.ADD_TO_LIST_SUCCESS,
 			placeID,
 			message
 		 };
 }
 
-function addPlaceError(message) {
-	return { type: actionTypes.ADD_PLACE_ERROR,
+function addToListError(message) {
+	return { type: actionTypes.ADD_TO_LIST_ERROR,
 			message
 		 };
 }
 
-function beginRemovePlace() {
-	return { type: actionTypes.REMOVE_PLACE };
+function beginRemoveFromList() {
+	return { type: actionTypes.REMOVE_FROM_LIST };
 }
 
-function removePlaceSuccess(placeID, message) {
+function removeFromListSuccess(placeID, message) {
 	console.log(placeID)
-	return { type: actionTypes.REMOVE_PLACE_SUCCESS,
+	return { type: actionTypes.REMOVE_FROM_LIST_SUCCESS,
 			placeID,
 			message
 		 };
 }
 
-function removePlaceError(message) {
-	return { type: actionTypes.REMOVE_PLACE_ERROR,
+function removeFromListError(message) {
+	return { type: actionTypes.REMOVE_FROM_LIST_ERROR,
 			message
 		 };
 }
@@ -169,62 +174,55 @@ function saveGuestBar(placeID) {
     };
 }
 
-export function setHeight(data) {
-	return { type: actionTypes.SET_MAP_HEIGHT,
-			data
+function showMessage(message) {
+	return {
+	    type: actionTypes.SHOW_MESSAGE_DIALOG,
+	    message
+    };
+}
+
+export function closeMessage() {
+	return { type: actionTypes.CLOSE_MESSAGE_DIALOG
 		 };
 }
 
 export function openLoginDialog() {
-	console.log("open")
-	return { type: actionTypes.OPEN_LOGIN
+	return { type: actionTypes.OPEN_LOGIN_DIALOG
 		 };
 }
 
 export function closeLoginDialog() {
-	return { type: actionTypes.CLOSE_LOGIN
+	return { type: actionTypes.CLOSE_LOGIN_DIALOG
 		 };
 }
-// export function loginAndAdd(userData, placeID){
-// 	if(!placeID) {
-// 		manualLogin(userData)
-// 	} else {
-
-// 	}
-// }
 
 export function manualLogin(data) {
 
 	return (dispatch, getState) => {
-		// const path = getState().reducer.user.loginReturnPath;
-		console.log("22")
-		console.log(getState())
 		dispatch(beginLogin());
 
 		return axios.post('/login', data)
 			 .then((response) => {
-			 		// console.log(response)
-		            dispatch(loginSuccess(data.username, response.data.places, 'You have been successfully logged in'));
-		            //user came here from add button
+			 		dispatch(loginSuccess(data.username, response.data.places, 'You have been successfully logged in!'));
+
+		            //add user to users list in Place if user came here from add button on place cart
 		            if(getState().reducer.user.guestBar){
 		            	const addData = {
 				        	placeID: getState().reducer.user.guestBar,
 				        	username: data.username,
 				        	operation: 'ADD'
 				        }
-		            	dispatch(beginAddPlace());
+		            	dispatch(beginAddToList());
 					    
 						return axios.post('/places', addData)
 							.then(response => {
-								dispatch(addPlaceSuccess(addData.placeID, 'You have successfully registered an account!'));
-						        dispatch(push(path));
+								dispatch(addToListSuccess(addData.placeID, 'You have successfully added to the list!'));
+						        
 						    })
 						    .catch((err) => {
-						        dispatch(addPlaceError("Error while adding the bar"));
+						        dispatch(addToListError("Add to the bar request could not be completed"));
 						    });
-		            } else {
-		            	// dispatch(push(path));
-		            }
+		            } 
 		            
 		      })
 		      .catch((err) => {
@@ -235,14 +233,36 @@ export function manualLogin(data) {
 
 export function signUp(data) {
     return (dispatch, getState) => {
-    	const path = getState().reducer.user.loginReturnPath;
-    	console.log(getState())
-	    dispatch(beginSignUp());
+    	const path = getState().reducer.user.signupReturnPath;
+    	dispatch(beginSignUp());
 		return axios.post('/signup', data)
 			.then(response => {
-				// console.log(response)
-		        dispatch(signUpSuccess(data.username, [], 'You have successfully registered an account!'));
-		        dispatch(push(path));
+				dispatch(signUpSuccess(data.username, [], 'You have successfully registered an account!'));
+					//add user to users list in Place if user came here from add button on place cart
+		            if(getState().reducer.user.guestBar){
+		            	const addData = {
+				        	placeID: getState().reducer.user.guestBar,
+				        	username: data.username,
+				        	operation: 'ADD'
+				        }
+		            	dispatch(beginAddToList());
+					    
+						return axios.post('/places', addData)
+							.then(response => {
+								dispatch(addToListSuccess(addData.placeID, 'You have successfully added to the list!'));
+						        dispatch(push(path));
+
+						    })
+						    .catch((err) => {
+						        dispatch(addToListError("Add to the bar request could not be completed"));
+						    });
+		            } else {
+		            	
+		            	dispatch(push(path));
+		            }
+
+
+		       
 		    })
 		    .catch((err) => {
 		        dispatch(signUpError('Something went wrong when signing up'));
@@ -260,7 +280,7 @@ export function logOut() {
 	      .then((response) => {
 	      		getPersistor().purge();
 	            dispatch(logoutSuccess());
-				// dispatch(push('/'));
+				
 	      })
 	      .catch((err) => {
 
@@ -269,7 +289,7 @@ export function logOut() {
 	  };
 }
 
-export function findPlace(address) {
+export function findLocation(address) {
 	return (dispatch) => {
 
 	    dispatch(beginLocationSearch());
@@ -280,140 +300,153 @@ export function findPlace(address) {
 		    				dispatch(searchLocationSuccess(address, lat, lng))
 		    			})
 		    .catch((err) => {
-		        dispatch(searchLocationError("Something wrong with address"));
+		        dispatch(searchLocationError("Your request could not be completed, something wrong with the address"));
             })
 	}
 }
 
-export function showPlaces(service) {
+export function showPlaces(service, address) {
 	return (dispatch, getState) => {
-		dispatch(beginPlacesSearch());
-		const {lat, lng, location, username} = getState().reducer.user;
-		// const { lat, lng, location } = getState().user;
-		// console.log(location)
-		const loc = new google.maps.LatLng(lat,lng);
-		const request = {
-                    location: loc,
-				    radius: '3000',
-				    type: ['bar'],
-                    // keyword: ['bar'],
-                    // rankBy: google.maps.places.RankBy.DISTANCE,
-                };
-		
-		service.nearbySearch(request, (results, status, pagination) => {
-			if (status == google.maps.places.PlacesServiceStatus.OK) {
-				// console.log(results.map(item=>item.id))
-				return axios.get('/data', {
-								    params: {
-								        bars: results.map(item=>item.id)
-								    }
-								}).then(response => {
-									console.log(results);
-									let res = results.map(item => {
-										let photoUrl = item.photos && item.photos[0] && item.photos[0].getUrl && item.photos[0].getUrl instanceof Function && item.photos[0].getUrl({'maxWidth': 200, 'maxHeight': 200});
-										return {id: item.id, 
-												name: item.name,
-												photoUrl, 
-												rating: item.rating,
-												location: item.geometry.location, 
-												address: item.vicinity, 
-												users:[]}
-											});
-									// let x = results[0].reference;
-									// return axios.get('/photo', {
-									// 	params: {
-									// 		ref: x
-									// 	}
-									// }).then(res => {
-									// 	  // response.data.pipe(fs.createWriteStream('ada_lovelace.jpg'))
-										  response.data.places.forEach(item => {
-									// 	// console.log(item);
-													for(let i in res){
-														// console.log(i);
-														if(item.placeID === res[i].id){
-															// console.log("response");
-												
-															res[i].users = item.users.slice(0);
-															break;
-														}
-													}
-												})
-									// 			// console.log(res);
-												
-									// 	});
-									dispatch(searchPlacesSuccess(res));
-											    dispatch(push('/places'));
-									
-								}
 
-								).catch((err) => {
-							        dispatch(searchPlacesError("Can't show results"));
-							    });
-			    
-			} else {
-			  	dispatch(searchPlacesError("Can't show results"));
-			}});
+		dispatch(beginPlacesSearch());
+
+	    return geocodeByAddress(address)
+		    .then(results => getLatLng(results[0]))
+		    .then(({ lat, lng }) => {
+		    				
+		    				const {username} = getState().reducer.user;
+		    				const loc = new google.maps.LatLng(lat,lng);
+							const request = {
+					                    location: loc,
+									    radius: '3000',
+									    type: ['bar'],
+				                    };
+							
+					        service.nearbySearch(request, (results, status, pagination) => {
+									if (status == google.maps.places.PlacesServiceStatus.OK) {
+										return axios.get('/data', {
+														    params: {
+														        bars: results.map(item=>item.id)
+														    }
+														}).then(response => {
+															let res = results.map(item => {
+																let photoUrl = item.photos && item.photos[0] && item.photos[0].getUrl && item.photos[0].getUrl instanceof Function && item.photos[0].getUrl({'maxWidth': 200, 'maxHeight': 200});
+																return {id: item.id, 
+																		name: item.name,
+																		photoUrl, 
+																		rating: item.rating,
+																		location: item.geometry.location, 
+																		address: item.vicinity, 
+																		users:[],
+																		highlighted: false}
+																	});
+																  response.data.places.forEach(item => {
+																			for(let i in res){
+																				if(item.placeID === res[i].id){
+																		
+																					res[i].users = item.users.slice(0);
+																					break;
+																				}
+																			}
+																		})
+															dispatch(searchPlacesSuccess(res, address, lat, lng));
+															
+														}
+
+														).catch((err) => {
+													        dispatch(searchPlacesError("Unable to show results"));
+													    });
+									    
+									} else {
+									  	dispatch(searchPlacesError("Unable to show results"));
+									}});        
+
+		    			})
+		    .catch((err) => {
+		        dispatch(searchPlacesError("Unable to show results"));
+            })
 		
 	}
 }
 
-export function addPlace(data) {
+export function addToList(data) {
 
     return (dispatch) => {
     	const addData = {...data, ...{ operation: 'ADD' }};
-	    dispatch(beginAddPlace());
+	    dispatch(beginAddToList());
 	    
 		return axios.post('/places', addData)
 			.then(response => {
-				// console.log(data);
 
-		        dispatch(addPlaceSuccess(data.placeID, 'You have successfully registered an account!'));
-		        // dispatch(push('/'));
+		        dispatch(addToListSuccess(data.placeID, 'You have successfully added to the list!'));
 		    })
 		    .catch((err) => {
-		        dispatch(addPlaceError('Something went wrong when signing up'));
+		        dispatch(addToListError('Add to the bar request could not be completed'));
 		    });
 	};
 }
 
-export function removePlace(data) {
+export function removeFromList(data) {
 
     return (dispatch) => {
     	const removeData = {...data, ...{ operation: 'REMOVE' }};
-	    dispatch(beginRemovePlace());
+	    dispatch(beginRemoveFromList());
 		return axios.post('/places', removeData)
 			.then(response => {
-				// console.log(data);
-
-		        dispatch(removePlaceSuccess(data.placeID, 'You have successfully registered an account!'));
-		        // dispatch(push('/'));
+				dispatch(removeFromListSuccess(data.placeID, 'You have successfully removed from the list!'));
 		    })
 		    .catch((err) => {
-		        dispatch(removePlaceError('Something went wrong when signing up'));
+		        dispatch(removeFromListError('Remove from the bar request could not be completed'));
 		    });
 	};
 }
 
-export function toLogIn(path) {
+export function toLogIn() {
 	return (dispatch) => {
-		// console.log("sav")
-		dispatch(saveCurrentPath(path));
-		dispatch(push("/login"));
+		dispatch(openLoginDialog());
 	}
 }
 
 export function toSignUp(path) {
 	return (dispatch) => {
-		// console.log("sav")
-		dispatch(saveCurrentPath(path));
+		dispatch(saveCurrentPath(path.pathname+path.search));
 		dispatch(push("/signup"));
 	}
 }
 
-export function loginAndAdd(path, placeID) {
+export function loginAndAdd(placeID) {
 	return (dispatch) => {
-		// console.log("sav")
 		dispatch(saveGuestBar(placeID));
-		dispatch(toLogIn(path));
+		dispatch(toLogIn());
 	}
+}
+
+//sets url for home page
+export function setLocation(address, pathname){
+	return (dispatch) => {
+		dispatch(push(`${pathname}?loc=${address}`));
+		
+	}
+}
+
+export function replaceLocation(address, pathname){
+	return (dispatch) => {
+		dispatch(replace(`${pathname}?loc=${address}`));
+		
+	}
+}
+
+//sets url for page that shows list of bars 
+export function setPlacesLocation(address){
+	return (dispatch) => {
+		dispatch(push(`/places?loc=${address}&bar=show`));
+		
+	}
+}
+
+
+export function highlightPlace(placeID) {
+	return { type: actionTypes.HIGHLIGHT_PLACE,
+		placeID
+		 };
 }

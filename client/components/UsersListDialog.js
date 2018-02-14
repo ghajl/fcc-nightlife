@@ -1,29 +1,16 @@
-import React, {Component} from 'react';
-import { withStyles } from 'material-ui/styles';
+import React from 'react';
 import List, { ListItem, ListItemText } from 'material-ui/List';
-import Dialog, { DialogTitle } from 'material-ui/Dialog';
+import Dialog, { DialogTitle, DialogActions } from 'material-ui/Dialog';
+import Button from 'material-ui/Button';
 
 
-class UsersListDialog extends Component {
-  constructor(props){
-    super(props);
 
-  // }
-    this.handleClose = this.handleClose.bind(this);
-    
-  }
+const UsersListDialog = (props) => {
 
-
-   handleClose() {
-    this.props.onClose();
-  };
-
-  
-  render() {
-    const { onClose, usersList, ...other } = this.props;
+    const { usersList, ...other } = props;
 
     return (
-      <Dialog onClose={this.handleClose} {...other}>
+      <Dialog onClose={props.onClose} {...other}>
         <DialogTitle id="going-list">Who is going:</DialogTitle>
         <div>
           <List>
@@ -36,9 +23,14 @@ class UsersListDialog extends Component {
             
           </List>
         </div>
+        <DialogActions>
+          <Button onClick={props.onClose} color="primary">
+            Ok
+          </Button>
+        </DialogActions>
       </Dialog>
     );
-  }
+  
 }
 
 export default UsersListDialog;

@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack-dev-server --config webpack.config.js",
     "build": "babel server --out-dir lib/server",
-    "start": "npm run build && node lib/server/server.js"
+    "start": "npm run build && node lib/server/server.js",
+    "build:min": "webpack --config webpack.prod.js"
   },
   "author": "",
   "license": "ISC",
@@ -29,6 +30,7 @@
     "normalize.css": "^7.0.0",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
+    "query-string": "^5.0.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-google-maps": "^9.4.5",
@@ -37,12 +39,13 @@
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.2.2",
     "react-router-redux": "^5.0.0-alpha.9",
+    "react-spinkit": "^3.0.0",
     "recompose": "^0.26.0",
     "redux": "^3.7.2",
     "redux-persist": "^5.4.0",
-    "redux-saga": "^0.16.0",
     "redux-thunk": "^2.2.0",
     "serialize-javascript": "^1.4.0",
+    "uglifyjs-webpack-plugin": "^1.1.8",
     "webpack": "^3.10.0"
   },
   "devDependencies": {

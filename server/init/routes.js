@@ -7,5 +7,5 @@ export default (app) => {
 	app.post("/signup", register);
 	app.post("/places", modifyPlaceList);
 	app.get("/data", getUsersBarsData);
-	app.get("/photo", getPhoto);
+	
 }
