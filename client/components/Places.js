@@ -34,7 +34,7 @@ const styles = {
 		height: '120px',
 		position: 'fixed',
 		backgroundColor: 'white',
-		top: '20%',
+		top: '120px',
 		'z-index': 1000,
 		left: '80%',
 		boxShadow: '5px 1px 10px #888888',
