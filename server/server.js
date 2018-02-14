@@ -1,18 +1,18 @@
 require("babel-register");
-import express from "express";
-import mongoose from "mongoose";
-import {config} from "./config";
-import webpack from 'webpack';
-import webpackDevMiddleware from 'webpack-dev-middleware';
-import webpackHotMiddleware from 'webpack-hot-middleware';
-import webpackConfig from '../../webpack.config.js';
-import passport from "passport";
-import { Strategy as LocalStrategy } from "passport-local";
-import session from "express-session";
-import bodyParser from "body-parser";
-import connectMongo from "connect-mongo";
-import initRoutes from './init/routes';
-import User from "./models/user";
+const express = require("express");
+const mongoose = require("mongoose");
+// const {config} = require("./config");
+const webpack = require('webpack');
+const webpackDevMiddleware = require('webpack-dev-middleware');
+const webpackHotMiddleware = require('webpack-hot-middleware');
+const webpackConfig = require('../../webpack.prod.js');
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const session = require("express-session");
+const bodyParser = require("body-parser");
+const connectMongo = require("connect-mongo");
+const initRoutes = require('./init/routes');
+const User = require("./models/user");
 
 const app = express();
 const compiler = webpack(webpackConfig);
@@ -31,7 +31,7 @@ app.use(cors({
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/public', express.static(process.cwd() + '/public'));
-const mongoDB = config.MONGOLAB_URI;
+const mongoDB = MONGOLAB_URI;
 const connect = () => {
 	mongoose.connect(mongoDB, {
 	    useMongoClient: true
