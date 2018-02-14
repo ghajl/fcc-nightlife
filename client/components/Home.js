@@ -44,7 +44,9 @@ class Home extends Component{
     	} else {
     		props.findLocation(this.location.loc);
     	}
-    	
+    	this.state = {
+		    height: window.innerHeight - 60 
+	    };
 	}
 
 	
@@ -61,12 +63,26 @@ class Home extends Component{
 	    	}
 		}
 	}
+    
+    handleWindowSizeChange = () => {
+    	this.setState({
+	        height: window.innerHeight - 60 
+	    });
+    }
+    
+    componentWillMount(){
+        window.addEventListener('resize', this.handleWindowSizeChange);
+    }
+	
 
 	render() {
 		return (
 			<div>
 			  	<div className={this.props.classes.map}>
-			  	<HomeMap isMarkerShown />
+			  	<HomeMap 
+			  		isMarkerShown
+			  		containerElement={<div style={{ height: this.state.height }} />}
+        		/>
 			  	</div>
 			  	<div className={this.props.classes.searchBar}>
 				  	<div className={this.props.classes.form}>

@@ -58,7 +58,8 @@ class Places extends Component{
 		
 		this.state = {
 		    open: false,
-		    list: []
+		    list: [],
+		    height: window.innerHeight - 60 
 	    };
 	}
 	
@@ -104,6 +105,17 @@ class Places extends Component{
 		}
 	}
 
+	handleWindowSizeChange = () => {
+    	this.setState({
+	        height: window.innerHeight - 60 
+	    });
+    }
+    
+    componentWillMount(){
+        window.addEventListener('resize', this.handleWindowSizeChange);
+    }
+
+
 	render() {
 		const { classes, bars, location} = this.props;
 		const height = window.innerHeight - 60;
@@ -116,6 +128,7 @@ class Places extends Component{
 				  		markers={bars}
 				  		mapRef={el => this.setMap(el)}
 			  			markerClick={this.markerClick}
+			  			containerElement={<div style={{ height: this.state.height }} />}
 				  		/>
 			  	</div>
 			  	<div className={this.props.classes.searchBar}>

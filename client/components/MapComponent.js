@@ -7,8 +7,7 @@ import MarkerComponent from '../containers/MarkerComponent';
 const MapComponent = compose(
     withProps({
         loadingElement: <div style={{ height: `100%` }} />,
-        containerElement: <div style={{ height: window.innerHeight - 60, width: '100%' }} />,
-        mapElement: <div style={{ height: window.innerHeight - 60, opacity: '.8' }} />
+        mapElement: <div style={{ height: `100%`, opacity: '.8' }} />
     }),
     withGoogleMap
 )((props) => {

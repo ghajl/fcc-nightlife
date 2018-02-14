@@ -36,7 +36,7 @@ const PlaceComponent = (props) => {
         	username: props.username,
 
         }
-		props.addPlace(data); 
+		props.addToList(data); 
     }
 
     const remove = (event) => {
@@ -48,7 +48,7 @@ const PlaceComponent = (props) => {
         	username: props.username,
 
         }
-		props.removePlace(data); 
+		props.removeFromList(data); 
     }
 	
 	const usersList = () => {
