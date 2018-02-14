@@ -11,8 +11,8 @@ const LocalStrategy = require("passport-local");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const connectMongo = require("connect-mongo");
-const initRoutes = require('./init/routes');
-const User = require("./models/user");
+import initRoutes from './init/routes';
+import User from "./models/user";
 
 const app = express();
 // const compiler = webpack(webpackConfig);

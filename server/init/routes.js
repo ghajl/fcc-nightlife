@@ -1,4 +1,4 @@
-import {login, logout, register, modifyPlaceList, getUsersBarsData, getPhoto} from "../controllers/users"
+import {login, logout, register, modifyPlaceList, getUsersBarsData} from "../controllers/users"
 
 
 export default (app) => {
