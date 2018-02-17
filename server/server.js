@@ -1,37 +1,40 @@
-require("babel-register");
-const express = require("express");
-const mongoose = require("mongoose");
-// const {config} = require("./config");
-// const webpack = require('webpack');
-// const webpackDevMiddleware = require('webpack-dev-middleware');
-// const webpackHotMiddleware = require('webpack-hot-middleware');
-// const webpackConfig = require('../../webpack.prod.js');
-const passport = require("passport");
-const LocalStrategy = require("passport-local");
-const session = require("express-session");
-const bodyParser = require("body-parser");
-const connectMongo = require("connect-mongo");
+// require("babel-register");
+import express from "express";
+import mongoose from "mongoose";
+import {config} from "./config";
+import webpack from 'webpack';
+import webpackDevMiddleware from 'webpack-dev-middleware';
+import webpackHotMiddleware from 'webpack-hot-middleware';
+import webpackConfig from '../../webpack.config.js';
+import passport from "passport";
+import {Strategy as LocalStrategy} from "passport-local";
+import session from "express-session";
+import bodyParser from "body-parser";
+import connectMongo from "connect-mongo";
 import initRoutes from './init/routes';
 import User from "./models/user";
 
 const app = express();
-// const compiler = webpack(webpackConfig);
+const compiler = webpack(webpackConfig);
 const cors = require('cors');
 
+console.log(process.env.NODE_ENV)
+const isDev = process.env.NODE_ENV === "development"
+if(isDev) {
 
-
-// app.use(webpackDevMiddleware(compiler, {
-//     publicPath: webpackConfig.output.publicPath
-// }));
-// app.use(webpackHotMiddleware(compiler));
-// app.use(cors({
-//     origin: 'http://localhost:3000/',
-//     credentials: true
-// }));
+	app.use(webpackDevMiddleware(compiler, {
+	    publicPath: webpackConfig.output.publicPath
+	}));
+	app.use(webpackHotMiddleware(compiler));
+	app.use(cors({
+	    origin: 'http://localhost:3000/',
+	    credentials: true
+	}));
+}
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/public', express.static(process.cwd() + '/public'));
-const mongoDB = process.env.MONGOLAB_URI;
+const mongoDB = process.env.MONGOLAB_URI || config.MONGOLAB_URI;
 const connect = () => {
 	mongoose.connect(mongoDB, {
 	    useMongoClient: true
@@ -116,7 +119,7 @@ app.all("*", (req, res, next) => {
 	<body>
 		<div id="root"></div>
 
-		<script src="public/bundle.js"></script>
+		<script src="/bundle.js"></script>
 	</body>
 	</html>`
 

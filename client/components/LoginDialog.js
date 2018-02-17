@@ -37,7 +37,6 @@ class LoginDialog extends Component {
             >
                 <DialogTitle id="form-dialog-title">Log in</DialogTitle>
                 <DialogContent>
-                <form >
                     <TextField
                         required
                         autoFocus
@@ -59,7 +58,6 @@ class LoginDialog extends Component {
                         inputRef={(input) => { this.passwordInput = input; }}
                         fullWidth
                     />
-                    </form>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={this.submit} color="primary">

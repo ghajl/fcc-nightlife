@@ -15,7 +15,7 @@ const styles = {
 		position: 'absolute',
 		backgroundColor: 'white',
 		opacity: '.9',
-		top: '120px',
+		top: '150px',
 		left: '50%',
 		boxShadow: '5px 1px 10px #888888',
 		transform: 'translate(-50%, -50%)',	
