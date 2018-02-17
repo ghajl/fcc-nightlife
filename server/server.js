@@ -19,7 +19,7 @@ const compiler = webpack(webpackConfig);
 const cors = require('cors');
 
 console.log(process.env.NODE_ENV)
-const isDev = process.env.NODE_ENV === "development"
+const isDev = process.env.NODE_ENV === "development";
 if(isDev) {
 
 	app.use(webpackDevMiddleware(compiler, {
@@ -119,7 +119,7 @@ app.all("*", (req, res, next) => {
 	<body>
 		<div id="root"></div>
 
-		<script src="/bundle.js"></script>
+		<script src="public/bundle.js"></script>
 	</body>
 	</html>`
 
