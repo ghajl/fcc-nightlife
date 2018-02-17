@@ -1,7 +1,6 @@
 // require("babel-register");
 import express from "express";
 import mongoose from "mongoose";
-import {config} from "./config";
 import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
@@ -17,10 +16,12 @@ import User from "./models/user";
 const app = express();
 const compiler = webpack(webpackConfig);
 const cors = require('cors');
-
+let config = null;
 const isDev = process.env.NODE_ENV === "development";
 if(isDev) {
-
+// import {config} from "./config";
+    config = require("./config").config;
+    console.log(config)
 	app.use(webpackDevMiddleware(compiler, {
 	    publicPath: webpackConfig.output.publicPath
 	}));
