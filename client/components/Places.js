@@ -7,38 +7,48 @@ import SearchForm from '../containers/SearchForm';
 import UsersListDialog from './UsersListDialog';
 import qs from 'query-string';
 import {defaultLocation} from '../../util/locations';
+import Grid from 'material-ui/Grid';
 
 
 
 const styles = {
+	root: {
+		// overflow: 'hidden',
+	},
     placesList: {
-		maxWidth: '80%',
-		float: 'left',
-		marginTop: - window.innerHeight - 60,
-		paddingTop: '150px',
-		marginLeft: '20px',
+		// maxWidth: '80%',
+		// float: 'left',
+		maxWidth: '100%',
+		// marginTop: - window.innerHeight - 60,
+		// paddingTop: '150px',
+		marginTop: '60px',
+		// marginLeft: '20px',
+		'overflow-y': 'scroll',
+		height: window.innerHeight - 60,
 	},
 	item: {
 		margin: '20px',
 	},
 	map: {
 		height: window.innerHeight - 60,
-		marginTop: '60px',
-		position: 'fixed',
-		top: 0,
 		width: '100%',
+		marginTop: '60px',
+		// position: 'fixed',
+		// top: 0,
+		// width: '100%',
 	},
 	searchBar: {
-		width: '400px',
-		maxWidth: '80%',
+		// width: '400px',
+		// maxWidth: '80%',
 		height: '120px',
-		position: 'fixed',
+		// position: 'fixed',
 		backgroundColor: 'white',
+		maxWidth: '100%',
 		top: '150px',
 		'z-index': 1000,
-		left: '80%',
+		// left: '80%',
 		boxShadow: '5px 1px 10px #888888',
-		transform: 'translate(-50%, -50%)',	
+		// transform: 'translate(-50%, -50%)',	
 	},
 	form: {
 		opacity: 1,
@@ -122,22 +132,17 @@ class Places extends Component{
 
 		return (
 			<div className={classes.root} style={{height: height}}>
-			  	<div className={classes.map}>
-				  	<MapComponent 
-					  	isMarkerShown
-				  		markers={bars}
-				  		mapRef={el => this.setMap(el)}
-			  			markerClick={this.markerClick}
-			  			containerElement={<div style={{ height: this.state.height }} />}
-				  		/>
-			  	</div>
-			  	<div className={this.props.classes.searchBar}>
+
+			<Grid container spacing={0}>
+				<Grid item xs={12} sm={6}>
+				<div className={classes.placesList}>
+		        <div className={this.props.classes.searchBar}>
 			  	<div className={this.props.classes.form}>
 			  	
 			  	<SearchForm urlLocation={location} path={this.props.match.path} placeLocation={this.placeLocation.loc}/>
 			  	</div>
 			  	</div>
-			  	<div className={classes.placesList} style={{marginTop: '60px'}}>
+			  	
 				  	{bars && bars.map((item, index) =>
 				  		
 				        <PlaceComponent 
@@ -154,6 +159,20 @@ class Places extends Component{
 			  	
 			  	
 			  	</div>
+			  	</Grid>
+      			<Grid item xs hidden={{ smDown: true }}>
+			  	<div className={classes.map}>
+				  	<MapComponent 
+					  	isMarkerShown
+				  		markers={bars}
+				  		mapRef={el => this.setMap(el)}
+			  			markerClick={this.markerClick}
+			  			containerElement={<div style={{ height: this.state.height, width: 'inherit' }} />}
+				  		/>
+			  	</div>
+			  	
+			  	</Grid>
+		    </Grid>
 			  	<UsersListDialog
             	usersList={this.state.list}
             	open={this.state.open}
