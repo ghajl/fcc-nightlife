@@ -16,7 +16,6 @@ const MapComponent = compose(
             defaultZoom={13}
             defaultCenter={{ lat: +props.lat, lng:  +props.lng }}
             center={{ lat: +props.lat, lng:  +props.lng }}
-            options={{ scrollwheel: false}}
             ref={props.mapRef}
         >
             {props.markers ? props.markers.map((marker, index) => {

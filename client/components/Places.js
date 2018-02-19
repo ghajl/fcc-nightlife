@@ -25,6 +25,10 @@ const styles = {
 		// marginLeft: '20px',
 		'overflow-y': 'scroll',
 		height: window.innerHeight - 60,
+		'@media (min-width: 600px)': {
+            borderRight: '.5rem solid #A8C256'
+        },
+		
 	},
 	item: {
 		margin: '20px',
@@ -33,6 +37,9 @@ const styles = {
 		height: window.innerHeight - 60,
 		width: '100%',
 		marginTop: '60px',
+		'@media (max-width: 600px)': {
+            width: 0,
+        },
 		// position: 'fixed',
 		// top: 0,
 		// width: '100%',
@@ -128,14 +135,14 @@ class Places extends Component{
 
 	render() {
 		const { classes, bars, location} = this.props;
-		const height = window.innerHeight - 60;
+		const height = this.state.height;
 
 		return (
-			<div className={classes.root} style={{height: height}}>
+			<div className={classes.root}>
 
 			<Grid container spacing={0}>
-				<Grid item xs={12} sm={6}>
-				<div className={classes.placesList}>
+				<Grid item xs={12} sm={6} md={3}>
+				<div className={classes.placesList} style={{ height: height}}>
 		        <div className={this.props.classes.searchBar}>
 			  	<div className={this.props.classes.form}>
 			  	
@@ -160,14 +167,14 @@ class Places extends Component{
 			  	
 			  	</div>
 			  	</Grid>
-      			<Grid item xs hidden={{ smDown: true }}>
-			  	<div className={classes.map}>
+      			<Grid item xs>
+			  	<div className={classes.map} style={{ height: height}}>
 				  	<MapComponent 
 					  	isMarkerShown
 				  		markers={bars}
 				  		mapRef={el => this.setMap(el)}
 			  			markerClick={this.markerClick}
-			  			containerElement={<div style={{ height: this.state.height, width: 'inherit' }} />}
+			  			containerElement={<div style={{ height: 'inherit', width: 'inherit' }} />}
 				  		/>
 			  	</div>
 			  	

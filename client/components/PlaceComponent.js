@@ -5,11 +5,11 @@ import { withStyles } from 'material-ui/styles';
 
 const styles = theme => ({
 	placeCart: {
-		width: '300px',
-		maxWidth: '80%',
+		maxWidth: '100%',
+		// maxWidth: '80%',
 		opacity: '.9',
 		boxShadow: '5px 1px 10px #888888',
-		margin: '20px',
+		// margin: '20px',
 		padding: '10px',
 		color: "#673AB7",
 		cursor: 'pointer'
