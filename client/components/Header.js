@@ -10,7 +10,7 @@ import { withStyles } from 'material-ui/styles';
 
 const styles = theme => ({
     nav: {
-    	display: 'flex',
+    	flexGrow: 1,
     	width:'100%',
     	overflow: 'hidden',
     	

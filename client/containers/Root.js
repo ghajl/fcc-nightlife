@@ -13,6 +13,41 @@ import MessageDialog from '../components/MessageDialog';
 import { manualLogin, closeLoginDialog, openLoginDialog, toSignUp, closeMessage } from '../../actions';
 import { connect } from 'react-redux';
 import {defaultLocation} from '../../util/locations';
+import { withStyles } from 'material-ui/styles';
+import { CircularProgress } from 'material-ui/Progress';
+import green from 'material-ui/colors/green';
+
+const styles = theme => ({
+  // root: {
+  //   display: 'flex',
+  //   alignItems: 'center',
+  // },
+  // wrapper: {
+  //   margin: theme.spacing.unit,
+  //   position: 'relative',
+  // },
+  // buttonSuccess: {
+  //   backgroundColor: green[500],
+  //   '&:hover': {
+  //     backgroundColor: green[700],
+  //   },
+  // },
+  // fabProgress: {
+  //   color: green[500],
+  //   position: 'absolute',
+  //   top: -6,
+  //   left: -6,
+  //   zIndex: 1,
+  // },
+  buttonProgress: {
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',	
+    zIndex: 2000
+  },
+});
+
 
 class Root extends Component{
 	state = {
@@ -58,7 +93,8 @@ class Root extends Component{
 	}
 	
 	render() {
-		const { store, history, persistor } = this.props;
+		const { store, history, persistor, classes } = this.props;
+console.log(this.props.loading)
 		return	(
 			
 		<Provider store={store}>
@@ -100,6 +136,7 @@ class Root extends Component{
 	                	onClose={this.handleCloseMessage}
 				        message={this.props.message}
 	                />
+	                {this.props.loading && <CircularProgress size={160} className={classes.buttonProgress} />}
 		      </React.Fragment>
 		    </ConnectedRouter>
 		</PersistGate>
@@ -113,5 +150,6 @@ export default connect(({reducer}) =>(
 	{
 		isOpen: reducer.user.loginDialogOpen, 
 		message: reducer.user.message, 
-		isOpenMessage: reducer.user.messageDialogOpen
-	}))(Root)
+		isOpenMessage: reducer.user.messageDialogOpen,
+		loading: reducer.user.isWaiting
+	}))(withStyles(styles)(Root))

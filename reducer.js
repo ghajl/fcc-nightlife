@@ -34,6 +34,7 @@ export function user (state = initialState, action) {
     case actionTypes.REMOVE_FROM_LIST:
     case actionTypes.ADD_TO_LIST:
     case actionTypes.FIND_LOCATION:
+    case actionTypes.FIND_PLACES:
     case actionTypes.LOGOUT_USER:
     case actionTypes.SIGNUP_USER:
     case actionTypes.MANUAL_LOGIN_USER:
