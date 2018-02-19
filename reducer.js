@@ -118,7 +118,10 @@ export function user (state = initialState, action) {
         let newBar = null;
         //check if the current user already in the list
         if(~state.bars[i].users.indexOf(state.username)){
-          return state
+          return {
+            ...state,
+            ...{ isWaiting: false}
+          }    
         } else {
           newBar = {...state.bars[i], ...{users: [...state.bars[i].users, state.username]}}
         

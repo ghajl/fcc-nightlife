@@ -52,14 +52,22 @@ const styles = theme => ({
 class Root extends Component{
 	state = {
 		    usernameErrorText: "",
-		    passwordErrorText: ""
+		    passwordErrorText: "",
+		    menuAnchorEl: null,
 	    };
 	
 	handleClickOpen = () => {
 	    this.props.store.dispatch(openLoginDialog())
 	}
 
+	handleMenu = event => {
+	    this.setState({ menuAnchorEl: event.currentTarget });
+	};
 
+	handleMenuClose = () => {
+	    this.setState({ menuAnchorEl: null });
+	};
+	
 	handleSubmit = (data) => {
 		const username = data && data.username || "";
 		const password = data && data.password || "";
@@ -94,7 +102,8 @@ class Root extends Component{
 	
 	render() {
 		const { store, history, persistor, classes } = this.props;
-console.log(this.props.loading)
+		const { menuAnchorEl } = this.state;
+	    const open = Boolean(menuAnchorEl);
 		return	(
 			
 		<Provider store={store}>
@@ -108,6 +117,10 @@ console.log(this.props.loading)
 	                  return (
 	                    <Header 
 	                    	path={props.location}
+	                    	open={open}
+	                    	menuAnchorEl={menuAnchorEl}
+	                    	handleMenu={this.handleMenu}
+	                    	handleMenuClose={this.handleMenuClose}
                     	/>
 	                  )
 	                }} />
@@ -118,6 +131,7 @@ console.log(this.props.loading)
 			        <Route path="/signup" component={Signup}/>
 			        <Route path="/places" component={Places}/>
 		        </Switch>
+		        
 		        <Route render={(props) => {
 		        	console.log(props)
 	                  return (

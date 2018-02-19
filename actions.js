@@ -129,7 +129,6 @@ function beginAddToList() {
 }
 
 function addToListSuccess(placeID, message) {
-	console.log(placeID)
 	return { type: actionTypes.ADD_TO_LIST_SUCCESS,
 			placeID,
 			message

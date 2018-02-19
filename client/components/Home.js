@@ -29,6 +29,9 @@ const styles = {
 	},
 	map: {
 		marginTop: '60px',
+		'@media (max-width: 600px)': {
+            marginTop: '50px',
+        },
 	}
 }
 
@@ -45,11 +48,13 @@ class Home extends Component{
     		props.findLocation(this.location.loc);
     	}
     	this.state = {
-		    height: window.innerHeight - 60 
+		    height: window.innerHeight - this.getMargin() 
 	    };
 	}
 
-	
+	getMargin = () => {
+		return window.innerWidth <= 600 ? 50 : 60
+	}
 	componentWillReceiveProps(nextProps){
 		if(this.props.location.search != nextProps.location.search){
 
@@ -65,8 +70,9 @@ class Home extends Component{
 	}
     
     handleWindowSizeChange = () => {
+    	
     	this.setState({
-	        height: window.innerHeight - 60 
+	        height: window.innerHeight - this.getMargin()  
 	    });
     }
     
