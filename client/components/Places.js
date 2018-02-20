@@ -30,7 +30,7 @@ const styles = {
 		// marginLeft: '20px',
 		
 		height: window.innerHeight - 60,
-		'@media (min-width: 640px)': {
+		'@media (min-width: 641px)': {
             borderRight: '.5rem solid #A8C256',
             'overflow-y': 'scroll',
             width: '400px',
