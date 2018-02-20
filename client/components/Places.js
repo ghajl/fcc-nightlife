@@ -14,30 +14,39 @@ import Grid from 'material-ui/Grid';
 const styles = {
 	root: {
 		// overflow: 'hidden',
+		// '@media (max-width: 600px)': {
+  //           'overflow-y': 'scroll',
+  //       },
+  		 display: 'flex',
 	},
     placesList: {
 		// maxWidth: '80%',
 		// float: 'left',
+		// flexGrow: 1,
 		maxWidth: '100%',
 		// marginTop: - window.innerHeight - 60,
 		// paddingTop: '150px',
 		marginTop: '60px',
 		// marginLeft: '20px',
-		'overflow-y': 'scroll',
-		height: window.innerHeight - 60,
-		'@media (min-width: 600px)': {
-            borderRight: '.5rem solid #A8C256'
-        },
 		
+		height: window.innerHeight - 60,
+		'@media (min-width: 640px)': {
+            borderRight: '.5rem solid #A8C256',
+            'overflow-y': 'scroll',
+            width: '400px',
+        },
+		'@media (max-width: 640px)': {
+            width: '100%',
+        },
 	},
 	item: {
 		margin: '20px',
 	},
 	map: {
 		height: window.innerHeight - 60,
-		width: '100%',
+		flexGrow: 1,
 		marginTop: '60px',
-		'@media (max-width: 600px)': {
+		'@media (max-width: 640px)': {
             width: 0,
         },
 		// position: 'fixed',
@@ -140,8 +149,6 @@ class Places extends Component{
 		return (
 			<div className={classes.root}>
 
-			<Grid container spacing={0}>
-				<Grid item xs={12} sm={6} md={3}>
 				<div className={classes.placesList} style={{ height: height}}>
 		        <div className={this.props.classes.searchBar}>
 			  	<div className={this.props.classes.form}>
@@ -166,8 +173,6 @@ class Places extends Component{
 			  	
 			  	
 			  	</div>
-			  	</Grid>
-      			<Grid item xs>
 			  	<div className={classes.map} style={{ height: height}}>
 				  	<MapComponent 
 					  	isMarkerShown
@@ -178,8 +183,6 @@ class Places extends Component{
 				  		/>
 			  	</div>
 			  	
-			  	</Grid>
-		    </Grid>
 			  	<UsersListDialog
             	usersList={this.state.list}
             	open={this.state.open}
