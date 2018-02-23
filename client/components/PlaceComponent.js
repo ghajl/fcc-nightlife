@@ -6,10 +6,9 @@ import { withStyles } from 'material-ui/styles';
 const styles = theme => ({
 	placeCart: {
 		maxWidth: '100%',
-		// maxWidth: '80%',
 		opacity: '.9',
-		boxShadow: '5px 1px 10px #888888',
-		// margin: '20px',
+		boxShadow: '1px 1px 10px #888888',
+		margin: '5px',
 		padding: '10px',
 		color: "#673AB7",
 		cursor: 'pointer'
@@ -50,6 +49,7 @@ const PlaceComponent = (props) => {
         }
 		props.removeFromList(data); 
     }
+	
 	
 	const usersList = () => {
     	if (props.isUserGoing) {
@@ -96,7 +96,7 @@ const PlaceComponent = (props) => {
     
     return (
 
-		<div onClick={cartClick} className={`${props.classes.placeCart} ${props.classes.text}`} style={props.isHighlighted ? {backgroundColor: 'palegreen'} : {backgroundColor: 'white'}}>
+		<div onClick={cartClick} className={`${props.classes.placeCart} ${props.classes.text}`} style={props.isHighlighted ? {boxShadow: '1px 1px 20px #1A237E',} : {boxShadow: '1px 1px 10px #888888',}}>
 		
 			{props.photo && 
 			<img src={props.photo}/>

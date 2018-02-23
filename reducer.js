@@ -21,6 +21,7 @@ export const initialState = {
   signupReturnPath: "/",
   guestBar: null,
   loginDialogOpen: false,
+  loginMenuOpen: false,
   messageDialogOpen: false,
   highlighted: null
 }
@@ -192,6 +193,19 @@ export function user (state = initialState, action) {
         ...state,
         ...{ loginDialogOpen: false}
       }
+
+    case actionTypes.OPEN_LOGIN_MENU:
+      return {
+        ...state,
+        ...{ loginMenuOpen: true}
+      }
+
+    case actionTypes.CLOSE_LOGIN_MENU:
+      return {
+        ...state,
+        ...{ loginMenuOpen: false}
+      }
+
     case actionTypes.SHOW_MESSAGE_DIALOG:
       return {
         ...state,

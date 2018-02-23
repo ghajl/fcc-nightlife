@@ -26,7 +26,13 @@ class LoginDialog extends Component {
         this.props.onSubmit(data)
         
     }
-
+    
+    handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            this.submit(event);
+        }
+    }
+    
     render() {
         return (
           <div>
@@ -34,20 +40,26 @@ class LoginDialog extends Component {
                 open={this.props.open}
                 onClose={this.props.onClose}
                 aria-labelledby="form-dialog-title"
+
             >
                 <DialogTitle id="form-dialog-title">Log in</DialogTitle>
                 <DialogContent>
                     <form>
                     <TextField
                         required
-                        autoFocus
+                        
                         margin="dense"
                         id="username"
                         label="Username"
                         type="username"
                         helperText={this.props.usernameErrorText}
-                        inputRef={(input) => { this.usernameInput = input; }}
+                        inputRef={(input) => { 
+                            if(input) {
+                                this.usernameInput = input; setTimeout(() => {this.usernameInput.focus()}, 300)}
+                            }
+                        }
                         fullWidth
+                        onKeyPress={this.handleKeyPress}
                     />
                     <TextField
                         required
@@ -58,6 +70,7 @@ class LoginDialog extends Component {
                         helperText={this.props.passwordErrorText}
                         inputRef={(input) => { this.passwordInput = input; }}
                         fullWidth
+                        onKeyPress={this.handleKeyPress}
                     />
                     </form>
                 </DialogContent>

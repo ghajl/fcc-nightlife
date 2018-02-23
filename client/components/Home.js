@@ -5,7 +5,8 @@ import injectSheet from 'react-jss';
 import SearchForm from '../containers/SearchForm';
 import qs from 'query-string';
 import {defaultLocation} from '../../util/locations';
- 
+import withWidth from 'material-ui/utils/withWidth';
+import compose from 'recompose/compose';
 
 const styles = {
     searchBar: {
@@ -22,7 +23,6 @@ const styles = {
 		
 	},
 	form: {
-		opacity: 1,
 		width: '80%',
 		padding: '10px',
 
@@ -53,7 +53,7 @@ class Home extends Component{
 	}
 
 	getMargin = () => {
-		return window.innerWidth <= 600 ? 50 : 60
+		return this.props.width == 'xs' ? 50 : 60
 	}
 	componentWillReceiveProps(nextProps){
 		if(this.props.location.search != nextProps.location.search){
@@ -101,4 +101,4 @@ class Home extends Component{
 	}
 }
 
-export default injectSheet(styles)(Home);
+export default compose(injectSheet(styles), withWidth())(Home);

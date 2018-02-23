@@ -8,66 +8,63 @@ import UsersListDialog from './UsersListDialog';
 import qs from 'query-string';
 import {defaultLocation} from '../../util/locations';
 import Grid from 'material-ui/Grid';
+import withWidth from 'material-ui/utils/withWidth';
+import compose from 'recompose/compose';
 
 
 
 const styles = {
 	root: {
-		// overflow: 'hidden',
-		// '@media (max-width: 600px)': {
-  //           'overflow-y': 'scroll',
-  //       },
   		 display: 'flex',
 	},
     placesList: {
-		// maxWidth: '80%',
-		// float: 'left',
-		// flexGrow: 1,
 		maxWidth: '100%',
-		// marginTop: - window.innerHeight - 60,
-		// paddingTop: '150px',
 		marginTop: '60px',
-		// marginLeft: '20px',
-		
-		height: window.innerHeight - 60,
+		'@media (max-width: 600px)': {
+            marginTop: '50px',
+        },
 		'@media (min-width: 641px)': {
             borderRight: '.5rem solid #A8C256',
-            'overflow-y': 'scroll',
             width: '400px',
         },
 		'@media (max-width: 640px)': {
             width: '100%',
         },
 	},
+	carts: {
+		marginTop: '125px',
+  		'@media (min-width: 641px)': {
+            'overflow-y': 'scroll',
+            marginTop: '120px',
+        },
+	},
 	item: {
 		margin: '20px',
 	},
 	map: {
-		height: window.innerHeight - 60,
 		flexGrow: 1,
 		marginTop: '60px',
 		'@media (max-width: 640px)': {
             width: 0,
         },
-		// position: 'fixed',
-		// top: 0,
-		// width: '100%',
 	},
 	searchBar: {
-		// width: '400px',
-		// maxWidth: '80%',
+		width: '100%',
 		height: '120px',
-		// position: 'fixed',
+		position: 'fixed',
 		backgroundColor: 'white',
 		maxWidth: '100%',
-		top: '150px',
+		top: '50px',
 		'z-index': 1000,
-		// left: '80%',
-		boxShadow: '5px 1px 10px #888888',
-		// transform: 'translate(-50%, -50%)',	
+		boxShadow: '1px 1px 10px #888888',
+		'@media (min-width: 600px)': {
+            top: '60px',
+        },
+        '@media (min-width: 641px)': {
+            width: 'inherit',
+        },
 	},
 	form: {
-		opacity: 1,
 		width: '80%',
 		padding: '10px',
 	},
@@ -85,7 +82,7 @@ class Places extends Component{
 		this.state = {
 		    open: false,
 		    list: [],
-		    height: window.innerHeight - 60 
+		    height: window.innerHeight - this.getMargin() 
 	    };
 	}
 	
@@ -104,6 +101,10 @@ class Places extends Component{
 	//show choosed bar on map and in list of bar cards
 	markerClick = placeID => {
 		this.props.highlightPlace(placeID);
+	}
+
+	getMargin = () => {
+		return this.props.width == 'xs' ? 50 : 60
 	}
 
 	componentWillReceiveProps(nextProps){
@@ -133,7 +134,7 @@ class Places extends Component{
 
 	handleWindowSizeChange = () => {
     	this.setState({
-	        height: window.innerHeight - 60 
+	        height: window.innerHeight - this.getMargin() 
 	    });
     }
     
@@ -156,7 +157,7 @@ class Places extends Component{
 			  	<SearchForm urlLocation={location} path={this.props.match.path} placeLocation={this.placeLocation.loc}/>
 			  	</div>
 			  	</div>
-			  	
+			  	<div className={classes.carts} style={{ height: height - 120}}>
 				  	{bars && bars.map((item, index) =>
 				  		
 				        <PlaceComponent 
@@ -171,7 +172,7 @@ class Places extends Component{
 			  	
 			  	
 			  	
-			  	
+			  	</div>
 			  	</div>
 			  	<div className={classes.map} style={{ height: height}}>
 				  	<MapComponent 
@@ -193,4 +194,4 @@ class Places extends Component{
 		)
 	}
 }
-export default injectSheet(styles)(Places);
+export default compose(injectSheet(styles), withWidth())(Places);

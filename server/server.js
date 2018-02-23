@@ -1,4 +1,3 @@
-// require("babel-register");
 import express from "express";
 import mongoose from "mongoose";
 import webpack from 'webpack';
@@ -19,9 +18,7 @@ const cors = require('cors');
 let config = null;
 const isDev = process.env.NODE_ENV === "development";
 if(isDev) {
-// import {config} from "./config";
     config = require("./config").config;
-    console.log(config)
 	app.use(webpackDevMiddleware(compiler, {
 	    publicPath: webpackConfig.output.publicPath
 	}));
@@ -35,10 +32,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/public', express.static(process.cwd() + '/public'));
 const mongoDB = process.env.MONGOLAB_URI || config.MONGOLAB_URI;
+const mongoOptions = {
+  useMongoClient: true,
+  reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
+  reconnectInterval: 500, // Reconnect every 500ms
+};
 const connect = () => {
-	mongoose.connect(mongoDB, {
-	    useMongoClient: true
-	}, (err, res) => {
+	mongoose.connect(mongoDB, mongoOptions, (err, res) => {
 		if (err) {
 			console.log(`Error connecting`)
 		} else {
@@ -120,7 +120,7 @@ app.all("*", (req, res, next) => {
 	<body>
 		<div id="root"></div>
 
-		<script src="public/bundle.js"></script>
+		<script src="/bundle.js"></script>
 	</body>
 	</html>`
 

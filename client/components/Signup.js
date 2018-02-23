@@ -51,7 +51,11 @@ class Signup extends Component{
 		    passwordConfirmErrorMessage: "",
 	    };
 	}
-
+	handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            this.onSignupSubmit(event);
+        }
+    }
 
 	onSignupSubmit = (event) => {		
 		event.preventDefault()
@@ -82,14 +86,19 @@ class Signup extends Component{
 					<TextField
 					  className={classes.textField} 
 	                  required
-	                  autoFocus
+	                  
 	                  margin="dense"
 	                  id="username"
 	                  label="Username"
 	                  type="username"
 	                  helperText={this.state.usernameErrorMessage}
-	                  inputRef={(input) => { this.usernameInput = input; }}
+	                  inputRef={(input) => { 
+                        if(input) {
+                            this.usernameInput = input; setTimeout(() => {this.usernameInput.focus()}, 300)}
+                        }
+                      }
 	                  margin="normal"
+	                  onKeyPress={this.handleKeyPress}
 	                />
 	                <TextField
 	                 className={classes.textField} 
@@ -101,6 +110,7 @@ class Signup extends Component{
 	                  helperText={this.state.passwordErrorMessage}
 	                  inputRef={(input) => { this.passwordInput = input; }}
 	                  margin="normal"
+	                  onKeyPress={this.handleKeyPress}
 	                />
 	                <TextField
 	                 className={classes.textField} 
@@ -112,6 +122,7 @@ class Signup extends Component{
 	                  helperText={this.state.passwordConfirmErrorMessage}
 	                  inputRef={(input) => { this.confirmPasswordInput = input; }}
 	                  margin="normal"
+	                  onKeyPress={this.handleKeyPress}
 	                />
 				</form>	
 				<div className={classes.button}>

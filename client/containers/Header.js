@@ -1,6 +1,19 @@
 import Header from "../components/Header"
 import { connect } from 'react-redux';
-import { logOut, toSignUp, openLoginDialog } from '../../actions';
-const mapStateToProps = ({reducer}) =>({username: reducer.user.username, isAuthenticated: reducer.user.authenticated});
+import { 
+	logOut, 
+	toSignUp, 
+	openLoginDialog, 
+	openLoginMenu, 
+	closeLoginMenu 
+} from '../../actions';
 
-export default connect(mapStateToProps, { logOut, toSignUp, openLoginDialog })(Header);
+const mapStateToProps = ({reducer}) =>(
+	{
+		username: reducer.user.username, 
+		isAuthenticated: reducer.user.authenticated, 
+		loginMenuOpen: reducer.user.loginMenuOpen
+	}
+);
+
+export default connect(mapStateToProps, { logOut, toSignUp, openLoginDialog, openLoginMenu, closeLoginMenu })(Header);

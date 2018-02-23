@@ -19,6 +19,7 @@ const MapComponent = compose(
             ref={props.mapRef}
         >
             {props.markers ? props.markers.map((marker, index) => {
+                //check because redux-persist
                 let lat = isNaN(marker.location.lat) ?  marker.location.lat() : marker.location.lat;
                 let lng = isNaN(marker.location.lng) ?  marker.location.lng() : marker.location.lng;
                 let placeID = marker.id;

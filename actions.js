@@ -31,6 +31,8 @@ export const actionTypes = {
 	CLOSE_LOGIN_DIALOG: 'CLOSE_LOGIN_DIALOG',
 	SHOW_MESSAGE_DIALOG: 'SHOW_MESSAGE_DIALOG',
 	CLOSE_MESSAGE_DIALOG: 'CLOSE_MESSAGE_DIALOG',
+	OPEN_LOGIN_MENU: 'OPEN_LOGIN_MENU',
+	CLOSE_LOGIN_MENU: 'CLOSE_LOGIN_MENU',
 	HIGHLIGHT_PLACE: 'HIGHLIGHT_PLACE'
 }
 
@@ -192,6 +194,16 @@ export function openLoginDialog() {
 
 export function closeLoginDialog() {
 	return { type: actionTypes.CLOSE_LOGIN_DIALOG
+		 };
+}
+
+export function openLoginMenu() {
+	return { type: actionTypes.OPEN_LOGIN_MENU
+		 };
+}
+
+export function closeLoginMenu() {
+	return { type: actionTypes.CLOSE_LOGIN_MENU
 		 };
 }
 

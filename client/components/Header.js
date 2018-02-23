@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom'
 import Button from 'material-ui/Button';
@@ -11,13 +11,11 @@ import { withStyles } from 'material-ui/styles';
 import withWidth from 'material-ui/utils/withWidth';
 import compose from 'recompose/compose';
 import Menu, { MenuItem } from 'material-ui/Menu';
-import { ListItem, ListItemText } from 'material-ui/List';
+import { ListItem } from 'material-ui/List';
+
 const styles = theme => ({
     nav: {
-    	flexGrow: 1,
-    	width:'100%',
     	overflow: 'hidden',
-    	
     },
     logo: {
     	flex: 1,
@@ -31,31 +29,53 @@ const styles = theme => ({
     },
     text: theme.typography.button,
     title: {
-        
         color: theme.palette.text.secondary,
     },
 })
 
-const Header = ({classes, isAuthenticated, logOut, toSignUp, username, ...props}) => {
-    const logout = (event) => {
+class Header extends Component{
+    constructor(){
+        super();
+        this.menuAnchorEl = null;
+    }
+
+    handleMenu = event => {
+        event.preventDefault();
+        this.props.openLoginMenu();
+    };
+
+    handleMenuClose = () => {
+        this.props.closeLoginMenu();
+        
+    };
+    
+
+    logout = (event) => {
 
         event.preventDefault();
-        props.handleMenuClose()
-        logOut();
+        this.handleMenuClose()
+        this.props.logOut();
     };
-    const toLogIn = (event) => {
+    
+    toLogIn = (event) => {
 
         event.preventDefault();
-        props.handleMenuClose()
-        props.openLoginDialog()
+        this.handleMenuClose()
+        this.props.openLoginDialog()
+        
     };
-    const signUp = (event) => {
+    
+    signUp = (event) => {
 
         event.preventDefault();
-        props.handleMenuClose()
-        toSignUp(props.path);
+        this.handleMenuClose()
+        this.props.toSignUp(this.props.path);
     };
-	return (
+
+    render() {
+        const {classes, isAuthenticated, username, ...props} = this.props;
+        const open = props.loginMenuOpen;
+        return (
         <div className={classes.nav}>
         	<AppBar color="secondary">
         		<Toolbar>
@@ -64,9 +84,10 @@ const Header = ({classes, isAuthenticated, logOut, toSignUp, username, ...props}
 		            </Typography>
                     { props.width == 'xs' ? (
                         <IconButton
-                          aria-owns={props.open ? 'menu-appbar' : null}
+                          aria-owns={open ? 'menu-appbar' : null}
                           aria-haspopup="true"
-                          onClick={props.handleMenu}
+                          onClick={this.handleMenu}
+                          buttonRef={(el) => { this.menuAnchorEl = el; }}
                           color="inherit"
                         >
                           <AccountBox />
@@ -77,15 +98,15 @@ const Header = ({classes, isAuthenticated, logOut, toSignUp, username, ...props}
                         <div className={classes.login}>
                             {isAuthenticated ? (
 
-                                    <Button component={Link} to="/logout" onClick={logout}>
+                                    <Button component={Link} to="/logout" onClick={this.logout}>
                                         LOG OUT
                                     </Button>
                                     ) : (
                                     <React.Fragment>
-                                        <Button onClick={toLogIn}>
+                                        <Button onClick={this.toLogIn}>
                                             LOG IN
                                         </Button>
-                                        <Button component={Link} to="/signup" onClick={signUp}>
+                                        <Button component={Link} to="/signup" onClick={this.signUp}>
                                             SIGN UP
                                         </Button>
                                     </React.Fragment>
@@ -99,7 +120,7 @@ const Header = ({classes, isAuthenticated, logOut, toSignUp, username, ...props}
 
                     <Menu
                         id="menu-appbar"
-                        anchorEl={props.menuAnchorEl}
+                        anchorEl={this.menuAnchorEl}
                         anchorOrigin={{
                             vertical: 'top',
                             horizontal: 'right',
@@ -108,28 +129,30 @@ const Header = ({classes, isAuthenticated, logOut, toSignUp, username, ...props}
                             vertical: 'top',
                             horizontal: 'right',
                         }}
-                        open={props.open}
-                        onClose={props.handleMenuClose}
+                        open={open}
+                        onClose={this.handleMenuClose}
+
                     >
                         <ListItem className={classes.text}>{username}</ListItem>
                         {isAuthenticated ? (
-                                    <MenuItem selected={true} component={Link} to="/logout" onClick={logout} className={classes.text}>LOG OUT</MenuItem>
-                                    
-                                    ) : (
-                                    <div>
-                                        <MenuItem selected={true} onClick={toLogIn} className={classes.text}>LOG IN</MenuItem>
-                                        
-                                        <MenuItem  component={Link} to="/signup" onClick={signUp} className={classes.text}>SIGN UP</MenuItem>
-                                        
-                                    </div>
-                                    )}
+                            <MenuItem component={Link} to="/logout" onClick={this.logout} className={classes.text}>LOG OUT</MenuItem>
+                            
+                            ) : (
+                            <div>
+                                <MenuItem onClick={this.toLogIn} className={classes.text}>LOG IN</MenuItem>
+                                
+                                <MenuItem  component={Link} to="/signup" onClick={this.signUp} className={classes.text}>SIGN UP</MenuItem>
+                                
+                            </div>
+                        )}
                     </Menu>
         		</Toolbar>
         	</AppBar>
         	
         	
         </div>
-    ) 
+        ) 
+    }
 }
 
 export default compose(withStyles(styles), withWidth())(Header);

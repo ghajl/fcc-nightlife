@@ -15,37 +15,15 @@ import { connect } from 'react-redux';
 import {defaultLocation} from '../../util/locations';
 import { withStyles } from 'material-ui/styles';
 import { CircularProgress } from 'material-ui/Progress';
-import green from 'material-ui/colors/green';
 
 const styles = theme => ({
-  // root: {
-  //   display: 'flex',
-  //   alignItems: 'center',
-  // },
-  // wrapper: {
-  //   margin: theme.spacing.unit,
-  //   position: 'relative',
-  // },
-  // buttonSuccess: {
-  //   backgroundColor: green[500],
-  //   '&:hover': {
-  //     backgroundColor: green[700],
-  //   },
-  // },
-  // fabProgress: {
-  //   color: green[500],
-  //   position: 'absolute',
-  //   top: -6,
-  //   left: -6,
-  //   zIndex: 1,
-  // },
-  buttonProgress: {
-    position: 'fixed',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',	
-    zIndex: 2000
-  },
+    buttonProgress: {
+	    position: 'fixed',
+	    top: '50%',
+	    left: '50%',
+	    transform: 'translate(-50%, -50%)',	
+	    zIndex: 2000
+    },
 });
 
 
@@ -53,22 +31,14 @@ class Root extends Component{
 	state = {
 		    usernameErrorText: "",
 		    passwordErrorText: "",
-		    menuAnchorEl: null,
+		    
 	    };
 	
 	handleClickOpen = () => {
 	    this.props.store.dispatch(openLoginDialog())
 	}
 
-	handleMenu = event => {
-	    this.setState({ menuAnchorEl: event.currentTarget });
-	};
-
-	handleMenuClose = () => {
-	    this.setState({ menuAnchorEl: null });
-	};
-	
-	handleSubmit = (data) => {
+		handleSubmit = (data) => {
 		const username = data && data.username || "";
 		const password = data && data.password || "";
 
@@ -102,8 +72,6 @@ class Root extends Component{
 	
 	render() {
 		const { store, history, persistor, classes } = this.props;
-		const { menuAnchorEl } = this.state;
-	    const open = Boolean(menuAnchorEl);
 		return	(
 			
 		<Provider store={store}>
@@ -117,10 +85,6 @@ class Root extends Component{
 	                  return (
 	                    <Header 
 	                    	path={props.location}
-	                    	open={open}
-	                    	menuAnchorEl={menuAnchorEl}
-	                    	handleMenu={this.handleMenu}
-	                    	handleMenuClose={this.handleMenuClose}
                     	/>
 	                  )
 	                }} />
@@ -133,8 +97,7 @@ class Root extends Component{
 		        </Switch>
 		        
 		        <Route render={(props) => {
-		        	console.log(props)
-	                  return (
+		        	return (
 	                  	<LoginDialog
 			            	open={this.props.isOpen}
 			            	onSubmit={this.handleSubmit}
@@ -144,13 +107,13 @@ class Root extends Component{
 				            passwordErrorText={this.state.passwordErrorText}
 				        />
 				        )
-	                }} /> 
-	                <MessageDialog
-	                	open={this.props.isOpenMessage}
-	                	onClose={this.handleCloseMessage}
-				        message={this.props.message}
-	                />
-	                {this.props.loading && <CircularProgress size={160} className={classes.buttonProgress} />}
+                }} /> 
+                <MessageDialog
+                	open={this.props.isOpenMessage}
+                	onClose={this.handleCloseMessage}
+			        message={this.props.message}
+                />
+                {this.props.loading && <CircularProgress size={160} className={classes.buttonProgress} />}
 		      </React.Fragment>
 		    </ConnectedRouter>
 		</PersistGate>
