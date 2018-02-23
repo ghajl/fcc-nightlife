@@ -8,7 +8,7 @@ module.exports = {
     output: {
         filename: 'bundle.js',
         path: path.resolve(process.cwd(),  'public'),
-        publicPath: '/public/'
+        publicPath: '/public'
     },
     plugins: [
         new UglifyJSPlugin({
