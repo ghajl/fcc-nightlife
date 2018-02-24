@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Header from '../containers/Header';
+import Page from './Page';
 import HomeMap from '../containers/HomeMap'
 import injectSheet from 'react-jss';
 import SearchForm from '../containers/SearchForm';
@@ -83,7 +83,7 @@ class Home extends Component{
 
 	render() {
 		return (
-			<div>
+			<Page location={this.props.location}>
 			  	<div className={this.props.classes.map}>
 			  	<HomeMap 
 			  		isMarkerShown
@@ -96,7 +96,7 @@ class Home extends Component{
 				  	</div>
 			  	</div>
 			  	
-			</div>
+			</Page>
 		)
 	}
 }

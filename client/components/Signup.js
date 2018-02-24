@@ -3,7 +3,7 @@ import Header from '../containers/Header'
 import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
 import { withStyles } from 'material-ui/styles';
-
+import Page from './Page';
 const styles = theme => ({
 	root: {
 		display: 'flex',
@@ -80,6 +80,7 @@ class Signup extends Component{
 	render(){
 		const { classes} = this.props;
 		return (
+		  <Page location={this.props.location} >
 		  <div className={classes.root}>
 		  	<div className={classes.container} style={{marginTop:200}}>
 				<form className={classes.form} >
@@ -131,8 +132,8 @@ class Signup extends Component{
 	            </Button>
 	               </div>
 			</div>	
-		  	
-		  </div>
+		  	</div>
+		  </Page>
 		)
 	}
 }

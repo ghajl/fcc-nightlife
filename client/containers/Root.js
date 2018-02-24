@@ -9,6 +9,7 @@ import Places from './Places';
 import { ConnectedRouter } from 'react-router-redux';
 import { PersistGate } from 'redux-persist/es/integration/react';
 import LoginDialog from '../components/LoginDialog';
+import NotFound from '../components/NotFound';
 import MessageDialog from '../components/MessageDialog';
 import { manualLogin, closeLoginDialog, openLoginDialog, toSignUp, closeMessage } from '../../actions';
 import { connect } from 'react-redux';
@@ -81,19 +82,14 @@ class Root extends Component{
 		    
 		    <ConnectedRouter history={history}>
 		    <React.Fragment>
-			    <Route render={(props) => {
-	                  return (
-	                    <Header 
-	                    	path={props.location}
-                    	/>
-	                  )
-	                }} />
+			    
 		        <Switch>
 
 			        <Route exact path="/" render={() => <Redirect to={`/location?loc=${defaultLocation.address}`} />}/>
 			        <Route path="/location" component={Home}/>
 			        <Route path="/signup" component={Signup}/>
 			        <Route path="/places" component={Places}/>
+			        <Route component={NotFound} />
 		        </Switch>
 		        
 		        <Route render={(props) => {

@@ -102,7 +102,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.options('*', cors()) 
 initRoutes(app);
-
+const bundlePath = isDev ? "/bundle.js" : "/dist/bundle.js";
 app.all("*", (req, res, next) => {	
 
 	const appHTML = 
@@ -121,7 +121,7 @@ app.all("*", (req, res, next) => {
 	<body>
 		<div id="root"></div>
 
-		<script src="/dist/bundle.js"></script>
+		<script src=${bundlePath}></script>
 	</body>
 	</html>`
 

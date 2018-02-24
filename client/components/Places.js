@@ -10,6 +10,7 @@ import {defaultLocation} from '../../util/locations';
 import Grid from 'material-ui/Grid';
 import withWidth from 'material-ui/utils/withWidth';
 import compose from 'recompose/compose';
+import Page from './Page';
 
 
 
@@ -148,11 +149,11 @@ class Places extends Component{
 		const height = this.state.height;
 
 		return (
+			<Page location={location}>
 			<div className={classes.root}>
-
 				<div className={classes.placesList} style={{ height: height}}>
-		        <div className={this.props.classes.searchBar}>
-			  	<div className={this.props.classes.form}>
+		        <div className={classes.searchBar}>
+			  	<div className={classes.form}>
 			  	
 			  	<SearchForm urlLocation={location} path={this.props.match.path} placeLocation={this.placeLocation.loc}/>
 			  	</div>
@@ -189,8 +190,8 @@ class Places extends Component{
             	open={this.state.open}
 	            onClose={this.handleClose}
 	        />
-	        
-			</div>
+	        </div>
+			</Page>
 		)
 	}
 }
