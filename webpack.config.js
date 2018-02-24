@@ -1,16 +1,16 @@
 const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
     entry: './index.js',
     output: {
         filename: 'bundle.js',
-        path: path.resolve(process.cwd(),  'public'),
-        publicPath: '/'
+        path: __dirname + "/dist",
+        publicPath: '/public/'
     },
     devServer: {
         port: 3000,
+        contentBase: './dist',
+        
         historyApiFallback: true,
     },
     module: {
