@@ -31,6 +31,7 @@ if(isDev) {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/public', express.static(process.cwd() + '/public'));
+app.use('/dist', express.static(process.cwd() + '/dist'));
 const mongoDB = process.env.MONGOLAB_URI || config.MONGOLAB_URI;
 const mongoOptions = {
   useMongoClient: true,
