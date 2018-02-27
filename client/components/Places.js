@@ -16,20 +16,28 @@ import Page from './Page';
 
 const styles = {
 	root: {
-  		 display: 'flex',
-	},
-    placesList: {
-		maxWidth: '100%',
-		marginTop: '60px',
+  		flex: '1 0 auto', 
+		display: 'flex',
+		'@media (max-width: 640px)': {
+            flexDirection: 'column',
+        },
+        marginTop: '60px',
 		'@media (max-width: 600px)': {
             marginTop: '50px',
         },
+		// alignItems: 'stretch'
+  //       
+	},
+    placesList: {
+		maxWidth: '100%',
+		
 		'@media (min-width: 641px)': {
             borderRight: '.5rem solid #A8C256',
             width: '400px',
         },
 		'@media (max-width: 640px)': {
             width: '100%',
+            flex: '1 0 auto', 
         },
 	},
 	carts: {
@@ -38,15 +46,19 @@ const styles = {
             'overflow-y': 'scroll',
             marginTop: '120px',
         },
+        '@media (max-width: 640px)': {
+            marginTop: 0,
+        },
 	},
 	item: {
 		margin: '20px',
 	},
 	map: {
 		flexGrow: 1,
-		marginTop: '60px',
+		// marginTop: '60px',
 		'@media (max-width: 640px)': {
             width: 0,
+            height: 0,
         },
 	},
 	searchBar: {
@@ -63,6 +75,10 @@ const styles = {
         },
         '@media (min-width: 641px)': {
             width: 'inherit',
+        },
+        '@media (max-width: 640px)': {
+            position: 'relative',
+            top: 0,
         },
 	},
 	form: {
@@ -147,35 +163,38 @@ class Places extends Component{
 	render() {
 		const { classes, bars, location} = this.props;
 		const height = this.state.height;
-
+		const sectionStyle = window.innerWidth <= 640 ? { flex: '1 0 auto',display: 'flex', flexDirection: 'column', } : { height: height - this.props.footerHeight}
+		const listStyle = window.innerWidth <= 640 ? { flex: '1 0 auto' } : { height: height - 120 - this.props.footerHeight}
+		const mapStyle = window.innerWidth <= 640 ? { height: 0 } : { height: height - this.props.footerHeight}
+		console.log(this.props)
 		return (
 			<Page location={location}>
 			<div className={classes.root}>
-				<div className={classes.placesList} style={{ height: height}}>
-		        <div className={classes.searchBar}>
-			  	<div className={classes.form}>
-			  	
-			  	<SearchForm urlLocation={location} path={this.props.match.path} placeLocation={this.placeLocation.loc}/>
+				<div className={classes.placesList} style={sectionStyle}>
+			        <div className={classes.searchBar}>
+					  	<div className={classes.form}>
+					  	
+					  	<SearchForm urlLocation={location} path={this.props.match.path} placeLocation={this.placeLocation.loc}/>
+					  	</div>
+				  	</div>
+				  	<div className={classes.carts} style={listStyle}>
+					  	{bars && bars.map((item, index) =>
+					  		
+					        <PlaceComponent 
+					        	key={index}
+					            data={item} 
+					            path={this.props.match.url}
+					            openShowListDialog={this.handleClickOpen}	
+		            			markerClick={this.markerClick}
+					            />
+					        
+					      )}
+				  	
+				  	
+				  	
+				  	</div>
 			  	</div>
-			  	</div>
-			  	<div className={classes.carts} style={{ height: height - 120}}>
-				  	{bars && bars.map((item, index) =>
-				  		
-				        <PlaceComponent 
-				        	key={index}
-				            data={item} 
-				            path={this.props.match.url}
-				            openShowListDialog={this.handleClickOpen}	
-	            			markerClick={this.markerClick}
-				            />
-				        
-				      )}
-			  	
-			  	
-			  	
-			  	</div>
-			  	</div>
-			  	<div className={classes.map} style={{ height: height}}>
+			  	<div className={classes.map} style={mapStyle}>
 				  	<MapComponent 
 					  	isMarkerShown
 				  		markers={bars}

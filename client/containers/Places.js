@@ -12,7 +12,8 @@ const mapStateToProps = ({reducer}) =>(
 	{ 
 		bars: reducer.user.bars, 
 		lat: reducer.user.lat, 
-		lng: reducer.user.lng 
+		lng: reducer.user.lng,
+		footerHeight: reducer.user.footerHeight 
 	}
 );
 

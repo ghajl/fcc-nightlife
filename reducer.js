@@ -23,7 +23,9 @@ export const initialState = {
   loginDialogOpen: false,
   loginMenuOpen: false,
   messageDialogOpen: false,
-  highlighted: null
+  highlighted: null,
+  footerHeight: 0,
+  headerHeight: 0
 }
 
 
@@ -217,6 +219,16 @@ export function user (state = initialState, action) {
         ...state,
         ...{ messageDialogOpen: false,
             message: []}
+      }
+    case actionTypes.FOOTER_HEIGHT:
+      return {
+        ...state,
+        ...{ footerHeight: action.height}
+      }
+    case actionTypes.HEADER_HEIGHT:
+    return {
+        ...state,
+        ...{ headerHeight: action.height}
       }
     default:
       return state

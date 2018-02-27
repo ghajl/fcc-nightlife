@@ -4,8 +4,9 @@ import { withScriptjs, withGoogleMap, GoogleMap, Marker } from "react-google-map
 
 const HomeMap = compose(
     withProps({
-        loadingElement: <div style={{ height: `100%` }} />,
-        mapElement: <div style={{ height: `100%`, opacity: '.8' }} />,
+        loadingElement: <div style={{ flex: '1 0 auto',display: 'flex',
+        'flex-direction': 'column', }} />,
+        mapElement: <div style={{ flex: '1 0 auto', opacity: '.8' }} />,
     }),
     withGoogleMap
 )((props) => {

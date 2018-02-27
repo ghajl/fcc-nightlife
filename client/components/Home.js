@@ -32,6 +32,9 @@ const styles = {
 		'@media (max-width: 600px)': {
             marginTop: '50px',
         },
+		flex: '1 0 auto', 
+		display: 'flex',
+        'flex-direction': 'column',
 	}
 }
 
@@ -53,7 +56,7 @@ class Home extends Component{
 	}
 
 	getMargin = () => {
-		return this.props.width == 'xs' ? 50 : 60
+		return this.props.width == 'xs' ? 150 : 160
 	}
 	componentWillReceiveProps(nextProps){
 		if(this.props.location.search != nextProps.location.search){
@@ -82,12 +85,14 @@ class Home extends Component{
 	
 
 	render() {
+		// console.log(this.props)
 		return (
 			<Page location={this.props.location}>
-			  	<div className={this.props.classes.map}>
+			  	<div id="content" className={this.props.classes.map}>
 			  	<HomeMap 
 			  		isMarkerShown
-			  		containerElement={<div style={{ height: this.state.height }} />}
+			  		containerElement={<div style={{flex: '1 0 auto',display: 'flex',
+        'flex-direction': 'column', }} />}
         		/>
 			  	</div>
 			  	<div className={this.props.classes.searchBar}>

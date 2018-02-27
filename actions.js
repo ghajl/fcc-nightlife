@@ -33,7 +33,9 @@ export const actionTypes = {
 	CLOSE_MESSAGE_DIALOG: 'CLOSE_MESSAGE_DIALOG',
 	OPEN_LOGIN_MENU: 'OPEN_LOGIN_MENU',
 	CLOSE_LOGIN_MENU: 'CLOSE_LOGIN_MENU',
-	HIGHLIGHT_PLACE: 'HIGHLIGHT_PLACE'
+	HIGHLIGHT_PLACE: 'HIGHLIGHT_PLACE',
+	FOOTER_HEIGHT: 'FOOTER_HEIGHT',
+	HEADER_HEIGHT: 'HEADER_HEIGHT'
 }
 
 
@@ -459,5 +461,18 @@ export function setPlacesLocation(address){
 export function highlightPlace(placeID) {
 	return { type: actionTypes.HIGHLIGHT_PLACE,
 		placeID
+		 };
+}
+
+export function footerHeight(height) {
+	console.log(height)
+	return { type: actionTypes.FOOTER_HEIGHT,
+		height
+		 };
+}
+
+export function headerHeight(height) {
+	return { type: actionTypes.HEADER_HEIGHT,
+		height
 		 };
 }
