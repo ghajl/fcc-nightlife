@@ -12,7 +12,7 @@ class MarkerComponent extends Component {
 	}
 
 	componentWillReceiveProps(nextProps){
-		if(nextProps.isHighlighted){
+		if(nextProps.isHighlighted && !this.props.isHighlighted){
 
 			this.setState({
 		        animation: google.maps.Animation.BOUNCE
