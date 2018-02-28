@@ -7,14 +7,14 @@ import storage from 'redux-persist/lib/storage';
 import sessionStorage from 'redux-persist/lib/storage/session';
 
 const config = {
-  key: 'root',
-  storage: sessionStorage,
+    key: 'root',
+    storage: sessionStorage,
 }
 
 const combReducers = combineReducers({
-	    user,
-	    router
-	  });
+    user,
+    router
+});
 
 const reducers = persistCombineReducers(config, {reducer: combReducers});
 
@@ -23,9 +23,9 @@ let persistor = null;
 export function configureStore (history){
 	const middleware = [thunk, routerMiddleware(history)];
 	const store = createStore(
-	  reducers,
-	  undefined,
-	  applyMiddleware(...middleware)
+        reducers,
+	    undefined,
+	    applyMiddleware(...middleware)
 	);
 
 	persistor = persistStore(store);

@@ -162,11 +162,10 @@ class Places extends Component{
 
 	render() {
 		const { classes, bars, location} = this.props;
-		const height = this.state.height;
+		const {height} = this.state;
 		const sectionStyle = window.innerWidth <= 640 ? { flex: '1 0 auto',display: 'flex', flexDirection: 'column', } : { height: height - this.props.footerHeight}
 		const listStyle = window.innerWidth <= 640 ? { flex: '1 0 auto' } : { height: height - 120 - this.props.footerHeight}
 		const mapStyle = window.innerWidth <= 640 ? { height: 0 } : { height: height - this.props.footerHeight}
-		console.log(this.props)
 		return (
 			<Page location={location}>
 			<div className={classes.root}>

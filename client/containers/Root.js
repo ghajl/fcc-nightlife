@@ -53,6 +53,7 @@ class Root extends Component{
 		else if (!password || !password.trim()){
 			this.setState({ usernameErrorText: "", passwordErrorText: "password is required" });
 		} else {
+			this.setState({ usernameErrorText: "", passwordErrorText: "" });
 			this.props.store.dispatch(manualLogin({ // this function is passed in via react-redux
 					username,
 					password			

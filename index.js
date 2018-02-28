@@ -1,7 +1,7 @@
 import "babel-polyfill";
+import 'normalize.css';
 import React from 'react';
 import {render} from 'react-dom';
-import 'normalize.css';
 import createHistory from 'history/createBrowserHistory';
 import { configureStore } from './store';
 import Root from './client/containers/Root'

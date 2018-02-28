@@ -59,9 +59,9 @@ const styles = {
 
 const Footer = (props) => {
 	const {classes} = props;
-        console.log(props)
+        
 	return (
-		<div className={classes.wrapper} ref={elem => { if(elem) props.footerHeight(elem.offsetHeight + 1); console.log(elem)}}>
+		<div className={classes.wrapper} ref={elem => { if(elem) props.footerHeight(elem.offsetHeight + 1);}}>
 			<div className={classes.container}>
 				<div className={classes.element}>
 					<div className={classes.link}>

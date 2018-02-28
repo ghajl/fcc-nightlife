@@ -40,55 +40,55 @@ export const actionTypes = {
 
 
 function beginLogin() {
-  return { type: actionTypes.MANUAL_LOGIN_USER };
+    return { type: actionTypes.MANUAL_LOGIN_USER };
 }
 
 function loginSuccess(username, places, message) {
-  return {
-    type: actionTypes.LOGIN_SUCCESS_USER,
-    message,
-    username,
-    places
-  };
+    return {
+	    type: actionTypes.LOGIN_SUCCESS_USER,
+	    message,
+	    username,
+	    places
+    };
 }
 
 function loginError(message) {
-  return {
-    type: actionTypes.LOGIN_ERROR_USER,
-    message
-  };
+    return {
+	    type: actionTypes.LOGIN_ERROR_USER,
+	    message
+    };
 }
 
 function signUpError(message) {
-  return {
-    type: actionTypes.SIGNUP_ERROR_USER,
-    message
-  };
+    return {
+	    type: actionTypes.SIGNUP_ERROR_USER,
+	    message
+    };
 }
 
 function beginSignUp() {
-  return { type: actionTypes.SIGNUP_USER };
+    return { type: actionTypes.SIGNUP_USER };
 }
 
 function signUpSuccess(username, places, message) {
-  return {
-    type: actionTypes.SIGNUP_SUCCESS_USER,
-    message,
-    username,
-    places
-  };
+    return {
+	    type: actionTypes.SIGNUP_SUCCESS_USER,
+	    message,
+	    username,
+	    places
+    };
 }
 
 function beginLogout() {
-  return { type: actionTypes.LOGOUT_USER};
+    return { type: actionTypes.LOGOUT_USER};
 }
 
 function logoutSuccess() {
-  return { type: actionTypes.LOGOUT_SUCCESS_USER };
+    return { type: actionTypes.LOGOUT_SUCCESS_USER };
 }
 
 function logoutError() {
-  return { type: actionTypes.LOGOUT_ERROR_USER };
+    return { type: actionTypes.LOGOUT_ERROR_USER };
 }
 
 function beginLocationSearch() {
@@ -465,7 +465,6 @@ export function highlightPlace(placeID) {
 }
 
 export function footerHeight(height) {
-	console.log(height)
 	return { type: actionTypes.FOOTER_HEIGHT,
 		height
 		 };

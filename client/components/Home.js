@@ -16,7 +16,7 @@ const styles = {
 		position: 'absolute',
 		backgroundColor: 'white',
 		opacity: '.9',
-		top: '150px',
+		top: '170px',
 		left: '50%',
 		boxShadow: '5px 1px 10px #888888',
 		transform: 'translate(-50%, -50%)',	
@@ -34,7 +34,7 @@ const styles = {
         },
 		flex: '1 0 auto', 
 		display: 'flex',
-        'flex-direction': 'column',
+        flexDirection: 'column',
 	}
 }
 
@@ -58,6 +58,7 @@ class Home extends Component{
 	getMargin = () => {
 		return this.props.width == 'xs' ? 150 : 160
 	}
+	
 	componentWillReceiveProps(nextProps){
 		if(this.props.location.search != nextProps.location.search){
 

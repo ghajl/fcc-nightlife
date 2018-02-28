@@ -47,7 +47,7 @@ class LoginDialog extends Component {
                     <form>
                     <TextField
                         required
-                        
+                        error={this.props.usernameErrorText.length > 0}
                         margin="dense"
                         id="username"
                         label="Username"
@@ -63,6 +63,7 @@ class LoginDialog extends Component {
                     />
                     <TextField
                         required
+                        error={this.props.passwordErrorText.length > 0}
                         margin="dense"
                         id="password"
                         label="Password"

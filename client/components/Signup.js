@@ -8,6 +8,12 @@ const styles = theme => ({
 	root: {
 		display: 'flex',
 		justifyContent: 'center',
+		alignItems: 'center',
+		flex: '1 0 auto',
+		marginTop: '60px',
+		'@media (max-width: 600px)': {
+            marginTop: '50px',
+        },
 	},
     container: {
 	    display: 'flex',
@@ -19,7 +25,6 @@ const styles = theme => ({
     form: {
 	  	display: 'flex',
 	    flexDirection: 'column',
-	    justifyContent: 'center',
 	    alignItems: 'center',
 	    width: 500,
 	    maxWidth: '100%'
@@ -82,12 +87,12 @@ class Signup extends Component{
 		return (
 		  <Page location={this.props.location} >
 		  <div className={classes.root}>
-		  	<div className={classes.container} style={{marginTop:200}}>
+		  	<div className={classes.container}>
 				<form className={classes.form} >
 					<TextField
 					  className={classes.textField} 
 	                  required
-	                  
+	                  error={this.state.usernameErrorMessage.length > 0}
 	                  margin="dense"
 	                  id="username"
 	                  label="Username"
@@ -104,6 +109,7 @@ class Signup extends Component{
 	                <TextField
 	                 className={classes.textField} 
 	                  required
+	                  error={this.state.passwordErrorMessage.length > 0}
 	                  margin="dense"
 	                  id="password"
 	                  label="Password"
@@ -116,6 +122,7 @@ class Signup extends Component{
 	                <TextField
 	                 className={classes.textField} 
 	                  required
+	                  error={this.state.passwordConfirmErrorMessage.length > 0}
 	                  margin="dense"
 	                  id="confirm-password"
 	                  label="Confirm Password"
