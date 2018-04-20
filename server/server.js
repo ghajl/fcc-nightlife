@@ -6,11 +6,13 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 import webpackConfig from '../../webpack.config.js';
 import passport from "passport";
 import {Strategy as LocalStrategy} from "passport-local";
+import {Strategy as FacebookStrategy} from 'passport-facebook';
 import session from "express-session";
 import bodyParser from "body-parser";
 import connectMongo from "connect-mongo";
 import initRoutes from './init/routes';
 import User from "./models/user";
+
 
 const app = express();
 const compiler = webpack(webpackConfig);
@@ -71,6 +73,31 @@ passport.use(new LocalStrategy(
 	 		})
     });
 }));
+const facebookId = process.env.FACEBOOK_APP_ID || config.FACEBOOK_APP_ID;
+const facebookSecret = process.env.FACEBOOK_APP_SECRET || config.FACEBOOK_APP_SECRET;
+passport.use(new FacebookStrategy({
+    clientID: facebookId,
+    clientSecret: facebookSecret,
+    callbackURL: "http://localhost:3000/auth/facebook/callback"
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    User.findOne({ fb: profile.id }, function (err, user) {
+    	if(err) { 
+    		return cb(err); 
+    	}
+    	if(user) {
+    		return cb(null, user);
+    	}
+      	const newUser = new User();
+      	newUser.fb = profile.id;
+      	newUser.profile.name = `${profile.name.givenName} ${profile.name.familyName}`;
+      	newUser.save((err) => {
+            cb(err, newUser);
+        });
+    });
+  }
+));
+
 
 passport.serializeUser((user, done) => {  	
   	done(null, user.id)
@@ -85,7 +112,6 @@ passport.deserializeUser((id, done) => {
 const MongoStore = connectMongo(session);
 
 app.use(require('cookie-parser')());
-app.use(require('body-parser').urlencoded({ extended: true }));
 app.use(session({ 
 	secret: 'keyboard cat', 
 	resave: true, 
@@ -100,8 +126,15 @@ app.use(session({
 // session.
 app.use(passport.initialize());
 app.use(passport.session());
-app.options('*', cors()) 
-initRoutes(app);
+app.options('*', cors()) ;
+//save url for redirecting after successful facebook authentication
+app.use((req, res, next) => {
+	if(req.path.match(/^\/auth/)){
+		req.session.returnTo = req.originalUrl;
+	}
+	next();
+});
+initRoutes(app, passport);
 const bundlePath = isDev ? "/bundle.js" : "/dist/bundle.js";
 app.all("*", (req, res, next) => {	
 
