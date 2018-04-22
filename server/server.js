@@ -134,6 +134,11 @@ app.use((req, res, next) => {
 	}
 	next();
 });
+
+app.get('/privacypolicy', function(req, res) {
+  res.sendFile(process.cwd() + "/public/privacypolicy.htm");
+});
+
 initRoutes(app, passport);
 const bundlePath = isDev ? "/bundle.js" : "/dist/bundle.js";
 app.all("*", (req, res, next) => {	
