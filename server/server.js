@@ -131,7 +131,7 @@ app.use(passport.session());
 app.options('*', cors()) ;
 //save url for redirecting after successful facebook authentication
 app.use((req, res, next) => {
-	if(req.path.match(/^\/auth/)){
+	if(!req.path.match(/^\/auth/)){
 		req.session.returnTo = req.originalUrl;
 	}
 	next();
