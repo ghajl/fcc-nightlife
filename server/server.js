@@ -78,7 +78,8 @@ const facebookSecret = process.env.FACEBOOK_APP_SECRET || config.FACEBOOK_APP_SE
 passport.use(new FacebookStrategy({
     clientID: facebookId,
     clientSecret: facebookSecret,
-    callbackURL: 'https://fcc-barcoordinator.herokuapp.com/auth/facebook/callback'
+    callbackURL: 'https://fcc-barcoordinator.herokuapp.com/auth/facebook/callback',
+    profileFields: ['id', 'displayName', 'name', 'emails']
   },
   function(accessToken, refreshToken, profile, cb) {
     User.findOne({ fb: profile.id }, function (err, user) {
