@@ -9,7 +9,8 @@ const UserSchema = new mongoose.Schema({
 	password: String,
 	places:[String]	,
 	profile: {
-	    name: { type: String, default: '' }
+	    givenName: { type: String, default: '' },
+	    familyName: { type: String, default: '' }
 	},
 	fb: String
 })

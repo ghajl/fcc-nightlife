@@ -78,7 +78,7 @@ const facebookSecret = process.env.FACEBOOK_APP_SECRET || config.FACEBOOK_APP_SE
 passport.use(new FacebookStrategy({
     clientID: facebookId,
     clientSecret: facebookSecret,
-    callbackURL: "https://fcc-barcoordinator.herokuapp.com/auth/facebook/callback"
+    callbackURL: process.cwd() + '/auth/facebook/callback'
   },
   function(accessToken, refreshToken, profile, cb) {
     User.findOne({ fb: profile.id }, function (err, user) {
@@ -90,7 +90,9 @@ passport.use(new FacebookStrategy({
     	}
       	const newUser = new User();
       	newUser.fb = profile.id;
-      	newUser.profile.name = `${profile.name.givenName} ${profile.name.familyName}`;
+      	console.log(profile);
+      	newUser.profile.givenName = profile.name.givenName;
+      	newUser.profile.familyName = profile.name.familyName;
       	newUser.save((err) => {
             cb(err, newUser);
         });

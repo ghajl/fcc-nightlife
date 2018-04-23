@@ -11,6 +11,9 @@ export default (app, passport) => {
 
 	app.get('/auth/facebook', passport.authenticate('facebook'));
 	app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/signup' }), (req, res) => {
+		console.log(req.session)
 		res.redirect(req.session.returnTo || '/');
 	});
 }
+
+//https://fcc-barcoordinator.herokuapp.com/auth/facebook/callback
