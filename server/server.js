@@ -75,6 +75,7 @@ passport.use(new LocalStrategy(
 }));
 const facebookId = process.env.FACEBOOK_APP_ID || config.FACEBOOK_APP_ID;
 const facebookSecret = process.env.FACEBOOK_APP_SECRET || config.FACEBOOK_APP_SECRET;
+console.log(process.cwd())
 passport.use(new FacebookStrategy({
     clientID: facebookId,
     clientSecret: facebookSecret,
