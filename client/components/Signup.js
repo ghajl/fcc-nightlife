@@ -3,7 +3,9 @@ import Header from '../containers/Header'
 import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
 import { withStyles } from 'material-ui/styles';
+import getErrorMessages from '../helpers/InputCheck';
 import Page from './Page';
+
 const styles = theme => ({
 	root: {
 		display: 'flex',
@@ -67,8 +69,9 @@ class Signup extends Component{
 		const username = this.usernameInput.value;
 		const password = this.passwordInput.value;
 		const confirm = this.confirmPasswordInput.value;
-		if(inputFieldErrors(username, password, confirm)){
-			const {usernameError, passwordError, passwordConfirmError} = getErrorMessages(username, password, confirm);
+		
+		const {usernameError, passwordError, passwordConfirmError} = getErrorMessages(username, password, confirm);
+		if(usernameError || passwordError || passwordConfirmError){
 			this.setState({
 				usernameErrorMessage: usernameError,
 				passwordErrorMessage: passwordError,
@@ -151,12 +154,21 @@ function inputFieldErrors(username, password, confirm) {
 	return !username || !password || !confirm || password != confirm
 }				
 
-function getErrorMessages(username, password, confirm){
-	let usernameError = username ? "" : "Username is required";
-	let passwordError = password ? "" : "Password is required";
-	let passwordConfirmError = confirm ? "" : "Confirm password is required";
-	if(password && confirm && password != confirm){
-		passwordConfirmError = "Error in password confirmation"
-	}
-	return {usernameError, passwordError, passwordConfirmError}
-}
+// function getErrorMessages(username, password, confirm){
+
+// 	let _username = username.trim();
+// 	let _password = password.trim();
+// 	let _confirm = confirm.trim();
+// 	let usernameError = '';
+// 	let passwordError = '';
+// 	let passwordConfirmError = '';
+// 	if(_username == '') usernameError = 'Username is required';
+// 	if(_password == '') passwordError = 'Password is required';
+// 	if(_confirm == '') passwordConfirmError = 'Password confirmation is required';
+// 	if(/[^a-zA-Z0-9_.]/g.test(_username)) usernameError = 'Username must contain only letters, digits, underscore and period';
+// 	if(!/[a-zA-Z0-9]/g.test(_username)) usernameError = 'Username must contain at least one letter or digit';
+// 	if(/[^a-zA-Z0-9]/g.test(_password)) passwordError = 'Password must contain only letters and digits';
+// 	if(/[^a-zA-Z0-9]/g.test(_confirm)) passwordConfirmError = 'Password confirmation must contain only letters and digits';
+// 	if(_password && _confirm && _password != _confirm) passwordConfirmError = 'Error in password confirmation';
+// 	return {usernameError, passwordError, passwordConfirmError}
+// }

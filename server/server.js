@@ -30,8 +30,7 @@ if(isDev) {
 	    credentials: true
 	}));
 }
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use('/public', express.static(process.cwd() + '/public'));
 app.use('/dist', express.static(process.cwd() + '/dist'));
 const mongoDB = process.env.MONGOLAB_URI || config.MONGOLAB_URI;
@@ -117,6 +116,8 @@ passport.deserializeUser((id, done) => {
 const MongoStore = connectMongo(session);
 
 app.use(require('cookie-parser')());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({ 
 	secret: 'keyboard cat', 
 	resave: true, 
@@ -150,7 +151,7 @@ app.get('/privacypolicy', function(req, res) {
 initRoutes(app, passport);
 const bundlePath = isDev ? "/bundle.js" : "/dist/bundle.js";
 app.all("*", (req, res, next) => {	
-
+console.log("aa")
 	const appHTML = 
 	`<!doctype html>
 	<html lang="">

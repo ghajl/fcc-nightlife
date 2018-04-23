@@ -6,7 +6,7 @@ export default (app, passport) => {
 	app.get("/logout", logout);
 	app.post("/signup", register);
 	app.post("/places", modifyPlaceList);
-	app.get("/places", getUsersBarsData);
+	app.get("/data", getUsersBarsData);
 	
 
 	app.get('/auth/facebook', passport.authenticate('facebook'));

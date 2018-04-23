@@ -16,6 +16,7 @@ import { connect } from 'react-redux';
 import {defaultLocation} from '../../util/locations';
 import { withStyles } from 'material-ui/styles';
 import { CircularProgress } from 'material-ui/Progress';
+import getErrorMessages from '../helpers/InputCheck';
 
 const styles = theme => ({
     buttonProgress: {
@@ -43,15 +44,9 @@ class Root extends Component{
 		const username = data && data.username || "";
 		const password = data && data.password || "";
 
-		if(!username || !username.trim()){
-			if(password && password.trim()){
-				this.setState({ usernameErrorText: "Username is required", passwordErrorText: "" });
-			} else {
-				this.setState({ usernameErrorText: "Username is required", passwordErrorText: "password is required" });
-			}
-		}
-		else if (!password || !password.trim()){
-			this.setState({ usernameErrorText: "", passwordErrorText: "password is required" });
+		const {usernameError, passwordError} = getErrorMessages(username, password);
+		if(usernameError || passwordError){
+			this.setState({ usernameErrorText: usernameError, passwordErrorText: passwordError });
 		} else {
 			this.setState({ usernameErrorText: "", passwordErrorText: "" });
 			this.props.store.dispatch(manualLogin({ // this function is passed in via react-redux

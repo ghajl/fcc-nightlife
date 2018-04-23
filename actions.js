@@ -337,7 +337,7 @@ export function showPlaces(service, address) {
 							
 					        service.nearbySearch(request, (results, status, pagination) => {
 									if (status == google.maps.places.PlacesServiceStatus.OK) {
-										return axios.get('/places', {
+										return axios.get('/data', {
 														    params: {
 														        bars: results.map(item=>item.id)
 														    }
