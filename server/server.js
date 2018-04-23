@@ -75,11 +75,10 @@ passport.use(new LocalStrategy(
 }));
 const facebookId = process.env.FACEBOOK_APP_ID || config.FACEBOOK_APP_ID;
 const facebookSecret = process.env.FACEBOOK_APP_SECRET || config.FACEBOOK_APP_SECRET;
-console.log(process.cwd())
 passport.use(new FacebookStrategy({
     clientID: facebookId,
     clientSecret: facebookSecret,
-    callbackURL: process.cwd() + '/auth/facebook/callback'
+    callbackURL: 'https://fcc-barcoordinator.herokuapp.com/auth/facebook/callback'
   },
   function(accessToken, refreshToken, profile, cb) {
     User.findOne({ fb: profile.id }, function (err, user) {
@@ -91,7 +90,7 @@ passport.use(new FacebookStrategy({
     	}
       	const newUser = new User();
       	newUser.fb = profile.id;
-      	console.log(profile);
+      	console.log(profile)
       	newUser.profile.givenName = profile.name.givenName;
       	newUser.profile.familyName = profile.name.familyName;
       	newUser.save((err) => {
