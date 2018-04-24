@@ -36,6 +36,7 @@
     "css-loader": "^0.28.8",
     "express": "*",
     "express-session": "^1.15.6",
+    "helmet": "^3.12.0",
     "history": "^4.7.2",
     "html-webpack-plugin": "^2.30.1",
     "isomorphic-unfetch": "^2.0.0",

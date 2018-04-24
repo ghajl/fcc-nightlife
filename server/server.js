@@ -118,8 +118,10 @@ const MongoStore = connectMongo(session);
 app.use(require('cookie-parser')());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+const sessionSecret = process.env.SESSION_SECRET || config.SESSION_SECRET;
 app.use(session({ 
-	secret: 'keyboard cat', 
+	secret: sessionSecret, 
 	resave: true, 
 	saveUninitialized: true,
 	store: new MongoStore({
@@ -138,8 +140,9 @@ app.use((req, res, next) => {
 	if(req.path !== '/login' &&
 	    req.path !== '/signup' && 
 	    !req.path.match(/^\/auth/) &&
+	    !req.path.match(/^\/data/) &&
 	    !req.path.match(/\./)) {
-			req.session.returnTo = req.originalUrl;
+			req.session.returnTo = '/';
 		}
 	next();
 });
@@ -151,7 +154,7 @@ app.get('/privacypolicy', function(req, res) {
 initRoutes(app, passport);
 const bundlePath = isDev ? "/bundle.js" : "/dist/bundle.js";
 app.all("*", (req, res, next) => {	
-console.log("aa")
+
 	const appHTML = 
 	`<!doctype html>
 	<html lang="">

@@ -102,7 +102,8 @@ export function register(req, res, next) {
 
 //returns - if exist - users lists of bars currently found by search on client
 export function getUsersBarsData(req, res, next) {
-	console.log("aaa")
+	console.log(req.isAuthenticated())
+	if(!req.query.bars) return res.sendStatus(401);
 	const { bars } = req.query;
 	Place.find( {placeID: { $in: bars }}, 'placeID users', (err, docs) => {
 		if (err) {

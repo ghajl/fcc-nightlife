@@ -51,11 +51,9 @@ class Signup extends Component{
 		super();
 		this.usernameInput = null;
 		this.passwordInput = null;
-		this.confirmPasswordInput = null;
 		this.state = {
 		    usernameErrorMessage: "",
 		    passwordErrorMessage: "",
-		    passwordConfirmErrorMessage: "",
 	    };
 	}
 	handleKeyPress = (event) => {
@@ -68,20 +66,17 @@ class Signup extends Component{
 		event.preventDefault()
 		const username = this.usernameInput.value;
 		const password = this.passwordInput.value;
-		const confirm = this.confirmPasswordInput.value;
 		
-		const {usernameError, passwordError, passwordConfirmError} = getErrorMessages(username, password, confirm);
-		if(usernameError || passwordError || passwordConfirmError){
+		const {usernameError, passwordError} = getErrorMessages(username, password);
+		if(usernameError || passwordError){
 			this.setState({
 				usernameErrorMessage: usernameError,
-				passwordErrorMessage: passwordError,
-				passwordConfirmErrorMessage: passwordConfirmError
+				passwordErrorMessage: passwordError
 			})
 		} else {
 			this.props.signUp({ 
 				username,
 				password,
-				confirm			
 			}) 
 		}
 	};
@@ -122,19 +117,7 @@ class Signup extends Component{
 	                  margin="normal"
 	                  onKeyPress={this.handleKeyPress}
 	                />
-	                <TextField
-	                 className={classes.textField} 
-	                  required
-	                  error={this.state.passwordConfirmErrorMessage.length > 0}
-	                  margin="dense"
-	                  id="confirm-password"
-	                  label="Confirm Password"
-	                  type="password"
-	                  helperText={this.state.passwordConfirmErrorMessage}
-	                  inputRef={(input) => { this.confirmPasswordInput = input; }}
-	                  margin="normal"
-	                  onKeyPress={this.handleKeyPress}
-	                />
+	                
 				</form>	
 				<div className={classes.button}>
 				<Button raised color="accent" onClick={this.onSignupSubmit}>
@@ -149,26 +132,3 @@ class Signup extends Component{
 }
 export default withStyles(styles)(Signup)
 
-
-function inputFieldErrors(username, password, confirm) {
-	return !username || !password || !confirm || password != confirm
-}				
-
-// function getErrorMessages(username, password, confirm){
-
-// 	let _username = username.trim();
-// 	let _password = password.trim();
-// 	let _confirm = confirm.trim();
-// 	let usernameError = '';
-// 	let passwordError = '';
-// 	let passwordConfirmError = '';
-// 	if(_username == '') usernameError = 'Username is required';
-// 	if(_password == '') passwordError = 'Password is required';
-// 	if(_confirm == '') passwordConfirmError = 'Password confirmation is required';
-// 	if(/[^a-zA-Z0-9_.]/g.test(_username)) usernameError = 'Username must contain only letters, digits, underscore and period';
-// 	if(!/[a-zA-Z0-9]/g.test(_username)) usernameError = 'Username must contain at least one letter or digit';
-// 	if(/[^a-zA-Z0-9]/g.test(_password)) passwordError = 'Password must contain only letters and digits';
-// 	if(/[^a-zA-Z0-9]/g.test(_confirm)) passwordConfirmError = 'Password confirmation must contain only letters and digits';
-// 	if(_password && _confirm && _password != _confirm) passwordConfirmError = 'Error in password confirmation';
-// 	return {usernameError, passwordError, passwordConfirmError}
-// }
