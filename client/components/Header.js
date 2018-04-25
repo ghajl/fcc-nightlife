@@ -68,8 +68,10 @@ class Header extends Component{
     signUp = (event) => {
 
         event.preventDefault();
-        this.handleMenuClose()
-        this.props.toSignUp(this.props.path);
+        console.log(this.props)
+        this.handleMenuClose();
+        if(this.props.path.pathname != '/signup') this.props.toSignUp(this.props.path);
+        
     };
 
     render() {

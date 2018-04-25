@@ -122,8 +122,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const sessionSecret = process.env.SESSION_SECRET || config.SESSION_SECRET;
 app.use(session({ 
 	secret: sessionSecret, 
-	resave: true, 
-	saveUninitialized: true,
+	resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 24 * 60 * 60 * 1000 },
 	store: new MongoStore({
 		url: mongoDB,
 		autoReconnect: true

@@ -11,7 +11,7 @@ export function login(req, res, next) {
 		if(!user) {
 			return res.sendStatus(401);		
 		}
-		req.logIn(user, loginErr => {
+		return req.logIn(user, loginErr => {
 			if(loginErr) {
 				return res.sendStatus(401);
 			}
@@ -87,22 +87,27 @@ export function register(req, res, next) {
 			return res.sendStatus(409);
 		}
 		// create the new user
-		else {
-			newUser.save((err, user) => {
-				if (err) {
-					
-					return res.sendStatus(401);
-				}
-				return res.sendStatus(200);
-			})
-		}
+		
+		return newUser.save((err, user) => {
+			if (err) {
+				
+				return res.sendStatus(401);
+			}
+			return req.logIn(user, (loginErr) => {
+		        if (loginErr) return res.sendStatus(401);
+		        return res.sendStatus(200);
+	        });
+			
+		})
+		
 	})
 
 }
 
 //returns - if exist - users lists of bars currently found by search on client
 export function getUsersBarsData(req, res, next) {
-	console.log(req.isAuthenticated())
+	console.log(req.user)
+	console.log(req.session)
 	if(!req.query.bars) return res.sendStatus(401);
 	const { bars } = req.query;
 	Place.find( {placeID: { $in: bars }}, 'placeID users', (err, docs) => {

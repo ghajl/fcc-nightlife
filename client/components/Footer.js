@@ -8,7 +8,7 @@ const styles = {
 	wrapper: {
 		textAlign: 'center',
 		backgroundColor: 'white',
-		boxShadow: '0 -3px 15px -6px #222',
+		boxShadow: '0 -3px 7px -6px #222',
 	},
 	element: {
 		display: 'inline-block',
@@ -59,7 +59,7 @@ const styles = {
 
 const Footer = (props) => {
 	const {classes} = props;
-        !function foo(){console.log("111") }()
+       
 	return (
 		<div className={classes.wrapper} ref={elem => { if(elem) props.footerHeight(elem.offsetHeight + 1);}}>
 			<div className={classes.container}>

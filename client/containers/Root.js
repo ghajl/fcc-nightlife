@@ -35,9 +35,11 @@ class Root extends Component{
 		    passwordErrorText: "",
 		    
 	    };
-	
+	componentDidMount = () => {
+	    console.log("asa")
+    }
 	handleClickOpen = () => {
-	    this.props.store.dispatch(openLoginDialog())
+	    this.props.openLoginDialog();
 	}
 
 		handleSubmit = (data) => {
@@ -49,26 +51,28 @@ class Root extends Component{
 			this.setState({ usernameErrorText: usernameError, passwordErrorText: passwordError });
 		} else {
 			this.setState({ usernameErrorText: "", passwordErrorText: "" });
-			this.props.store.dispatch(manualLogin({ // this function is passed in via react-redux
+			this.props.manualLogin({ // this function is passed in via react-redux
 					username,
 					password			
-				}))
+				})
 		}
 	}
 	toSignUp = path => {
-		this.props.store.dispatch(closeLoginDialog())
-		this.props.store.dispatch(toSignUp(path))
+		this.props.closeLoginDialog();
+		this.props.toSignUp(path);
 	}
 	handleClose = () => {
 		this.setState({ usernameErrorText: "", passwordErrorText: "" });
-	    this.props.store.dispatch(closeLoginDialog())
+	    this.props.closeLoginDialog();
 	}
 	handleCloseMessage = () => {
-		this.props.store.dispatch(closeMessage())
+		this.props.closeMessage();
 	}
 	
 	render() {
 		const { store, history, persistor, classes } = this.props;
+		const state = store.getState();
+		const { user: {authenticated}} = state.reducer;
 		return	(
 			
 		<Provider store={store}>
@@ -83,7 +87,12 @@ class Root extends Component{
 
 			        <Route exact path="/" render={() => <Redirect to={`/location?loc=${defaultLocation.address}`} />}/>
 			        <Route path="/location" component={Home}/>
-			        <Route path="/signup" component={Signup}/>
+			        <Route path="/signup" render={(props) => ( authenticated ? (
+			        											<Redirect to={'/'}/>
+			        											) : (
+			        											<Signup  {...props}/>
+		        											))
+												    }/>
 			        <Route path="/places" component={Places}/>
 			        <Route component={NotFound} />
 		        </Switch>
@@ -121,4 +130,4 @@ export default connect(({reducer}) =>(
 		message: reducer.user.message, 
 		isOpenMessage: reducer.user.messageDialogOpen,
 		loading: reducer.user.isWaiting
-	}))(withStyles(styles)(Root))
+	}), { manualLogin, closeLoginDialog, openLoginDialog, toSignUp, closeMessage } )(withStyles(styles)(Root))
