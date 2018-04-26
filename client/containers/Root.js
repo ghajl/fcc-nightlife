@@ -17,6 +17,7 @@ import {defaultLocation} from '../../util/locations';
 import { withStyles } from 'material-ui/styles';
 import { CircularProgress } from 'material-ui/Progress';
 import getErrorMessages from '../helpers/InputCheck';
+import createRoutes from '../routes';
 
 const styles = theme => ({
     buttonProgress: {
@@ -73,6 +74,7 @@ class Root extends Component{
 		const { store, history, persistor, classes } = this.props;
 		const state = store.getState();
 		const { user: {authenticated}} = state.reducer;
+		const routes = createRoutes(store);
 		return	(
 			
 		<Provider store={store}>
@@ -83,19 +85,7 @@ class Root extends Component{
 		    <ConnectedRouter history={history}>
 		    <React.Fragment>
 			    
-		        <Switch>
-
-			        <Route exact path="/" render={() => <Redirect to={`/location?loc=${defaultLocation.address}`} />}/>
-			        <Route path="/location" component={Home}/>
-			        <Route path="/signup" render={(props) => ( authenticated ? (
-			        											<Redirect to={'/'}/>
-			        											) : (
-			        											<Signup  {...props}/>
-		        											))
-												    }/>
-			        <Route path="/places" component={Places}/>
-			        <Route component={NotFound} />
-		        </Switch>
+		        {routes}
 		        
 		        <Route render={(props) => {
 		        	return (

@@ -24,7 +24,7 @@ export function configureStore (history){
 	const middleware = [thunk, routerMiddleware(history)];
 	const store = createStore(
         reducers,
-	    undefined,
+	    window.__INITIAL_STATE__,
 	    applyMiddleware(...middleware)
 	);
 

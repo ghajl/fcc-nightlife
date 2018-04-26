@@ -12,7 +12,7 @@ import bodyParser from "body-parser";
 import connectMongo from "connect-mongo";
 import initRoutes from './init/routes';
 import User from "./models/user";
-
+import renderMiddleware from "./render/middleware";
 
 const app = express();
 const compiler = webpack(webpackConfig);
@@ -184,4 +184,22 @@ app.listen( port, function () {
     console.log('app listening on port ' + port + '\n');
 });
 
-		
+// const es = (store) => {
+// 	const state = store.getState();
+// 	const { user: {authenticated}} = state.reducer;
+// 	return (
+// 	    <Switch>
+
+// 	        <Route exact path="/" render={() => <Redirect to={`/location?loc=${defaultLocation.address}`} />}/>
+// 	        <Route path="/location" component={Home}/>
+// 	        <Route path="/signup" render={(props) => ( authenticated ? (
+// 	        											<Redirect to={'/'}/>
+// 	        											) : (
+// 	        											<Signup  {...props}/>
+// 	    											))
+// 										    }/>
+// 	        <Route path="/places" component={Places}/>
+// 	        <Route component={NotFound} />
+// 	    </Switch>
+//     )
+// }
