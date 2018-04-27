@@ -78,10 +78,6 @@ class Root extends Component{
 		return	(
 			
 		<Provider store={store}>
-		<PersistGate
-			
-	        persistor={persistor}>
-		    
 		    <ConnectedRouter history={history}>
 		    <React.Fragment>
 			    
@@ -107,7 +103,7 @@ class Root extends Component{
                 {this.props.loading && <CircularProgress size={160} className={classes.buttonProgress} />}
 		      </React.Fragment>
 		    </ConnectedRouter>
-		</PersistGate>
+		
 		</Provider>
 
 		)

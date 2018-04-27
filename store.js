@@ -1,5 +1,5 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux'
-import user from './reducer'
+import user from './reducer';
 import { routerReducer as router, routerMiddleware } from 'react-router-redux';
 import thunk from 'redux-thunk';
 import { persistStore, persistCombineReducers } from 'redux-persist';
@@ -16,14 +16,14 @@ const combReducers = combineReducers({
     router
 });
 
-const reducers = persistCombineReducers(config, {reducer: combReducers});
+// const reducers = persistCombineReducers(config, {reducer: combReducers});
 
 let persistor = null;
 
 export function configureStore (history){
 	const middleware = [thunk, routerMiddleware(history)];
 	const store = createStore(
-        reducers,
+        combReducers,
 	    window.__INITIAL_STATE__,
 	    applyMiddleware(...middleware)
 	);
