@@ -11,7 +11,7 @@ import { PersistGate } from 'redux-persist/es/integration/react';
 import LoginDialog from '../components/LoginDialog';
 import NotFound from '../components/NotFound';
 import MessageDialog from '../components/MessageDialog';
-import { manualLogin, closeLoginDialog, openLoginDialog, toSignUp, closeMessage } from '../../actions';
+import { fetchUserData, manualLogin, closeLoginDialog, openLoginDialog, toSignUp, closeMessage } from '../../actions';
 import { connect } from 'react-redux';
 import {defaultLocation} from '../../util/locations';
 import { withStyles } from 'material-ui/styles';
@@ -36,7 +36,7 @@ class Root extends Component{
 		    
 	    };
 	componentDidMount = () => {
-	    console.log("asa")
+	    this.props.fetchUserData();
     }
 	handleClickOpen = () => {
 	    this.props.openLoginDialog();
@@ -130,4 +130,4 @@ export default connect(({reducer}) =>(
 		message: reducer.user.message, 
 		isOpenMessage: reducer.user.messageDialogOpen,
 		loading: reducer.user.isWaiting
-	}), { manualLogin, closeLoginDialog, openLoginDialog, toSignUp, closeMessage } )(withStyles(styles)(Root))
+	}), { fetchUserData, manualLogin, closeLoginDialog, openLoginDialog, toSignUp, closeMessage } )(withStyles(styles)(Root))

@@ -1,6 +1,6 @@
 import PlaceComponent from "../components/PlaceComponent"
 import { connect } from 'react-redux';
-import { showPlaces, addToList, removeFromList, loginAndAdd, openLoginDialog } from '../../actions';
+import { addToList, removeFromList, loginAndAdd, openLoginDialog } from '../../actions';
 
 
 const currentIsGoing = (barsOfUser, barID) => {
@@ -29,4 +29,4 @@ const mapStateToProps = ({reducer}, {data}) => {
 
 
 
-export default connect(mapStateToProps, { showPlaces, addToList, removeFromList, loginAndAdd, openLoginDialog })(PlaceComponent);
+export default connect(mapStateToProps, { addToList, removeFromList, loginAndAdd, openLoginDialog })(PlaceComponent);

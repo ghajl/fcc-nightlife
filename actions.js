@@ -7,6 +7,9 @@ export const actionTypes = {
 	MANUAL_LOGIN_USER:  'MANUAL_LOGIN_USER',
 	LOGIN_SUCCESS_USER:  'LOGIN_SUCCESS_USER',
 	LOGIN_ERROR_USER:  'LOGIN_ERROR_USER',
+	FETCH_USER:  'FETCH_USER',
+	FETCH_USER_SUCCESS:  'FETCH_USER_SUCCESS',
+	FETCH_USER_ERROR:  'FETCH_USER_ERROR',
 	SIGNUP_USER:  'SIGNUP_USER',
 	SIGNUP_SUCCESS_USER:  'SIGNUP_SUCCESS_USER',
 	SIGNUP_ERROR_USER:  'SIGNUP_ERROR_USER',
@@ -38,6 +41,22 @@ export const actionTypes = {
 	HEADER_HEIGHT: 'HEADER_HEIGHT'
 }
 
+function beginFetchUserData(){
+	return { type: actionTypes.FETCH_USER };
+}
+
+function fetchUserDataSuccess(username, places, profile){
+	return { 
+		type: actionTypes.FETCH_USER_SUCCESS,
+		username,
+	    places,
+	    profile
+	};
+}
+
+function fetchUserDataError(){
+	return { type: actionTypes.FETCH_USER_ERROR };
+}
 
 function beginLogin() {
     return { type: actionTypes.MANUAL_LOGIN_USER };
@@ -113,12 +132,15 @@ function beginPlacesSearch() {
 	return { type: actionTypes.FIND_PLACES };
 }
 
-function searchPlacesSuccess(data, address, lat, lng) {
+function searchPlacesSuccess(data, address, lat, lng, username, profile, userPlaces) {
 	return { type: actionTypes.FIND_PLACES_SUCCESS,
 			data, 
 			address, 
 			lat, 
-			lng
+			lng, 
+			username, 
+			profile,
+			userPlaces
 		 };
 }
 
@@ -326,55 +348,59 @@ export function showPlaces(service, address) {
 	    return geocodeByAddress(address)
 		    .then(results => getLatLng(results[0]))
 		    .then(({ lat, lng }) => {
-		    				
-		    				const {username} = getState().reducer.user;
-		    				const loc = new google.maps.LatLng(lat,lng);
-							const request = {
-					                    location: loc,
-									    radius: '3000',
-									    type: ['bar'],
-				                    };
-							
-					        service.nearbySearch(request, (results, status, pagination) => {
-									if (status == google.maps.places.PlacesServiceStatus.OK) {
-										return axios.get('/data', {
-														    params: {
-														        bars: results.map(item=>item.id)
-														    }
-														}).then(response => {
-															let res = results.map(item => {
-																let photoUrl = item.photos && item.photos[0] && item.photos[0].getUrl && item.photos[0].getUrl instanceof Function && item.photos[0].getUrl({'maxWidth': 200, 'maxHeight': 200});
-																return {id: item.id, 
-																		name: item.name,
-																		photoUrl, 
-																		rating: item.rating,
-																		location: item.geometry.location, 
-																		address: item.vicinity, 
-																		users:[],
-																		highlighted: false}
-																	});
-																  response.data.places.forEach(item => {
-																			for(let i in res){
-																				if(item.placeID === res[i].id){
-																		
-																					res[i].users = item.users.slice(0);
-																					break;
-																				}
-																			}
-																		})
-															dispatch(searchPlacesSuccess(res, address, lat, lng));
-															
-														}
+				
+				const {username} = getState().reducer.user;
+				const loc = new google.maps.LatLng(lat,lng); //coordinates of location
+				const request = {
+		                    location: loc,
+						    radius: '3000',
+						    type: ['bar'],
+	                    };
+				//find bars in the location
+		        service.nearbySearch(request, (results, status, pagination) => {
+					if (status == google.maps.places.PlacesServiceStatus.OK) {
+						//get list of users registered in bars
+						return axios.get('/data', {
+										    params: {
+										        bars: results.map(item=>item.id)
+										    }
+										})
+									.then(response => {
+										//make list of bars
+										let res = results.map(item => {
+											let photoUrl = item.photos && item.photos[0] && item.photos[0].getUrl && item.photos[0].getUrl instanceof Function && item.photos[0].getUrl({'maxWidth': 200, 'maxHeight': 200});
+											return {id: item.id, 
+													name: item.name,
+													photoUrl, 
+													rating: item.rating,
+													location: item.geometry.location, 
+													address: item.vicinity, 
+													users:[],
+													highlighted: false}
+												});
+										//add users to bars
+									    response.data.locationPlaces.forEach(item => {
+												for(let i in res){
+													if(item.placeID === res[i].id){
+											
+														res[i].users = [...item.users];
+														break;
+													}
+												}
+											})
+									    const {username, profile, userPlaces} = response.data;
+										dispatch(searchPlacesSuccess(res, address, lat, lng, username, profile, userPlaces));
+										
+									})
+									.catch((err) => {
+								        dispatch(searchPlacesError("Unable to show results"));
+								    });
+					    
+					} else {
+					  	dispatch(searchPlacesError("Unable to show results"));
+					}});        
 
-														).catch((err) => {
-													        dispatch(searchPlacesError("Unable to show results"));
-													    });
-									    
-									} else {
-									  	dispatch(searchPlacesError("Unable to show results"));
-									}});        
-
-		    			})
+			})
 		    .catch((err) => {
 		        dispatch(searchPlacesError("Unable to show results"));
             })
@@ -382,10 +408,27 @@ export function showPlaces(service, address) {
 	}
 }
 
+export function fetchUserData() {
+	return (dispatch) => {
+		dispatch(beginFetchUserData());
+		return axios.get('/user')
+	        .then((response) => {
+	      		console.log(response);
+
+	            dispatch(fetchUserDataSuccess(response.data.username, response.data.places, response.data.profile));
+	        })
+	        .catch((err) => {
+				console.log(err);
+		        dispatch(fetchUserDataError());
+	        });
+    };
+}
+
 export function addToList(data) {
 
-    return (dispatch) => {
-    	const addData = {...data, ...{ operation: 'ADD' }};
+    return (dispatch, getState) => {
+    	const {username} = getState().reducer.user;
+    	const addData = {...data, ...{ operation: 'ADD', username }};
 	    dispatch(beginAddToList());
 	    
 		return axios.post('/places', addData)
@@ -394,6 +437,15 @@ export function addToList(data) {
 		        dispatch(addToListSuccess(data.placeID, 'You have successfully added to the list!'));
 		    })
 		    .catch((err) => {
+		    	if (err.response){
+		    		if(err.response.status == '401') {
+				        dispatch(logoutSuccess());
+				        dispatch(removeFromListError('You are not logged in'));
+				    }
+				    if(err.response.status == '403') {
+				        dispatch(removeFromListError('You are logged in to another account'));
+				    }
+		    	}
 		        dispatch(addToListError('Add to the bar request could not be completed'));
 		    });
 	};
@@ -401,14 +453,24 @@ export function addToList(data) {
 
 export function removeFromList(data) {
 
-    return (dispatch) => {
-    	const removeData = {...data, ...{ operation: 'REMOVE' }};
+    return (dispatch, getState) => {
+    	const {username} = getState().reducer.user;
+    	const removeData = {...data, ...{ operation: 'REMOVE', username }};
 	    dispatch(beginRemoveFromList());
 		return axios.post('/places', removeData)
 			.then(response => {
 				dispatch(removeFromListSuccess(data.placeID, 'You have successfully removed from the list!'));
 		    })
 		    .catch((err) => {
+		    	if (err.response){
+		    		if(err.response.status == '401') {
+				        dispatch(logoutSuccess());
+				        dispatch(removeFromListError('You are not logged in'));
+				    }
+				    if(err.response.status == '403') {
+				        dispatch(removeFromListError('You are logged in to another account'));
+				    }
+		    	}
 		        dispatch(removeFromListError('Remove from the bar request could not be completed'));
 		    });
 	};

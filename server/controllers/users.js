@@ -22,7 +22,7 @@ export function login(req, res, next) {
 
 // -------------------------------------------
 
-export function logout(req, res, next) {
+export function logout(req, res) {
 	// the logout method is added to the request object automatically by Passport
 	req.logout()
 	return res.sendStatus(200);
@@ -32,22 +32,23 @@ export function logout(req, res, next) {
 //user adds/removes himself to/from the list of users that are going to the bar -
 //add/remove username to/from list of users in Place and
 //add/remove place id to/from list of places in User
-export function modifyPlaceList(req, res, next) {
-	
+export function modifyPlaceList(req, res) {
+	if(!req.isAuthenticated()) return res.sendStatus(401); //user logged out on another tab
+	if(req.user.username !== req.body.username) return res.sendStatus(403); //user logged in to another account on different tab
 	if(req.body.operation === 'ADD'){
 		Place.findOneAndUpdate({placeID: req.body.placeID}, {$addToSet: { users: req.body.username } }, 
 								{upsert: true}, (err) => { 
 									if (err) {
-										return res.sendStatus(401);
+										return res.sendStatus(409);
 									}
 									User.update({username: req.body.username}, {$addToSet: { places: req.body.placeID } },(err) => {
 										if (err) {
 											Place.update({placeID: req.body.placeID},{$pull: { users: req.body.username } }, (err) => {
 												if (err) {
-													return res.sendStatus(401);
+													return res.sendStatus(409);
 												}
 											})
-											return res.sendStatus(401);
+											return res.sendStatus(409);
 										}
 										return res.sendStatus(200);
 									})
@@ -56,26 +57,26 @@ export function modifyPlaceList(req, res, next) {
 		Place.findOneAndUpdate({placeID: req.body.placeID}, {$pull: { users: req.body.username } }, 
 								(err) => { 
 									if (err) {
-										return res.sendStatus(401);
+										return res.sendStatus(409);
 									}
 									User.update({username: req.body.username}, {$pull: { places: req.body.placeID } },(err) => {
 										if (err) {
 											Place.update({placeID: req.body.placeID},{$addToSet: { users: req.body.username } }, (err) => {
 												if (err) {
-													return res.sendStatus(401);
+													return res.sendStatus(409);
 												}
 											})
-											return res.sendStatus(401);
+											return res.sendStatus(409);
 										}
 										return res.sendStatus(200);
 									})
 								})
 	} else {
-		return res.sendStatus(401);
+		return res.sendStatus(400);
 	}
 }
 
-export function register(req, res, next) {
+export function register(req, res) {
 	const newUser = new User({
 	    username: req.body.username,
 	    password: req.body.password
@@ -105,17 +106,26 @@ export function register(req, res, next) {
 }
 
 //returns - if exist - users lists of bars currently found by search on client
-export function getUsersBarsData(req, res, next) {
-	console.log(req.user)
-	console.log(req.session)
-	if(!req.query.bars) return res.sendStatus(401);
+export function getUsersBarsData(req, res) {
+	if(!req.query.bars) return res.sendStatus(400);
 	const { bars } = req.query;
-	Place.find( {placeID: { $in: bars }}, 'placeID users', (err, docs) => {
+	Place.find( {placeID: { $in: bars }}, 'placeID users', (err, locationPlaces) => {
 		if (err) {
-			return res.sendStatus(401);
+			return res.sendStatus(409);
 		}
-		return res.json({places: docs});
+		const username = req.user && req.user.username || null
+			,profile = req.user && req.user.profile || null,
+			userPlaces = req.user && req.user.places || null;
+		
+		return res.json({locationPlaces, username , profile, userPlaces});
 	} )
 	
 }
 
+export function getUserData(req, res) {
+	if(!req.user){
+		return res.sendStatus(401);
+	}
+	const {places, username, profile} = req.user;
+	return res.json({places, username, profile});
+}

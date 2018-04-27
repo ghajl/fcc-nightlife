@@ -34,11 +34,35 @@ export function user (state = initialState, action) {
         case actionTypes.FIND_PLACES:
         case actionTypes.LOGOUT_USER:
         case actionTypes.SIGNUP_USER:
+        case actionTypes.FETCH_USER:
         case actionTypes.MANUAL_LOGIN_USER:
             return {
                 ...state,
                 ...{ isWaiting: true }
             }
+        case actionTypes.FETCH_USER_SUCCESS:
+        console.log(action)
+            return {
+                ...state,
+                ...{
+                    isWaiting: false,
+                    authenticated: true,
+                    username: action.username,
+                    userBars: action.places,
+                }
+            }    
+        case actionTypes.FETCH_USER_ERROR:
+            return {
+                ...state,
+                ...{
+                    isWaiting: false,
+                    authenticated: false,
+                    username: "Guest",
+                    userBars: [], 
+                    highlighted: null,
+                    guestBar: null
+                }
+            }                  
         case actionTypes.LOGIN_SUCCESS_USER:
         case actionTypes.SIGNUP_SUCCESS_USER:
             return {
@@ -88,14 +112,36 @@ export function user (state = initialState, action) {
                     bars: null }
             }
         case actionTypes.FIND_PLACES_SUCCESS:
-            return {
-                ...state,
-                ...{ isWaiting: false,
+            {
+                let data = {
+                    isWaiting: false,
                     bars: action.data,
                     location: action.address,
                     lat: action.lat,
-                    lng: action.lng }
+                    lng: action.lng
+                }
+                let userData = action.username == null ? 
+                    { 
+                        username: "Guest",
+                        authenticated: false,
+                        userBars: [], 
+                        highlighted: null,
+                        guestBar: null
+                    }
+                    :
+                    {
+                        username: action.username,
+                        authenticated: true,
+                        userBars: action.userPlaces, 
+                    }
+
+                return {
+                    ...state,
+                    ...data,
+                    ...userData
+                }    
             }
+            
         case actionTypes.REMOVE_FROM_LIST_ERROR:
         case actionTypes.ADD_TO_LIST_ERROR:
         case actionTypes.FIND_LOCATION_ERROR: 

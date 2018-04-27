@@ -1,5 +1,5 @@
 import SearchForm from "../components/SearchForm"
 import { connect } from 'react-redux';
-import { showPlaces, setLocation, setPlacesLocation } from '../../actions';
+import { setLocation, setPlacesLocation } from '../../actions';
 
-export default connect(() => ({}), { showPlaces, setLocation, setPlacesLocation })(SearchForm);
+export default connect(() => ({}), { setLocation, setPlacesLocation })(SearchForm);
