@@ -68,7 +68,6 @@ class Header extends Component{
     signUp = (event) => {
 
         event.preventDefault();
-        console.log(this.props)
         this.handleMenuClose();
         if(this.props.path.pathname != '/signup') this.props.toSignUp(this.props.path);
         
@@ -79,7 +78,7 @@ class Header extends Component{
         const open = props.loginMenuOpen;
         return (
         <div className={classes.nav}>
-        	<AppBar color="secondary">
+        	<AppBar color="default">
         		<Toolbar>
 					<Typography color="secondary" component={Link} to="/" type="title" className={classes.logo}>
 		                BarCoordinator

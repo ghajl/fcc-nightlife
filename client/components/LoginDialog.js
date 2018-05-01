@@ -1,13 +1,21 @@
 import React, { Component } from 'react';
 import Button from 'material-ui/Button';
+import LogInWithFB from './LogInWithFB';
 import TextField from 'material-ui/TextField';
 import Dialog, {
     DialogActions,
     DialogContent,
     DialogTitle,
 } from 'material-ui/Dialog';
+import injectSheet from 'react-jss';
 
-
+const styles = {
+    fbLogin: {
+        backgroundColor: '#F8F8F8',
+        textAlign:'center'
+    }
+}
+        
 class LoginDialog extends Component {
     constructor(){
         super();
@@ -34,6 +42,7 @@ class LoginDialog extends Component {
     }
     
     render() {
+        console.log(this.props)
         return (
           <div>
             <Dialog
@@ -86,10 +95,13 @@ class LoginDialog extends Component {
                         Cancel
                     </Button>
                 </DialogActions>
+                <div className={this.props.classes.fbLogin}>
+                <LogInWithFB />
+                </div>
             </Dialog>
           </div>
         );
     }
 }
 
-export default LoginDialog
+export default injectSheet(styles)(LoginDialog)

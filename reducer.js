@@ -5,14 +5,16 @@ export const initialState = {
     isWaiting: false,
     authenticated: false,
     username: "Guest",
+    facebookProfile: {},
+    facebookID: '',
     userBars: [],
     message: [],
     router: null,
-    bars: null,
+    locationBars: null,
     location: defaultLocation.address,
     lat: defaultLocation.lat,
     lng: defaultLocation.lng,
-    signupReturnPath: "/",
+    returnPath: "/",
     guestBar: null,
     loginDialogOpen: false,
     loginMenuOpen: false,
@@ -49,6 +51,7 @@ export function user (state = initialState, action) {
                     authenticated: true,
                     username: action.username,
                     userBars: action.places,
+                    facebookProfile: action.profile
                 }
             }    
         case actionTypes.FETCH_USER_ERROR:
@@ -58,6 +61,7 @@ export function user (state = initialState, action) {
                     isWaiting: false,
                     authenticated: false,
                     username: "Guest",
+                    facebookProfile: {},
                     userBars: [], 
                     highlighted: null,
                     guestBar: null
@@ -70,6 +74,7 @@ export function user (state = initialState, action) {
                 ...{ isWaiting: false,
                     authenticated: true,
                     username: action.username,
+                    facebookProfile: {},
                     userBars: action.places,
                     message:  [...state.message, action.message],
                     messageDialogOpen: true,
@@ -98,6 +103,7 @@ export function user (state = initialState, action) {
                 ...{ isWaiting: false,
                     authenticated: false,
                     username: "Guest",
+                    facebookProfile: {},
                     userBars: [], 
                     highlighted: null,
                     guestBar: null }
@@ -109,13 +115,13 @@ export function user (state = initialState, action) {
                     location: action.location,
                     lat: action.lat,
                     lng: action.lng,
-                    bars: null }
+                    locationBars: null }
             }
         case actionTypes.FIND_PLACES_SUCCESS:
             {
                 let data = {
                     isWaiting: false,
-                    bars: action.data,
+                    locationBars: action.data,
                     location: action.address,
                     lat: action.lat,
                     lng: action.lng
@@ -156,20 +162,20 @@ export function user (state = initialState, action) {
         case actionTypes.ADD_TO_LIST_SUCCESS:
             {
                 //get index of bar in current location bars list
-                let i = state.bars.reduce((acc, item, index) => item.id === action.placeID ? 
+                let i = state.locationBars.reduce((acc, item, index) => item.id === action.placeID ? 
                                                            index : acc ,-1);
                 let newBar = null;
                 //check if the current user already in the list
-                if(~state.bars[i].users.indexOf(state.username)){
+                if(~state.locationBars[i].users.indexOf(state.username)){
                     return {
                         ...state,
                         ...{ isWaiting: false}
                     }    
                 } else {
-                    newBar = {...state.bars[i], ...{users: [...state.bars[i].users, state.username]}}
+                    newBar = {...state.locationBars[i], ...{users: [...state.locationBars[i].users, state.username]}}
                   
                   
-                    let newPlaces =  [ ...state.bars.slice(0,i), newBar, ...state.bars.slice(i + 1)]
+                    let newPlaces =  [ ...state.locationBars.slice(0,i), newBar, ...state.locationBars.slice(i + 1)]
                 
                 
                     return {
@@ -178,20 +184,20 @@ export function user (state = initialState, action) {
                             message: [...state.message, action.message],
                             messageDialogOpen: true,
                             userBars: [...state.userBars,action.placeID],
-                            bars: newPlaces,
+                            locationBars: newPlaces,
                             guestBar: null}
                 }    
             }
         }
         case actionTypes.REMOVE_FROM_LIST_SUCCESS:
         {
-            let placeIndex = state.bars.reduce((acc, item, index) => item.id === action.placeID ? 
+            let placeIndex = state.locationBars.reduce((acc, item, index) => item.id === action.placeID ? 
                                                        index : acc ,-1);
-            let usersListIndex = state.bars[placeIndex].users.indexOf(state.username);
+            let usersListIndex = state.locationBars[placeIndex].users.indexOf(state.username);
             //remove user from users array in bar
-            state.bars[placeIndex].users.splice(usersListIndex, 1);
-            let newBar = {...state.bars[placeIndex], ...{users: [...state.bars[placeIndex].users]}}
-            let newPlaces =  [ ...state.bars.slice(0,placeIndex), newBar, ...state.bars.slice(placeIndex + 1)]
+            state.locationBars[placeIndex].users.splice(usersListIndex, 1);
+            let newBar = {...state.locationBars[placeIndex], ...{users: [...state.locationBars[placeIndex].users]}}
+            let newPlaces =  [ ...state.locationBars.slice(0,placeIndex), newBar, ...state.locationBars.slice(placeIndex + 1)]
             let newUserBars = [...state.userBars];
             let index = newUserBars.indexOf(action.placeID);
             //remove bar from bars array in user
@@ -204,7 +210,7 @@ export function user (state = initialState, action) {
                     message: [...state.message, action.message],
                     messageDialogOpen: true,
                     userBars: newUserBars,
-                    bars: newPlaces}
+                    locationBars: newPlaces}
             }       
         }
         case actionTypes.HIGHLIGHT_PLACE:
@@ -218,7 +224,7 @@ export function user (state = initialState, action) {
         case actionTypes.SAVE_PATH:
             return {
                 ...state,
-                ...{ signupReturnPath: action.path}
+                ...{ returnPath: action.path}
             }
         case actionTypes.SAVE_GUEST_BAR:
             return {

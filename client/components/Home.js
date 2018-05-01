@@ -86,14 +86,13 @@ class Home extends Component{
 	
 
 	render() {
-		// console.log(this.props)
 		return (
 			<Page location={this.props.location}>
 			  	<div id="content" className={this.props.classes.map}>
 			  	<HomeMap 
 			  		isMarkerShown
 			  		containerElement={<div style={{flex: '1 0 auto',display: 'flex',
-        'flex-direction': 'column', }} />}
+        flexDirection: 'column', }} />}
         		/>
 			  	</div>
 			  	<div className={this.props.classes.searchBar}>

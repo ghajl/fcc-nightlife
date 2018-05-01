@@ -5,6 +5,7 @@ import TextField from 'material-ui/TextField';
 import { withStyles } from 'material-ui/styles';
 import getErrorMessages from '../helpers/InputCheck';
 import Page from './Page';
+import LogInWithFB from './LogInWithFB';
 
 const styles = theme => ({
 	root: {
@@ -42,6 +43,10 @@ const styles = theme => ({
     },
     button: {
   	  	marginTop:50
+    },
+    fbLogin: {
+        textAlign:'center',
+        marginTop:50
     }
 });
 
@@ -124,6 +129,9 @@ class Signup extends Component{
 	                sign up
 	            </Button>
 	               </div>
+	               <div className={this.props.classes.fbLogin}>
+                <LogInWithFB/>
+                </div>
 			</div>	
 		  	</div>
 		  </Page>

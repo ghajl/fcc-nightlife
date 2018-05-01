@@ -10,7 +10,7 @@ import {
 
 const mapStateToProps = ({reducer}) =>(
 	{ 
-		bars: reducer.user.bars, 
+		bars: reducer.user.locationBars, 
 		lat: reducer.user.lat, 
 		lng: reducer.user.lng,
 		footerHeight: reducer.user.footerHeight 

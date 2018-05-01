@@ -60,6 +60,7 @@ const styles = {
 const Footer = (props) => {
 	const {classes} = props;
        
+       
 	return (
 		<div className={classes.wrapper} ref={elem => { if(elem) props.footerHeight(elem.offsetHeight + 1);}}>
 			<div className={classes.container}>

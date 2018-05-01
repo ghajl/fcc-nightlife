@@ -240,7 +240,7 @@ export function manualLogin(data) {
 			 .then((response) => {
 			 		dispatch(loginSuccess(data.username, response.data.places, 'You have been successfully logged in!'));
 
-		            //add user to users list in Place if user came here from add button on place cart
+		            //add user to users list of bar if user came here from add button on place cart
 		            if(getState().reducer.user.guestBar){
 		            	const addData = {
 				        	placeID: getState().reducer.user.guestBar,
@@ -268,7 +268,7 @@ export function manualLogin(data) {
 
 export function signUp(data) {
     return (dispatch, getState) => {
-    	const path = getState().reducer.user.signupReturnPath;
+    	const path = getState().reducer.user.returnPath;
     	dispatch(beginSignUp());
 		return axios.post('/signup', data)
 			.then(response => {
@@ -286,13 +286,11 @@ export function signUp(data) {
 							.then(response => {
 								dispatch(addToListSuccess(addData.placeID, 'You have successfully added to the list!'));
 						        dispatch(push(path));
-
 						    })
 						    .catch((err) => {
 						        dispatch(addToListError("Add to the bar request could not be completed"));
 						    });
 		            } else {
-		            	
 		            	dispatch(push(path));
 		            }
 
@@ -300,9 +298,20 @@ export function signUp(data) {
 		       
 		    })
 		    .catch((err) => {
-		        dispatch(signUpError('Something went wrong when signing up'));
+		    	if (err.response && err.response.status == '409'){
+			        dispatch(signUpError('This username is already in use'));
+		    	} else {
+		    		dispatch(signUpError('Something went wrong when signing up'));
+		    	}
+		        
 		    });
 	};
+}
+
+export function facebookLogIn(){
+	return (dispatch, getState) => {
+    	console.log("dd")
+				}
 }
 
 export function logOut() {
@@ -312,16 +321,16 @@ export function logOut() {
 	    dispatch(beginLogout());
 
 	    return axios.get('/logout')
-	      .then((response) => {
-	      		getPersistor().purge();
-	            dispatch(logoutSuccess());
-				
-	      })
-	      .catch((err) => {
+			        .then((response) => {
+			      		getPersistor().purge();
+			            dispatch(logoutSuccess());
+						
+			        })
+			        .catch((err) => {
 
-	        dispatch(logoutError());
-	      });
-	  };
+				        dispatch(logoutError());
+				    });
+    };
 }
 
 export function findLocation(address) {

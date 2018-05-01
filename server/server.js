@@ -90,7 +90,6 @@ passport.use(new FacebookStrategy({
     		return cb(null, user);
     	}
       	const newUser = new User();
-      	console.log(profile)
       	newUser.fb = profile.id;
       	newUser.profile.givenName = profile.name && profile.name.givenName || '';
       	newUser.profile.familyName = profile.name && profile.name.familyName || '';
@@ -138,11 +137,7 @@ app.use(passport.session());
 app.options('*', cors()) ;
 //save url for redirecting after successful facebook authentication
 app.use((req, res, next) => {
-	if(req.path !== '/login' &&
-	    req.path !== '/signup' && 
-	    !req.path.match(/^\/auth/) &&
-	    !req.path.match(/^\/data/) &&
-	    !req.path.match(/\./)) {
+	if(req.path.match(/^\/auth/)) {
 			req.session.returnTo = '/';
 		}
 	next();

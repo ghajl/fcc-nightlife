@@ -11,7 +11,7 @@ import { PersistGate } from 'redux-persist/es/integration/react';
 import LoginDialog from '../components/LoginDialog';
 import NotFound from '../components/NotFound';
 import MessageDialog from '../components/MessageDialog';
-import { fetchUserData, manualLogin, closeLoginDialog, openLoginDialog, toSignUp, closeMessage } from '../../actions';
+import { fetchUserData, manualLogin, facebookLogIn, closeLoginDialog, openLoginDialog, toSignUp, closeMessage } from '../../actions';
 import { connect } from 'react-redux';
 import {defaultLocation} from '../../util/locations';
 import { withStyles } from 'material-ui/styles';
@@ -36,7 +36,7 @@ class Root extends Component{
 		    
 	    };
 	componentDidMount = () => {
-	    this.props.fetchUserData();
+		this.props.fetchUserData();
     }
 	handleClickOpen = () => {
 	    this.props.openLoginDialog();
@@ -57,14 +57,17 @@ class Root extends Component{
 				})
 		}
 	}
+	
 	toSignUp = path => {
 		this.props.closeLoginDialog();
 		this.props.toSignUp(path);
 	}
+	
 	handleClose = () => {
 		this.setState({ usernameErrorText: "", passwordErrorText: "" });
 	    this.props.closeLoginDialog();
 	}
+	
 	handleCloseMessage = () => {
 		this.props.closeMessage();
 	}
@@ -72,7 +75,7 @@ class Root extends Component{
 	render() {
 		const { store, history, persistor, classes } = this.props;
 		const state = store.getState();
-		const { user: {authenticated}} = state.reducer;
+		const { user: {authenticated, returnPath}} = state.reducer;
 		return	(
 			
 		<Provider store={store}>
@@ -94,6 +97,11 @@ class Root extends Component{
 		        											))
 												    }/>
 			        <Route path="/places" component={Places}/>
+			        <Route path="/return-from-success-login" render={() => {
+			        	this.props.facebookLogIn();
+			        	return (
+			        	<Redirect to={returnPath} />
+			        	)}}/>
 			        <Route component={NotFound} />
 		        </Switch>
 		        
@@ -130,4 +138,4 @@ export default connect(({reducer}) =>(
 		message: reducer.user.message, 
 		isOpenMessage: reducer.user.messageDialogOpen,
 		loading: reducer.user.isWaiting
-	}), { fetchUserData, manualLogin, closeLoginDialog, openLoginDialog, toSignUp, closeMessage } )(withStyles(styles)(Root))
+	}), { fetchUserData, manualLogin, facebookLogIn, closeLoginDialog, openLoginDialog, toSignUp, closeMessage } )(withStyles(styles)(Root))
