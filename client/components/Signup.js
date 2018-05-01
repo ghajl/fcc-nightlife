@@ -87,6 +87,7 @@ class Signup extends Component{
 	};
 	render(){
 		const { classes} = this.props;
+		
 		return (
 		  <Page location={this.props.location} >
 		  <div className={classes.root}>

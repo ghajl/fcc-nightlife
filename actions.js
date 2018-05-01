@@ -172,7 +172,7 @@ function beginRemoveFromList() {
 }
 
 function removeFromListSuccess(placeID, message) {
-	console.log(placeID)
+	
 	return { type: actionTypes.REMOVE_FROM_LIST_SUCCESS,
 			placeID,
 			message
@@ -252,12 +252,15 @@ export function manualLogin(data) {
 						return axios.post('/places', addData)
 							.then(response => {
 								dispatch(addToListSuccess(addData.placeID, 'You have successfully added to the list!'));
+								dispatch(push("/return-from-success-login"));
 						        
 						    })
 						    .catch((err) => {
 						        dispatch(addToListError("Add to the bar request could not be completed"));
 						    });
-		            } 
+		            }  else {
+		            	dispatch(push("/return-from-success-login"));
+		            }
 		            
 		      })
 		      .catch((err) => {
@@ -268,7 +271,7 @@ export function manualLogin(data) {
 
 export function signUp(data) {
     return (dispatch, getState) => {
-    	const path = getState().reducer.user.returnPath;
+    	// const path = getState().reducer.user.returnPath;
     	dispatch(beginSignUp());
 		return axios.post('/signup', data)
 			.then(response => {
@@ -285,13 +288,13 @@ export function signUp(data) {
 						return axios.post('/places', addData)
 							.then(response => {
 								dispatch(addToListSuccess(addData.placeID, 'You have successfully added to the list!'));
-						        dispatch(push(path));
+						        dispatch(push("/return-from-success-login"));
 						    })
 						    .catch((err) => {
 						        dispatch(addToListError("Add to the bar request could not be completed"));
 						    });
 		            } else {
-		            	dispatch(push(path));
+		            	dispatch(push("/return-from-success-login"));
 		            }
 
 
@@ -308,10 +311,18 @@ export function signUp(data) {
 	};
 }
 
-export function facebookLogIn(){
+export function returnFromLogIn(){
 	return (dispatch, getState) => {
-    	console.log("dd")
-				}
+    	const path = getState().reducer.user.returnPath;
+    	
+    	dispatch(push(path));
+	}
+}
+
+export function saveReturnTo(path){
+	return (dispatch) => {
+		dispatch(saveCurrentPath(path.pathname+path.search));
+	}
 }
 
 export function logOut() {
@@ -422,8 +433,7 @@ export function fetchUserData() {
 		dispatch(beginFetchUserData());
 		return axios.get('/user')
 	        .then((response) => {
-	      		console.log(response);
-
+	      		
 	            dispatch(fetchUserDataSuccess(response.data.username, response.data.places, response.data.profile));
 	        })
 	        .catch((err) => {
@@ -491,9 +501,9 @@ export function toLogIn() {
 	}
 }
 
-export function toSignUp(path) {
+export function toSignUp() {
 	return (dispatch) => {
-		dispatch(saveCurrentPath(path.pathname+path.search));
+		// dispatch(saveCurrentPath(path.pathname+path.search));
 		dispatch(push("/signup"));
 	}
 }

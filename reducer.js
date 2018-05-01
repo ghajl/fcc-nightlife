@@ -43,7 +43,6 @@ export function user (state = initialState, action) {
                 ...{ isWaiting: true }
             }
         case actionTypes.FETCH_USER_SUCCESS:
-        console.log(action)
             return {
                 ...state,
                 ...{
