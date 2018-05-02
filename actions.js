@@ -45,12 +45,14 @@ function beginFetchUserData(){
 	return { type: actionTypes.FETCH_USER };
 }
 
-function fetchUserDataSuccess(username, places, profile){
+function fetchUserDataSuccess(username, places, profile, facebookID){
+	console.log(facebookID)
 	return { 
 		type: actionTypes.FETCH_USER_SUCCESS,
 		username,
 	    places,
-	    profile
+	    profile,
+	    facebookID
 	};
 }
 
@@ -433,8 +435,8 @@ export function fetchUserData() {
 		dispatch(beginFetchUserData());
 		return axios.get('/user')
 	        .then((response) => {
-	      		
-	            dispatch(fetchUserDataSuccess(response.data.username, response.data.places, response.data.profile));
+	      		const {username, places, profile, facebookID} = response.data;
+	            dispatch(fetchUserDataSuccess(username, places, profile, facebookID));
 	        })
 	        .catch((err) => {
 				console.log(err);

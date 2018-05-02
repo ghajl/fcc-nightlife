@@ -127,6 +127,6 @@ export function getUserData(req, res) {
 		return res.sendStatus(401);
 	}
 	console.log(req.user)
-	const {places, username, profile, fb} = req.user;
-	return res.json({places, username, profile, fb});
+	const {places, username, profile, facebookID} = req.user;
+	return res.json({places, username, profile, facebookID});
 }

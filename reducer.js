@@ -50,7 +50,8 @@ export function user (state = initialState, action) {
                     authenticated: true,
                     username: action.username,
                     userBars: action.places,
-                    facebookProfile: action.profile
+                    facebookProfile: action.profile,
+                    facebookID: action.facebookID
                 }
             }    
         case actionTypes.FETCH_USER_ERROR:
