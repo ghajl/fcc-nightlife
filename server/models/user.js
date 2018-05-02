@@ -4,15 +4,21 @@ import mongoose from "mongoose";
 const UserSchema = new mongoose.Schema({
 	username: { 
 		type: String,
-		unique: true
+		unique: true,
+		sparse: true
 	},
 	password: String,
 	places:[String]	,
 	profile: {
-	    givenName: { type: String, default: '' },
-	    familyName: { type: String, default: '' }
+	    givenName: String,
+	    familyName: String,
+	    displayName: String
 	},
-	fb: String
+	facebookID: { 
+		type: String,
+		unique: true,
+		sparse: true
+	}
 })
 
 

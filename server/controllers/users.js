@@ -126,6 +126,7 @@ export function getUserData(req, res) {
 	if(!req.user){
 		return res.sendStatus(401);
 	}
-	const {places, username, profile} = req.user;
-	return res.json({places, username, profile});
+	console.log(req.user)
+	const {places, username, profile, fb} = req.user;
+	return res.json({places, username, profile, fb});
 }

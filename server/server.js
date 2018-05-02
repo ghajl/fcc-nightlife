@@ -78,10 +78,10 @@ passport.use(new FacebookStrategy({
     clientID: facebookId,
     clientSecret: facebookSecret,
     callbackURL: 'https://fcc-barcoordinator.herokuapp.com/auth/facebook/callback',
-    profileFields: ['id', 'displayName', 'name', 'email']
+    profileFields: ['id', 'displayName', 'name']
   },
   function(accessToken, refreshToken, profile, cb) {
-    User.findOne({ fb: profile.id }, function (err, user) {
+    User.findOne({ facebookID: profile.id }, function (err, user) {
     	if(err) { 
     		console.log(err);
     		return cb(err); 
@@ -90,7 +90,7 @@ passport.use(new FacebookStrategy({
     		return cb(null, user);
     	}
       	const newUser = new User();
-      	newUser.fb = profile.id;
+      	newUser.facebookID = profile.id;
       	newUser.profile.givenName = profile.name && profile.name.givenName || '';
       	newUser.profile.familyName = profile.name && profile.name.familyName || '';
       	newUser.profile.displayName = profile.displayName || 'Facebook User';
