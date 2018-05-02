@@ -12,6 +12,7 @@ const mapStateToProps = ({reducer}) =>(
 	{
 		username: reducer.user.username, 
 		facebookProfile: reducer.user.facebookProfile, 
+		facebookID: reducer.user.facebookID, 
 		isAuthenticated: reducer.user.authenticated, 
 		loginMenuOpen: reducer.user.loginMenuOpen
 	}
