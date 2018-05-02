@@ -276,6 +276,22 @@ export function user (state = initialState, action) {
                 ...state,
                 ...{ headerHeight: action.height}
             }
+        case actionTypes.START_FACEBOOK_LOGIN:
+            return {
+                ...state,
+                ...{ 
+                    loginDialogOpen: false,
+                    isWaiting: true
+                }
+            }
+        case actionTypes.END_FACEBOOK_LOGIN:
+            return {
+                ...state,
+                ...{ 
+                    
+                    isWaiting: false
+                }
+            }
         default:
             return state
     }

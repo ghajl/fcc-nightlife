@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Button from 'material-ui/Button';
-import LogInWithFB from './LogInWithFB';
+import LogInWithFB from '../containers/LogInWithFB';
 import TextField from 'material-ui/TextField';
 import Dialog, {
     DialogActions,

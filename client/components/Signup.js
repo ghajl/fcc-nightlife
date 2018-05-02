@@ -5,7 +5,7 @@ import TextField from 'material-ui/TextField';
 import { withStyles } from 'material-ui/styles';
 import getErrorMessages from '../helpers/InputCheck';
 import Page from './Page';
-import LogInWithFB from './LogInWithFB';
+import LogInWithFB from '../containers/LogInWithFB';
 
 const styles = theme => ({
 	root: {

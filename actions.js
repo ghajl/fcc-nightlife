@@ -38,7 +38,9 @@ export const actionTypes = {
 	CLOSE_LOGIN_MENU: 'CLOSE_LOGIN_MENU',
 	HIGHLIGHT_PLACE: 'HIGHLIGHT_PLACE',
 	FOOTER_HEIGHT: 'FOOTER_HEIGHT',
-	HEADER_HEIGHT: 'HEADER_HEIGHT'
+	HEADER_HEIGHT: 'HEADER_HEIGHT',
+	START_FACEBOOK_LOGIN: 'START_FACEBOOK_LOGIN',
+	END_FACEBOOK_LOGIN: 'END_FACEBOOK_LOGIN'
 }
 
 function beginFetchUserData(){
@@ -46,7 +48,6 @@ function beginFetchUserData(){
 }
 
 function fetchUserDataSuccess(username, places, profile, facebookID){
-	console.log(facebookID)
 	return { 
 		type: actionTypes.FETCH_USER_SUCCESS,
 		username,
@@ -233,6 +234,16 @@ export function closeLoginMenu() {
 		 };
 }
 
+export function startFacebookLogin(){
+	return { type: actionTypes.START_FACEBOOK_LOGIN
+		 };
+}
+
+export function endFacebookLogin(){
+	return { type: actionTypes.END_FACEBOOK_LOGIN
+		 };
+}
+
 export function manualLogin(data) {
 
 	return (dispatch, getState) => {
@@ -270,6 +281,8 @@ export function manualLogin(data) {
 		      });
 		}
 }
+
+
 
 export function signUp(data) {
     return (dispatch, getState) => {
