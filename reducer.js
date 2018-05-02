@@ -62,6 +62,7 @@ export function user (state = initialState, action) {
                     authenticated: false,
                     username: "Guest",
                     facebookProfile: {},
+                    facebookID: null,
                     userBars: [], 
                     highlighted: null,
                     guestBar: null
@@ -75,6 +76,7 @@ export function user (state = initialState, action) {
                     authenticated: true,
                     username: action.username,
                     facebookProfile: {},
+                    facebookID: null,
                     userBars: action.places,
                     message:  [...state.message, action.message],
                     messageDialogOpen: true,
@@ -104,6 +106,7 @@ export function user (state = initialState, action) {
                     authenticated: false,
                     username: "Guest",
                     facebookProfile: {},
+                    facebookID: null,
                     userBars: [], 
                     highlighted: null,
                     guestBar: null }
