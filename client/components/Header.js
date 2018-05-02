@@ -97,7 +97,7 @@ class Header extends Component{
                         </IconButton>
                         ) : (
                         <React.Fragment>
-                        <div className={classes.text}>Hello, {username}!</div>
+                        <div className={classes.text}>Hello, {authenticatedUserName}!</div>
                         <div className={classes.login}>
                             {isAuthenticated ? (
 
@@ -136,7 +136,7 @@ class Header extends Component{
                         onClose={this.handleMenuClose}
 
                     >
-                        <ListItem className={classes.text}>{username}</ListItem>
+                        <ListItem className={classes.text}>{authenticatedUserName}</ListItem>
                         {isAuthenticated ? (
                             <MenuItem component={Link} to="/logout" onClick={this.logout} className={classes.text}>LOG OUT</MenuItem>
                             
