@@ -75,7 +75,7 @@ class Header extends Component{
 
     render() {
         const {classes, isAuthenticated, username, facebookProfile, ...props} = this.props;
-        const authenticatedUserName = 
+        // const authenticatedUserName = 
         const open = props.loginMenuOpen;
         return (
         <div className={classes.nav}>
