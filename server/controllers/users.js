@@ -34,16 +34,19 @@ export function logout(req, res) {
 //add/remove place id to/from list of places in User
 export function modifyPlaceList(req, res) {
 	if(!req.isAuthenticated()) return res.sendStatus(401); //user logged out on another tab
-	if(req.user.username !== req.body.username) return res.sendStatus(403); //user logged in to another account on different tab
+	if((req.user.username != null && req.body.username != null && req.user.username !== req.body.username) ||
+		(req.user.facebookID != null && req.body.facebookID != null && req.user.facebookID !== req.body.facebookID)) return res.sendStatus(403); //user logged in to another account on different tab
+	const barUsersData = req.body.facebookID != null ? { facebookUsers: req.body.facebookID } : { users: req.body.username };
+	const userData = req.body.facebookID != null ? { facebookID: req.body.facebookID } : { username: req.body.username };
 	if(req.body.operation === 'ADD'){
-		Place.findOneAndUpdate({placeID: req.body.placeID}, {$addToSet: { users: req.body.username } }, 
+		Place.findOneAndUpdate({placeID: req.body.placeID}, {$addToSet: barUsersData }, 
 								{upsert: true}, (err) => { 
 									if (err) {
 										return res.sendStatus(409);
 									}
-									User.update({username: req.body.username}, {$addToSet: { places: req.body.placeID } },(err) => {
+									User.update(userData, {$addToSet: { places: req.body.placeID } },(err) => {
 										if (err) {
-											Place.update({placeID: req.body.placeID},{$pull: { users: req.body.username } }, (err) => {
+											Place.update({placeID: req.body.placeID},{$pull: barUsersData }, (err) => {
 												if (err) {
 													return res.sendStatus(409);
 												}
@@ -54,14 +57,14 @@ export function modifyPlaceList(req, res) {
 									})
 								})
 	} else if (req.body.operation === 'REMOVE') {
-		Place.findOneAndUpdate({placeID: req.body.placeID}, {$pull: { users: req.body.username } }, 
+		Place.findOneAndUpdate({placeID: req.body.placeID}, {$pull: barUsersData }, 
 								(err) => { 
 									if (err) {
 										return res.sendStatus(409);
 									}
-									User.update({username: req.body.username}, {$pull: { places: req.body.placeID } },(err) => {
+									User.update(userData, {$pull: { places: req.body.placeID } },(err) => {
 										if (err) {
-											Place.update({placeID: req.body.placeID},{$addToSet: { users: req.body.username } }, (err) => {
+											Place.update({placeID: req.body.placeID},{$addToSet: barUsersData }, (err) => {
 												if (err) {
 													return res.sendStatus(409);
 												}
@@ -109,15 +112,16 @@ export function register(req, res) {
 export function getUsersBarsData(req, res) {
 	if(!req.query.bars) return res.sendStatus(400);
 	const { bars } = req.query;
-	Place.find( {placeID: { $in: bars }}, 'placeID users', (err, locationPlaces) => {
+	Place.find( {placeID: { $in: bars }}, 'placeID users facebookUsers', (err, locationPlaces) => {
 		if (err) {
 			return res.sendStatus(409);
 		}
-		const username = req.user && req.user.username || null
-			,profile = req.user && req.user.profile || null,
+		const username = req.user && req.user.username || null,
+			profile = req.user && req.user.profile || null,
+			facebookID = req.user && req.user.facebookID || null,
 			userPlaces = req.user && req.user.places || null;
 		
-		return res.json({locationPlaces, username , profile, userPlaces});
+		return res.json({locationPlaces, username , facebookID, profile, userPlaces});
 	} )
 	
 }

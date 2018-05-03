@@ -30,29 +30,32 @@ const PlaceComponent = (props) => {
 
         event.preventDefault();
         event.stopPropagation();
-        const data = {
-        	placeID: props.placeID,
-        	username: props.username,
+        // const data = {
+        // 	placeID: props.placeID,
+        // 	username: props.username,
 
-        }
-		props.addToList(data); 
+        // }
+		props.addToList(props.placeID); 
     }
 
     const remove = (event) => {
 
         event.preventDefault();
         event.stopPropagation();
-        const data = {
-        	placeID: props.placeID,
-        	username: props.username,
+        // const data = {
+        // 	placeID: props.placeID,
+        // 	username: props.username,
 
-        }
-		props.removeFromList(data); 
+        // }
+		props.removeFromList(props.placeID); 
     }
 	
 	
 	const usersList = () => {
     	if (props.isUserGoing) {
+    		if(props.facebookID != null){
+    			
+    		}
     		let i = props.usersInBar.indexOf(props.username);
     		let list = [...props.usersInBar];
     		list.splice(i, 1);

@@ -411,6 +411,7 @@ export function showPlaces(service, address) {
 													location: item.geometry.location, 
 													address: item.vicinity, 
 													users:[],
+													facebookUsers:[],
 													highlighted: false}
 												});
 										//add users to bars
@@ -419,12 +420,13 @@ export function showPlaces(service, address) {
 													if(item.placeID === res[i].id){
 											
 														res[i].users = [...item.users];
+														res[i].facebookUsers = [...item.facebookUsers];
 														break;
 													}
 												}
 											})
-									    const {username, profile, userPlaces} = response.data;
-										dispatch(searchPlacesSuccess(res, address, lat, lng, username, profile, userPlaces));
+									    const {username, facebookID, profile, userPlaces} = response.data;
+										dispatch(searchPlacesSuccess(res, address, lat, lng, username, facebookID, profile, userPlaces));
 										
 									})
 									.catch((err) => {
@@ -458,26 +460,29 @@ export function fetchUserData() {
     };
 }
 
-export function addToList(data) {
+export function addToList(placeID) {
 
     return (dispatch, getState) => {
-    	const {username} = getState().reducer.user;
-    	const addData = {...data, ...{ operation: 'ADD', username }};
+    	const {username, facebookID} = getState().reducer.user;
+    	// console.log(data);
+    	const data = { placeID, operation: 'ADD'};
+    	const addData = facebookID != null ? { ...data, ...{facebookID} } : {...data, ...{ username }};
+    	// console.log(addData);
 	    dispatch(beginAddToList());
 	    
 		return axios.post('/places', addData)
 			.then(response => {
 
-		        dispatch(addToListSuccess(data.placeID, 'You have successfully added to the list!'));
+		        dispatch(addToListSuccess(placeID, 'You have successfully added to the list!'));
 		    })
 		    .catch((err) => {
 		    	if (err.response){
 		    		if(err.response.status == '401') {
 				        dispatch(logoutSuccess());
-				        dispatch(removeFromListError('You are not logged in'));
+				        dispatch(addToListError('You are not logged in'));
 				    }
 				    if(err.response.status == '403') {
-				        dispatch(removeFromListError('You are logged in to another account'));
+				        dispatch(addToListError('You are logged in to another account'));
 				    }
 		    	}
 		        dispatch(addToListError('Add to the bar request could not be completed'));
@@ -485,15 +490,16 @@ export function addToList(data) {
 	};
 }
 
-export function removeFromList(data) {
+export function removeFromList(placeID) {
 
     return (dispatch, getState) => {
-    	const {username} = getState().reducer.user;
-    	const removeData = {...data, ...{ operation: 'REMOVE', username }};
+    	const {username, facebookID} = getState().reducer.user;
+    	const data = { placeID, operation: 'REMOVE'};
+    	const removeData = facebookID != null ? { ...data, ...{facebookID} } : {...data, ...{ username }};
 	    dispatch(beginRemoveFromList());
 		return axios.post('/places', removeData)
 			.then(response => {
-				dispatch(removeFromListSuccess(data.placeID, 'You have successfully removed from the list!'));
+				dispatch(removeFromListSuccess(placeID, 'You have successfully removed from the list!'));
 		    })
 		    .catch((err) => {
 		    	if (err.response){

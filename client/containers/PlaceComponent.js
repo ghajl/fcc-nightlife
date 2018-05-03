@@ -19,9 +19,11 @@ const mapStateToProps = ({reducer}, {data}) => {
 		address: data.address,
 		rating: data.rating,
 		usersInBar: data.users,
+		facebookUsersInBar: data.facebookUsers,
 		isUserGoing: currentIsGoing(reducer.user.userBars, data.id),
 		authenticated: reducer.user.authenticated,
 		username: reducer.user.username,
+		facebookID: reducer.user.facebookID,
 		isHighlighted: isHighlighted(data.id, reducer.user.highlighted)
 	}
 }

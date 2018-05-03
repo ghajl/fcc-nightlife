@@ -9,7 +9,20 @@ export const initialState = {
     facebookID: '',
     userBars: [],
     message: [],
-    router: null,
+    
+    /*
+    locationBars: {
+            id, 
+            name,
+            photoUrl, 
+            rating,
+            location, 
+            address, 
+            users:[],
+            facebookUsers:[],
+            highlighted
+        }[]
+    */
     locationBars: null,
     location: defaultLocation.address,
     lat: defaultLocation.lat,
@@ -165,20 +178,24 @@ export function user (state = initialState, action) {
         case actionTypes.ADD_TO_LIST_SUCCESS:
             {
                 //get index of bar in current location bars list
-                let i = state.locationBars.reduce((acc, item, index) => item.id === action.placeID ? 
-                                                           index : acc ,-1);
-                let newBar = null;
+                let i = state.locationBars.findIndex(elem => elem.id === action.placeID);
+                
+                
                 //check if the current user already in the list
-                if(~state.locationBars[i].users.indexOf(state.username)){
+                const registeredUsers = state.facebookID != null ? 'facebookUsers' : 'users';
+                const userID = state.facebookID != null ? 'facebookID' : 'username';
+                if(~state.locationBars[i][registeredUsers].indexOf(state[userID])){
                     return {
                         ...state,
                         ...{ isWaiting: false}
                     }    
                 } else {
-                    newBar = {...state.locationBars[i], ...{users: [...state.locationBars[i].users, state.username]}}
+                    const barUsersData = state.facebookID != null ? {facebookUsers: [...state.locationBars[i][registeredUsers], state[userID]]} 
+                                                                    : {users: [...state.locationBars[i][registeredUsers], state[userID]]}
+                    const updateBar = {...state.locationBars[i], ...barUsersData};
                   
                   
-                    let newPlaces =  [ ...state.locationBars.slice(0,i), newBar, ...state.locationBars.slice(i + 1)]
+                    const updateLocationBars =  [ ...state.locationBars.slice(0,i), updateBar, ...state.locationBars.slice(i + 1)];
                 
                 
                     return {
@@ -187,33 +204,39 @@ export function user (state = initialState, action) {
                             message: [...state.message, action.message],
                             messageDialogOpen: true,
                             userBars: [...state.userBars,action.placeID],
-                            locationBars: newPlaces,
+                            locationBars: updateLocationBars,
                             guestBar: null}
                 }    
             }
         }
         case actionTypes.REMOVE_FROM_LIST_SUCCESS:
         {
-            let placeIndex = state.locationBars.reduce((acc, item, index) => item.id === action.placeID ? 
-                                                       index : acc ,-1);
-            let usersListIndex = state.locationBars[placeIndex].users.indexOf(state.username);
-            //remove user from users array in bar
-            state.locationBars[placeIndex].users.splice(usersListIndex, 1);
-            let newBar = {...state.locationBars[placeIndex], ...{users: [...state.locationBars[placeIndex].users]}}
-            let newPlaces =  [ ...state.locationBars.slice(0,placeIndex), newBar, ...state.locationBars.slice(placeIndex + 1)]
-            let newUserBars = [...state.userBars];
-            let index = newUserBars.indexOf(action.placeID);
-            //remove bar from bars array in user
+
+            const registeredUsers = state.facebookID != null ? 'facebookUsers' : 'users';
+            const userID = state.facebookID != null ? 'facebookID' : 'username';
+            
+            const placeIndex = state.locationBars.findIndex(elem => elem.id === action.placeID);
+
+            const usersListIndex = state.locationBars[placeIndex][registeredUsers].indexOf(state[userID]);
+            //remove user from users list of bar
+            state.locationBars[placeIndex][registeredUsers].splice(usersListIndex, 1);
+            const barUsersData = state.facebookID != null ? {facebookUsers: [...state.locationBars[placeIndex].facebookUsers]}
+                                                            : {users: [...state.locationBars[placeIndex].users]};
+            const updateBar = {...state.locationBars[placeIndex], ...barUsersData};
+            const updateLocationBars =  [ ...state.locationBars.slice(0,placeIndex), updateBar, ...state.locationBars.slice(placeIndex + 1)]
+            let updateUserBars = [...state.userBars];
+            const index = updateUserBars.indexOf(action.placeID);
+            //remove bar from bars list of user
             if(index >= 0){
-                newUserBars.splice(index, 1);
+                updateUserBars.splice(index, 1);
             }
             return {
                 ...state,
                 ...{ isWaiting: false,
                     message: [...state.message, action.message],
                     messageDialogOpen: true,
-                    userBars: newUserBars,
-                    locationBars: newPlaces}
+                    userBars: updateUserBars,
+                    locationBars: updateLocationBars}
             }       
         }
         case actionTypes.HIGHLIGHT_PLACE:
