@@ -8,8 +8,10 @@ const PlaceSchema = new mongoose.Schema({
 		type: String,
 		unique: true	
 	},
-	users: [String],
-	facebookUsers: [String]
+	users: [String]
+		
+	
+	
 })
 
 

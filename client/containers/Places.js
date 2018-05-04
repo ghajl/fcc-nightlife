@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { 
 	findLocation, 
 	showPlaces, 
+	showList,
 	setHeight, 
 	highlightPlace, 
 	replaceLocation 
@@ -17,4 +18,4 @@ const mapStateToProps = ({reducer}) =>(
 	}
 );
 
-export default connect(mapStateToProps, { findLocation, showPlaces, setHeight, highlightPlace, replaceLocation })(Places);
+export default connect(mapStateToProps, { findLocation, showPlaces, showList, setHeight, highlightPlace, replaceLocation })(Places);

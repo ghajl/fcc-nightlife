@@ -111,6 +111,11 @@ class Places extends Component{
 	    });
 	}
     
+	showList = placeID => {
+		
+		this.props.showList(placeID);
+	}
+
     handleClose = () => {
 	    this.setState({ open: false, list: [] });
     }
@@ -184,6 +189,7 @@ class Places extends Component{
 					            data={item} 
 					            path={this.props.match.url}
 					            openShowListDialog={this.handleClickOpen}	
+					            showList={this.showList}
 		            			markerClick={this.markerClick}
 					            />
 					        
@@ -203,11 +209,7 @@ class Places extends Component{
 				  		/>
 			  	</div>
 			  	
-			  	<UsersListDialog
-            	usersList={this.state.list}
-            	open={this.state.open}
-	            onClose={this.handleClose}
-	        />
+			  	
 	        </div>
 			</Page>
 		)

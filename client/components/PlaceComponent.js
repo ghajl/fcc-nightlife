@@ -54,7 +54,7 @@ const PlaceComponent = (props) => {
 	const usersList = () => {
     	if (props.isUserGoing) {
     		if(props.facebookID != null){
-    			
+
     		}
     		let i = props.usersInBar.indexOf(props.username);
     		let list = [...props.usersInBar];
@@ -69,7 +69,7 @@ const PlaceComponent = (props) => {
     const showList = (event) => {
     	event.preventDefault();
         event.stopPropagation();
-        props.openShowListDialog(usersList())
+        props.showList(props.placeID)
     }
     const loginAndAdd = (event) => {
 
@@ -82,19 +82,16 @@ const PlaceComponent = (props) => {
         props.markerClick(props.placeID);
     }
 
-    //make label about how many people are going to specific bar
-    //if current user also is going - subtract from  the number and add label 'and me' or just 'me' 
-    //if only he is only one in the list
-    const goingNumber = props.isUserGoing ? props.usersInBar.length - 1 : props.usersInBar.length;    
+    //make label about how many people are on the list of the specific bar
+    //if current user also in the list - subtract from  the number and add label 'and me' or just 'me' 
+    //if only current user in the list
+    const goingNumber = props.isUserGoing ? props.usersInBar - 1 : props.usersInBar;    
     const GoingLabel = () => {
     	
-    	return props.isUserGoing ? goingNumber <= 0 ? 
-	    					
-	    						<span className={props.classes.me}>me</span>
-	    					: 
-	    						<React.Fragment>{goingNumber} <span className={props.classes.me}> and me</span></React.Fragment>
-	    					: 
-	    						<span>{goingNumber}</span>	
+    	return props.isUserGoing ? 
+			    	goingNumber <= 0 ? <span className={props.classes.me}>me</span>
+			    					: <React.Fragment>{goingNumber} <span className={props.classes.me}> and me</span></React.Fragment>
+								: <span>{goingNumber == 0 ? '-' : goingNumber}</span>	
     }
     
     return (
@@ -134,9 +131,11 @@ const PlaceComponent = (props) => {
 						            
 						            </div>
 				            ) : (
-				            <div><Button raised color="accent" dense={true} onClick={loginAndAdd}>
-				                Add
-				            </Button></div>)}
+				            <div>
+					            <Button raised color="accent" dense={true} onClick={loginAndAdd}>
+					                Add
+					            </Button>
+				            </div>)}
             
             
 		</div>

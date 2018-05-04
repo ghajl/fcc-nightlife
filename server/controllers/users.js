@@ -15,7 +15,9 @@ export function login(req, res, next) {
 			if(loginErr) {
 				return res.sendStatus(401);
 			}
-			return  res.json({places:user.places});
+			const currentBars = req.body.places;
+			const currentUserBars = currentBars.filter(barID => user.places.indexOf(barID) != -1);
+			return  res.json({places:currentUserBars, userID: user.id});
 		})
 	})(req, res, next)
 }
@@ -34,17 +36,16 @@ export function logout(req, res) {
 //add/remove place id to/from list of places in User
 export function modifyPlaceList(req, res) {
 	if(!req.isAuthenticated()) return res.sendStatus(401); //user logged out on another tab
-	if((req.user.username != null && req.body.username != null && req.user.username !== req.body.username) ||
-		(req.user.facebookID != null && req.body.facebookID != null && req.user.facebookID !== req.body.facebookID)) return res.sendStatus(403); //user logged in to another account on different tab
-	const barUsersData = req.body.facebookID != null ? { facebookUsers: req.body.facebookID } : { users: req.body.username };
-	const userData = req.body.facebookID != null ? { facebookID: req.body.facebookID } : { username: req.body.username };
+	if(req.user.id !== req.body.userID) return res.sendStatus(403); //user logged in to another account on different tab
+	const barUsersData =  { users: req.body.userID }; 
+	
 	if(req.body.operation === 'ADD'){
 		Place.findOneAndUpdate({placeID: req.body.placeID}, {$addToSet: barUsersData }, 
 								{upsert: true}, (err) => { 
 									if (err) {
 										return res.sendStatus(409);
 									}
-									User.update(userData, {$addToSet: { places: req.body.placeID } },(err) => {
+									User.findByIdAndUpdate(req.user.id, {$addToSet: { places: req.body.placeID } },(err) => {
 										if (err) {
 											Place.update({placeID: req.body.placeID},{$pull: barUsersData }, (err) => {
 												if (err) {
@@ -62,7 +63,7 @@ export function modifyPlaceList(req, res) {
 									if (err) {
 										return res.sendStatus(409);
 									}
-									User.update(userData, {$pull: { places: req.body.placeID } },(err) => {
+									User.findByIdAndUpdate(req.user.id, {$pull: { places: req.body.placeID } },(err) => {
 										if (err) {
 											Place.update({placeID: req.body.placeID},{$addToSet: barUsersData }, (err) => {
 												if (err) {
@@ -99,7 +100,7 @@ export function register(req, res) {
 			}
 			return req.logIn(user, (loginErr) => {
 		        if (loginErr) return res.sendStatus(401);
-		        return res.sendStatus(200);
+		        return res.json({userID: user.id});
 	        });
 			
 		})
@@ -111,17 +112,20 @@ export function register(req, res) {
 //returns - if exist - users lists of bars currently found by search on client
 export function getUsersBarsData(req, res) {
 	if(!req.query.bars) return res.sendStatus(400);
+	// if(!req.isAuthenticated()) return res.sendStatus(401); //user logged out on another tab
+
+	// if(req.user.id !== req.query.userID) return res.sendStatus(403); //user logged in to another account on different tab
+
 	const { bars } = req.query;
-	Place.find( {placeID: { $in: bars }}, 'placeID users facebookUsers', (err, locationPlaces) => {
+
+	Place.find( {placeID: { $in: bars }}, 'placeID users', (err, locationPlaces) => {
 		if (err) {
+
 			return res.sendStatus(409);
 		}
-		const username = req.user && req.user.username || null,
-			profile = req.user && req.user.profile || null,
-			facebookID = req.user && req.user.facebookID || null,
-			userPlaces = req.user && req.user.places || null;
-		
-		return res.json({locationPlaces, username , facebookID, profile, userPlaces});
+		const placesUsersData = locationPlaces.map(place => ({placeID: place.placeID, users: place.users.length}));
+
+		return res.json({placesUsersData});
 	} )
 	
 }
@@ -133,4 +137,30 @@ export function getUserData(req, res) {
 	console.log(req.user)
 	const {places, username, profile, facebookID} = req.user;
 	return res.json({places, username, profile, facebookID});
+}
+
+export function getUsersList(req, res) {
+	if(!req.query.placeID) return res.sendStatus(400);
+	
+	Place.findOne({ placeID: req.query.placeID }, 'users', (err, users) => {
+		if (err) {
+			
+			return res.sendStatus(409);
+			
+		}
+		if(users.length){
+			User.find({ _id: { $in: users.users}}, (err, users) => {
+				if (err) {
+				
+					return res.sendStatus(409);
+					
+				}
+				const result = users.map(userdata => userdata.facebookID ? `${userdata.profile.givenName} ${userdata.profile.givenName}` 
+																			: userdata.username);
+				return res.json({users: result});
+			})
+		}
+		return res.sendStatus(409);
+		
+	});
 }

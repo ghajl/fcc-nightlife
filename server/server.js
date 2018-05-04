@@ -78,7 +78,7 @@ passport.use(new FacebookStrategy({
     clientID: facebookId,
     clientSecret: facebookSecret,
     callbackURL: 'https://fcc-barcoordinator.herokuapp.com/auth/facebook/callback',
-    profileFields: ['id', 'displayName', 'name']
+    profileFields: ['id', 'name']
   },
   function(accessToken, refreshToken, profile, cb) {
     User.findOne({ facebookID: profile.id }, function (err, user) {
@@ -93,7 +93,6 @@ passport.use(new FacebookStrategy({
       	newUser.facebookID = profile.id;
       	newUser.profile.givenName = profile.name && profile.name.givenName || '';
       	newUser.profile.familyName = profile.name && profile.name.familyName || '';
-      	newUser.profile.displayName = profile.displayName || 'Facebook User';
       	newUser.save((err) => {
             cb(err, newUser);
         });
@@ -135,13 +134,6 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.options('*', cors()) ;
-//save url for redirecting after successful facebook authentication
-// app.use((req, res, next) => {
-// 	if(req.path.match(/^\/auth/)) {
-// 			req.session.returnTo = '/';
-// 		}
-// 	next();
-// });
 
 app.get('/privacypolicy', function(req, res) {
   res.sendFile(process.cwd() + "/public/privacypolicy.htm");

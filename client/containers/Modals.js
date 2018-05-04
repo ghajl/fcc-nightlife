@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import LoginDialog from '../components/LoginDialog';
 import MessageDialog from '../components/MessageDialog';
-import { manualLogin, returnFromLogIn, closeLoginDialog, openLoginDialog, toSignUp, closeMessage } from '../../actions';
+import UsersListDialog from '../components/UsersListDialog';
+import { manualLogin, returnFromLogIn, closeLoginDialog, openLoginDialog, toSignUp, closeMessage, closeList } from '../../actions';
 import { connect } from 'react-redux';
 import { withStyles } from 'material-ui/styles';
 import { CircularProgress } from 'material-ui/Progress';
@@ -58,6 +59,9 @@ class Modals extends Component{
 		this.props.closeMessage();
 	}
 
+	handleCloseList = () => {
+		this.props.closeList();
+	}
 	render() {
 		const { classes } = this.props;
 		
@@ -77,6 +81,12 @@ class Modals extends Component{
 	                	onClose={this.handleCloseMessage}
 				        message={this.props.message}
 	                />
+
+	                <UsersListDialog
+		            	usersList={this.props.list}
+		            	open={this.props.isOpenList}
+			            onClose={this.handleCloseList}
+			        />
 	                {this.props.loading && <CircularProgress size={160} className={classes.buttonProgress} />}
                 </React.Fragment>
 	)}
@@ -87,5 +97,7 @@ export default connect(({reducer}) =>(
 		isOpen: reducer.user.loginDialogOpen, 
 		message: reducer.user.message, 
 		isOpenMessage: reducer.user.messageDialogOpen,
-		loading: reducer.user.isWaiting
-	}), { manualLogin, returnFromLogIn, closeLoginDialog, openLoginDialog, toSignUp, closeMessage } )(withStyles(styles)(Modals))
+		loading: reducer.user.isWaiting,
+		isOpenList: reducer.user.listDialogOpen,
+		list: reducer.user.barUserslist
+	}), { manualLogin, returnFromLogIn, closeLoginDialog, openLoginDialog, toSignUp, closeMessage, closeList } )(withStyles(styles)(Modals))

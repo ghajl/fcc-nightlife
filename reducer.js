@@ -4,12 +4,14 @@ import {defaultLocation} from './util/locations';
 export const initialState = {
     isWaiting: false,
     authenticated: false,
+    userID: '',
     username: "Guest",
     facebookProfile: {},
     facebookID: '',
     userBars: [],
     message: [],
-    
+    barUserslist:[],
+
     /*
     locationBars: {
             id, 
@@ -18,8 +20,7 @@ export const initialState = {
             rating,
             location, 
             address, 
-            users:[],
-            facebookUsers:[],
+            users,
             highlighted
         }[]
     */
@@ -32,6 +33,7 @@ export const initialState = {
     loginDialogOpen: false,
     loginMenuOpen: false,
     messageDialogOpen: false,
+    listDialogOpen: false,
     highlighted: null,
     footerHeight: 0,
     headerHeight: 0
@@ -88,9 +90,10 @@ export function user (state = initialState, action) {
                 ...{ isWaiting: false,
                     authenticated: true,
                     username: action.username,
+                    userID: action.userID,
                     facebookProfile: {},
                     facebookID: null,
-                    userBars: action.places,
+                    userBars: action.places || [],
                     message:  [...state.message, action.message],
                     messageDialogOpen: true,
                     loginDialogOpen: false,
@@ -118,6 +121,7 @@ export function user (state = initialState, action) {
                 ...{ isWaiting: false,
                     authenticated: false,
                     username: "Guest",
+                    userID: '',
                     facebookProfile: {},
                     facebookID: null,
                     userBars: [], 
@@ -142,25 +146,10 @@ export function user (state = initialState, action) {
                     lat: action.lat,
                     lng: action.lng
                 }
-                let userData = action.username == null ? 
-                    { 
-                        username: "Guest",
-                        authenticated: false,
-                        userBars: [], 
-                        highlighted: null,
-                        guestBar: null
-                    }
-                    :
-                    {
-                        username: action.username,
-                        authenticated: true,
-                        userBars: action.userPlaces, 
-                    }
-
+                
                 return {
                     ...state,
-                    ...data,
-                    ...userData
+                    ...data
                 }    
             }
             
@@ -177,27 +166,17 @@ export function user (state = initialState, action) {
             }
         case actionTypes.ADD_TO_LIST_SUCCESS:
             {
-                //get index of bar in current location bars list
                 let i = state.locationBars.findIndex(elem => elem.id === action.placeID);
                 
-                
-                //check if the current user already in the list
-                const registeredUsers = state.facebookID != null ? 'facebookUsers' : 'users';
-                const userID = state.facebookID != null ? 'facebookID' : 'username';
-                if(~state.locationBars[i][registeredUsers].indexOf(state[userID])){
+                //check if the current user already in the list - in the case of user pressed add button before login
+                if(~state.userBars.indexOf(action.placeID)){
                     return {
                         ...state,
                         ...{ isWaiting: false}
                     }    
                 } else {
-                    const barUsersData = state.facebookID != null ? {facebookUsers: [...state.locationBars[i][registeredUsers], state[userID]]} 
-                                                                    : {users: [...state.locationBars[i][registeredUsers], state[userID]]}
-                    const updateBar = {...state.locationBars[i], ...barUsersData};
-                  
-                  
+                    const updateBar = {...state.locationBars[i], ...{users: state.locationBars[i].users + 1}};
                     const updateLocationBars =  [ ...state.locationBars.slice(0,i), updateBar, ...state.locationBars.slice(i + 1)];
-                
-                
                     return {
                         ...state,
                         ...{ isWaiting: false,
@@ -212,24 +191,20 @@ export function user (state = initialState, action) {
         case actionTypes.REMOVE_FROM_LIST_SUCCESS:
         {
 
-            const registeredUsers = state.facebookID != null ? 'facebookUsers' : 'users';
-            const userID = state.facebookID != null ? 'facebookID' : 'username';
-            
-            const placeIndex = state.locationBars.findIndex(elem => elem.id === action.placeID);
+            //reduce number of users on the list of bar
+            const i = state.locationBars.findIndex(elem => elem.id === action.placeID);
+            const updateBar = {...state.locationBars[i], ...{users: state.locationBars[i].users - 1}};
+            const updateLocationBars =  [ ...state.locationBars.slice(0,i), updateBar, ...state.locationBars.slice(i + 1)];
 
-            const usersListIndex = state.locationBars[placeIndex][registeredUsers].indexOf(state[userID]);
-            //remove user from users list of bar
-            state.locationBars[placeIndex][registeredUsers].splice(usersListIndex, 1);
-            const barUsersData = state.facebookID != null ? {facebookUsers: [...state.locationBars[placeIndex].facebookUsers]}
-                                                            : {users: [...state.locationBars[placeIndex].users]};
-            const updateBar = {...state.locationBars[placeIndex], ...barUsersData};
-            const updateLocationBars =  [ ...state.locationBars.slice(0,placeIndex), updateBar, ...state.locationBars.slice(placeIndex + 1)]
+
+            //remove bar from list of bars of current user
             let updateUserBars = [...state.userBars];
             const index = updateUserBars.indexOf(action.placeID);
-            //remove bar from bars list of user
+            
             if(index >= 0){
                 updateUserBars.splice(index, 1);
             }
+            
             return {
                 ...state,
                 ...{ isWaiting: false,
@@ -267,7 +242,37 @@ export function user (state = initialState, action) {
                 ...state,
                 ...{ loginDialogOpen: false}
             }
-
+        case actionTypes.BEGIN_SHOW_LIST:
+            return {
+                ...state,
+                ...{ isWaiting: true}
+            }
+        case actionTypes.SHOW_LIST_SUCCESS:
+            return {
+                ...state,
+                ...{ 
+                    isWaiting: false,
+                    barUserslist: action.users,
+                    listDialogOpen: true
+                }
+            }
+        case actionTypes.SHOW_LIST_ERROR:
+            return {
+                ...state,
+                ...{ 
+                    isWaiting: false,
+                    messageDialogOpen: true,
+                    message: [...state.message, action.message]
+                }
+            }
+        case actionTypes.CLOSE_USERS_LIST:
+            return {
+                ...state,
+                ...{ 
+                    barUserslist: [],
+                    listDialogOpen: false
+                }
+            }
         case actionTypes.OPEN_LOGIN_MENU:
             return {
                 ...state,

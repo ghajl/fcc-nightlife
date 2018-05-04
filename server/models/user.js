@@ -11,8 +11,7 @@ const UserSchema = new mongoose.Schema({
 	places:[String]	,
 	profile: {
 	    givenName: String,
-	    familyName: String,
-	    displayName: String
+	    familyName: String
 	},
 	facebookID: { 
 		type: String,

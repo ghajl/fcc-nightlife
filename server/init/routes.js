@@ -1,4 +1,4 @@
-import {login, logout, register, modifyPlaceList, getUsersBarsData, getUserData} from "../controllers/users"
+import {login, logout, register, modifyPlaceList, getUsersBarsData, getUserData, getUsersList} from "../controllers/users"
 
 
 export default (app, passport) => {
@@ -8,7 +8,7 @@ export default (app, passport) => {
 	app.post("/places", modifyPlaceList);
 	app.get("/data", getUsersBarsData);
 	app.get("/user", getUserData);
-
+	app.get('/userslist', getUsersList);
 	app.get('/auth/facebook', passport.authenticate('facebook'));
 	app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/signup' }), (req, res) => {
 		res.redirect('/return-from-success-login');
