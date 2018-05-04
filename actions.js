@@ -358,7 +358,7 @@ export function returnFromLogIn(){
 export function saveReturnTo(path){
 	return {
 	    type: actionTypes.SAVE_PATH,
-	    path.pathname + path.search
+	    path: path.pathname + path.search
     };
 	
 }
