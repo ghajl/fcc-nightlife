@@ -15,4 +15,3 @@ export default (app, passport) => {
 	});
 }
 
-//https://fcc-barcoordinator.herokuapp.com/auth/facebook/callback

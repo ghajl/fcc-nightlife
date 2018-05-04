@@ -97,29 +97,15 @@ class Places extends Component{
     	}
 		
 		this.state = {
-		    open: false,
-		    list: [],
 		    height: window.innerHeight - this.getMargin() 
 	    };
 	}
 	
-	//dialog with list of users that are going to the bar
-	handleClickOpen = list => {
-	    this.setState({
-	      open: true,
-	      list: list
-	    });
-	}
-    
 	showList = placeID => {
 		
 		this.props.showList(placeID);
 	}
 
-    handleClose = () => {
-	    this.setState({ open: false, list: [] });
-    }
-	
 	//show choosed bar on map and in list of bar cards
 	markerClick = placeID => {
 		this.props.highlightPlace(placeID);
@@ -188,7 +174,6 @@ class Places extends Component{
 					        	key={index}
 					            data={item} 
 					            path={this.props.match.url}
-					            openShowListDialog={this.handleClickOpen}	
 					            showList={this.showList}
 		            			markerClick={this.markerClick}
 					            />

@@ -6,8 +6,7 @@ export const initialState = {
     authenticated: false,
     userID: '',
     username: "Guest",
-    facebookProfile: {},
-    facebookID: '',
+    facebookProfile: null,
     userBars: [],
     message: [],
     barUserslist:[],
@@ -67,7 +66,7 @@ export function user (state = initialState, action) {
                     userID: action.userID,
                     userBars: [],
                     facebookProfile: action.profile,
-                    facebookID: action.facebookID
+                    
                 }
             }    
         case actionTypes.FETCH_USER_ERROR:
@@ -77,8 +76,7 @@ export function user (state = initialState, action) {
                     isWaiting: false,
                     authenticated: false,
                     username: "Guest",
-                    facebookProfile: {},
-                    facebookID: null,
+                    facebookProfile: null,
                     userBars: [], 
                     highlighted: null,
                     guestBar: null
@@ -92,8 +90,7 @@ export function user (state = initialState, action) {
                     authenticated: true,
                     username: action.username,
                     userID: action.userID,
-                    facebookProfile: {},
-                    facebookID: null,
+                    facebookProfile: null,
                     userBars: action.places || [],
                     message:  [...state.message, action.message],
                     messageDialogOpen: true,
@@ -123,8 +120,7 @@ export function user (state = initialState, action) {
                     authenticated: false,
                     username: "Guest",
                     userID: '',
-                    facebookProfile: {},
-                    facebookID: null,
+                    facebookProfile: null,
                     userBars: [], 
                     highlighted: null,
                     guestBar: null }
@@ -147,6 +143,10 @@ export function user (state = initialState, action) {
                     lat: action.lat,
                     lng: action.lng,
                     userBars: action.userBars, 
+                    username: action.username || "Guest", 
+                    facebookProfile: action.profile, 
+                    userID: action.userID || '',
+                    authenticated: action.userID != null
                 }
                 
                 return {

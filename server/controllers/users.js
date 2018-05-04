@@ -120,15 +120,15 @@ export function getUsersBarsData(req, res) {
 
 			return res.sendStatus(409);
 		}
-		let currentUserBars = [];
+		let currentUserBars = [], username = null, profile = null, id = null;
 		if(req.user != null){
 			
 			currentUserBars = req.query.bars.filter(barID => req.user.places.indexOf(barID) != -1);
-			
+			({username = null, profile = null, id} = req.user);
 		}
 		const placesUsersData = locationPlaces.map(place => ({placeID: place.placeID, users: place.users.length}));
 
-		return res.json({placesUsersData, currentUserBars});
+		return res.json({placesUsersData, currentUserBars, username, profile, userID: id});
 	} )
 	
 }
@@ -137,9 +137,9 @@ export function getUserData(req, res) {
 	if(!req.user){
 		return res.sendStatus(401);
 	}
-	const {username, profile, facebookID, id} = req.user;
+	const {username, profile, id} = req.user;
 	
-	return res.json({username, profile, facebookID, userID: id});
+	return res.json({username, profile, userID: id});
 }
 
 export function getUsersList(req, res) {

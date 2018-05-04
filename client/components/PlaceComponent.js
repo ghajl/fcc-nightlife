@@ -30,11 +30,6 @@ const PlaceComponent = (props) => {
 
         event.preventDefault();
         event.stopPropagation();
-        // const data = {
-        // 	placeID: props.placeID,
-        // 	username: props.username,
-
-        // }
 		props.addToList(props.placeID); 
     }
 
@@ -42,29 +37,12 @@ const PlaceComponent = (props) => {
 
         event.preventDefault();
         event.stopPropagation();
-        // const data = {
-        // 	placeID: props.placeID,
-        // 	username: props.username,
-
-        // }
 		props.removeFromList(props.placeID); 
     }
 	
 	
-	const usersList = () => {
-    	if (props.isUserGoing) {
-    		if(props.facebookID != null){
-
-    		}
-    		let i = props.usersInBar.indexOf(props.username);
-    		let list = [...props.usersInBar];
-    		list.splice(i, 1);
-    		return list;
-    	} else 
-    		return props.usersInBar
-    	
-    	
-    }
+	
+    
     
     const showList = (event) => {
     	event.preventDefault();

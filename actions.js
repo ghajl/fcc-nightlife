@@ -51,12 +51,11 @@ function beginFetchUserData(){
 	return { type: actionTypes.FETCH_USER };
 }
 
-function fetchUserDataSuccess(username, profile, facebookID, userID){
+function fetchUserDataSuccess(username, profile, userID){
 	return { 
 		type: actionTypes.FETCH_USER_SUCCESS,
 		username,
 	    profile,
-	    facebookID, 
 	    userID
 	};
 }
@@ -140,13 +139,16 @@ function beginPlacesSearch() {
 	return { type: actionTypes.FIND_PLACES };
 }
 
-function searchPlacesSuccess(data, address, lat, lng, userBars) {
+function searchPlacesSuccess(data, address, lat, lng, userBars, username, profile, userID) {
 	return { type: actionTypes.FIND_PLACES_SUCCESS,
 			data, 
 			address, 
 			lat, 
 			lng,
-			userBars
+			userBars, 
+			username, 
+			profile, 
+			userID
 		 };
 }
 
@@ -354,9 +356,11 @@ export function returnFromLogIn(){
 }
 
 export function saveReturnTo(path){
-	return (dispatch) => {
-		dispatch(saveCurrentPath(path.pathname+path.search));
-	}
+	return {
+	    type: actionTypes.SAVE_PATH,
+	    path.pathname + path.search
+    };
+	
 }
 
 export function logOut() {
@@ -420,7 +424,7 @@ export function showPlaces(service, address) {
 										})
 									.then(response => {
 										//make list of bars
-
+										console.log(response.data)
 										const locationBars = results.map(item => {
 											let photoUrl = item.photos && item.photos[0] && item.photos[0].getUrl && item.photos[0].getUrl instanceof Function && item.photos[0].getUrl({'maxWidth': 200, 'maxHeight': 200});
 											return {id: item.id, 
@@ -439,8 +443,8 @@ export function showPlaces(service, address) {
             								locationBars[i].users = item.users;
 											}
 										)
-									    
-										dispatch(searchPlacesSuccess(locationBars, address, lat, lng, response.data.currentUserBars));
+									    let {username = null, profile = null, userID = null} = response.data;
+										dispatch(searchPlacesSuccess(locationBars, address, lat, lng, response.data.currentUserBars, username, profile, userID));
 										
 									})
 									.catch((err) => {
@@ -476,8 +480,8 @@ export function fetchUserData() {
 		dispatch(beginFetchUserData());
 		return axios.get('/user')
 	        .then((response) => {
-	      		const {username, profile, facebookID, userID} = response.data;
-	            dispatch(fetchUserDataSuccess(username, profile, facebookID, userID));
+	      		const {username, profile, userID} = response.data;
+	            dispatch(fetchUserDataSuccess(username, profile, userID));
 	        })
 	        .catch((err) => {
 				console.log(err);
@@ -565,9 +569,8 @@ export function removeFromList(placeID) {
 }
 
 export function toLogIn() {
-	return (dispatch) => {
-		dispatch(openLoginDialog());
-	}
+	return { type: actionTypes.OPEN_LOGIN_DIALOG
+		 };
 }
 
 export function toSignUp() {
