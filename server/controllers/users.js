@@ -142,14 +142,15 @@ export function getUserData(req, res) {
 export function getUsersList(req, res) {
 	if(!req.query.placeID) return res.sendStatus(400);
 	
-	Place.findOne({ placeID: req.query.placeID }, 'users', (err, users) => {
+	Place.findOne({ placeID: req.query.placeID }, 'users', (err, data) => {
 		if (err) {
 			console.log(err)
 			return res.sendStatus(409);
 			
 		}
-		if(users.length){
-			User.find({ _id: { $in: users.users}}, (err, users) => {
+		
+		if(data.users && data.users.length){
+			User.find({ _id: { $in: data.users}}, (err, users) => {
 				if (err) {
 				console.log(err)
 					return res.sendStatus(409);
@@ -159,9 +160,11 @@ export function getUsersList(req, res) {
 																			: userdata.username);
 				return res.json({users: result});
 			})
+		} else {
+			console.log("didn't find users")
+			return res.sendStatus(409);
 		}
-		console.log("didn't find users")
-		return res.sendStatus(409);
+		
 		
 	});
 }
