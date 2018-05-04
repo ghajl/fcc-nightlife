@@ -144,14 +144,14 @@ export function getUsersList(req, res) {
 	
 	Place.findOne({ placeID: req.query.placeID }, 'users', (err, users) => {
 		if (err) {
-			
+			console.log(err)
 			return res.sendStatus(409);
 			
 		}
 		if(users.length){
 			User.find({ _id: { $in: users.users}}, (err, users) => {
 				if (err) {
-				
+				console.log(err)
 					return res.sendStatus(409);
 					
 				}
@@ -160,6 +160,7 @@ export function getUsersList(req, res) {
 				return res.json({users: result});
 			})
 		}
+		console.log("didn't find users")
 		return res.sendStatus(409);
 		
 	});
