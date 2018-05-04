@@ -159,7 +159,7 @@ export function getUsersList(req, res) {
 					return res.sendStatus(409);
 					
 				}
-				const result = users.map(userdata => userdata.facebookID ? `${userdata.profile.givenName} ${userdata.profile.givenName}` 
+				const result = users.map(userdata => userdata.facebookID ? `${userdata.profile.givenName} ${userdata.profile.familyName}` 
 																			: userdata.username);
 				return res.json({users: result});
 			})
