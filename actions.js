@@ -51,13 +51,13 @@ function beginFetchUserData(){
 	return { type: actionTypes.FETCH_USER };
 }
 
-function fetchUserDataSuccess(username, places, profile, facebookID){
+function fetchUserDataSuccess(username, profile, facebookID, userID){
 	return { 
 		type: actionTypes.FETCH_USER_SUCCESS,
 		username,
-	    places,
 	    profile,
-	    facebookID
+	    facebookID, 
+	    userID
 	};
 }
 
@@ -140,12 +140,13 @@ function beginPlacesSearch() {
 	return { type: actionTypes.FIND_PLACES };
 }
 
-function searchPlacesSuccess(data, address, lat, lng) {
+function searchPlacesSuccess(data, address, lat, lng, userBars) {
 	return { type: actionTypes.FIND_PLACES_SUCCESS,
 			data, 
 			address, 
 			lat, 
-			lng
+			lng,
+			userBars
 		 };
 }
 
@@ -414,8 +415,7 @@ export function showPlaces(service, address) {
 						//get list of users registered in bars
 						return axios.get('/data', {
 										    params: {
-										        bars: results.map(item=>item.id),
-										        userID
+										        bars: results.map(item=>item.id)
 										    }
 										})
 									.then(response => {
@@ -440,7 +440,7 @@ export function showPlaces(service, address) {
 											}
 										)
 									    
-										dispatch(searchPlacesSuccess(locationBars, address, lat, lng));
+										dispatch(searchPlacesSuccess(locationBars, address, lat, lng, response.data.currentUserBars));
 										
 									})
 									.catch((err) => {
@@ -472,11 +472,12 @@ export function showPlaces(service, address) {
 
 export function fetchUserData() {
 	return (dispatch) => {
+		
 		dispatch(beginFetchUserData());
 		return axios.get('/user')
 	        .then((response) => {
-	      		const {username, places, profile, facebookID} = response.data;
-	            dispatch(fetchUserDataSuccess(username, places, profile, facebookID));
+	      		const {username, profile, facebookID, userID} = response.data;
+	            dispatch(fetchUserDataSuccess(username, profile, facebookID, userID));
 	        })
 	        .catch((err) => {
 				console.log(err);

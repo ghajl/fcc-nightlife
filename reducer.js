@@ -64,7 +64,8 @@ export function user (state = initialState, action) {
                     isWaiting: false,
                     authenticated: true,
                     username: action.username,
-                    userBars: action.places,
+                    userID: action.userID,
+                    userBars: [],
                     facebookProfile: action.profile,
                     facebookID: action.facebookID
                 }
@@ -144,7 +145,8 @@ export function user (state = initialState, action) {
                     locationBars: action.data,
                     location: action.address,
                     lat: action.lat,
-                    lng: action.lng
+                    lng: action.lng,
+                    userBars: action.userBars, 
                 }
                 
                 return {

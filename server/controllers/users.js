@@ -112,10 +112,7 @@ export function register(req, res) {
 //returns - if exist - users lists of bars currently found by search on client
 export function getUsersBarsData(req, res) {
 	if(!req.query.bars) return res.sendStatus(400);
-	// if(!req.isAuthenticated()) return res.sendStatus(401); //user logged out on another tab
-
-	// if(req.user.id !== req.query.userID) return res.sendStatus(403); //user logged in to another account on different tab
-
+	
 	const { bars } = req.query;
 
 	Place.find( {placeID: { $in: bars }}, 'placeID users', (err, locationPlaces) => {
@@ -123,9 +120,15 @@ export function getUsersBarsData(req, res) {
 
 			return res.sendStatus(409);
 		}
+		let currentUserBars = [];
+		if(req.user != null){
+			
+			currentUserBars = req.query.bars.filter(barID => req.user.places.indexOf(barID) != -1);
+			
+		}
 		const placesUsersData = locationPlaces.map(place => ({placeID: place.placeID, users: place.users.length}));
 
-		return res.json({placesUsersData});
+		return res.json({placesUsersData, currentUserBars});
 	} )
 	
 }
@@ -134,9 +137,9 @@ export function getUserData(req, res) {
 	if(!req.user){
 		return res.sendStatus(401);
 	}
-	console.log(req.user)
-	const {places, username, profile, facebookID} = req.user;
-	return res.json({places, username, profile, facebookID});
+	const {username, profile, facebookID, id} = req.user;
+	
+	return res.json({username, profile, facebookID, userID: id});
 }
 
 export function getUsersList(req, res) {
