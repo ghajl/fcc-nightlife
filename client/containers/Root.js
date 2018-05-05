@@ -8,7 +8,7 @@ import Places from './Places';
 import { ConnectedRouter } from 'react-router-redux';
 import { PersistGate } from 'redux-persist/es/integration/react';
 import NotFound from '../components/NotFound';
-import { fetchUserData, saveReturnTo } from '../../actions';
+import { fetchUserData, saveReturnTo, addToList } from '../../actions';
 import { connect } from 'react-redux';
 import {defaultLocation} from '../../util/locations';
 import Modals from './Modals';
@@ -58,7 +58,10 @@ class Root extends Component{
 			        	
 			        <Route path="/return-from-success-login" 
 				        render={() => {
-				        	let {returnPath} = store.getState().reducer.user;
+				        	const {returnPath, guestBar} = store.getState().reducer.user;
+				        	if(guestBar != null){
+				        		this.props.addToList(guestBar); 
+				        	}
 				        	return (<Redirect to={returnPath}/>)}
 			        }/>
 			        <Route component={NotFound} />
@@ -74,4 +77,4 @@ class Root extends Component{
 	}
 }
 
-export default connect(() =>({}), { fetchUserData, saveReturnTo } )(Root)
+export default connect(({reducer}) =>({userID: reducer.user.userID}), { fetchUserData, saveReturnTo, addToList } )(Root)
