@@ -174,7 +174,10 @@ export function user (state = initialState, action) {
                 if(~state.userBars.indexOf(action.placeID)){
                     return {
                         ...state,
-                        ...{ isWaiting: false}
+                        ...{ 
+                            isWaiting: false, 
+                            guestBar: null
+                        }
                     }    
                 } else {
                     const updateBar = {...state.locationBars[i], ...{users: state.locationBars[i].users + 1}};
