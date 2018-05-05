@@ -54,15 +54,16 @@ class Root extends Component{
 			        <Route path="/places" 
 				        render={(props) => {
 				        	this.props.saveReturnTo(props.location);
+				        	const {guestBar, userID} = store.getState().reducer.user;
+				        	if(userID && guestBar != null){
+				        		this.props.addToList(guestBar); 
+				        	}
+				        	
 				        	return (<Places {...props}/>)}
 		        	}/>
 			        	
 			        <Route path="/return-from-success-login" 
 				        render={() => {
-				        	const {returnPath, guestBar, userID} = store.getState().reducer.user;
-				        	if(userID && guestBar != null){
-				        		this.props.addToList(guestBar); 
-				        	}
 				        	return (<Redirect to={returnPath}/>)}
 			        }/>
 			        <Route component={NotFound} />
