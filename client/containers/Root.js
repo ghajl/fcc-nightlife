@@ -64,6 +64,7 @@ class Root extends Component{
 			        	
 			        <Route path="/return-from-success-login" 
 				        render={() => {
+				        	const {returnPath} = store.getState().reducer.user;
 				        	return (<Redirect to={returnPath}/>)}
 			        }/>
 			        <Route component={NotFound} />
