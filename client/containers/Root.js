@@ -22,6 +22,7 @@ class Root extends Component{
 	
 	render() {
 		const { store, history, persistor, classes } = this.props;
+		console.log("root")
 		return	(
 			
 		<Provider store={store}>
@@ -58,8 +59,8 @@ class Root extends Component{
 			        	
 			        <Route path="/return-from-success-login" 
 				        render={() => {
-				        	const {returnPath, guestBar} = store.getState().reducer.user;
-				        	if(guestBar != null){
+				        	const {returnPath, guestBar, userID} = store.getState().reducer.user;
+				        	if(userID && guestBar != null){
 				        		this.props.addToList(guestBar); 
 				        	}
 				        	return (<Redirect to={returnPath}/>)}
