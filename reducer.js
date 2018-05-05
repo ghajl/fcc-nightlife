@@ -155,8 +155,7 @@ export function user (state = initialState, action) {
                 }    
             }
             
-        case actionTypes.REMOVE_FROM_LIST_ERROR:
-        case actionTypes.ADD_TO_LIST_ERROR:
+        case actionTypes.MODIFY_LIST_ERROR:
         case actionTypes.FIND_LOCATION_ERROR: 
         case actionTypes.FIND_PLACES_ERROR:  
             return {

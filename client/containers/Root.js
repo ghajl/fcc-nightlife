@@ -22,7 +22,6 @@ class Root extends Component{
 	
 	render() {
 		const { store, history, persistor, classes } = this.props;
-		console.log("root")
 		return	(
 			
 		<Provider store={store}>

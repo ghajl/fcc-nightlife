@@ -24,10 +24,9 @@ export const actionTypes = {
 	FIND_PLACES_ERROR: 'FIND_PLACES_ERROR',
 	ADD_TO_LIST: 'ADD_TO_LIST',
 	ADD_TO_LIST_SUCCESS: 'ADD_TO_LIST_SUCCESS',
-	ADD_TO_LIST_ERROR: 'ADD_TO_LIST_ERROR',
+	MODIFY_LIST_ERROR: 'MODIFY_LIST_ERROR',
 	REMOVE_FROM_LIST: 'REMOVE_FROM_LIST',
 	REMOVE_FROM_LIST_SUCCESS: 'REMOVE_FROM_LIST_SUCCESS',
-	REMOVE_FROM_LIST_ERROR: 'REMOVE_FROM_LIST_ERROR',
 	SAVE_PATH: 'SAVE_PATH',
 	SAVE_GUEST_BAR: 'SAVE_GUEST_BAR',
 	OPEN_LOGIN_DIALOG: 'OPEN_LOGIN_DIALOG',
@@ -169,8 +168,8 @@ function addToListSuccess(placeID, message) {
 		 };
 }
 
-function addToListError(message) {
-	return { type: actionTypes.ADD_TO_LIST_ERROR,
+function modifyListError(message) {
+	return { type: actionTypes.MODIFY_LIST_ERROR,
 			message
 		 };
 }
@@ -187,11 +186,6 @@ function removeFromListSuccess(placeID, message) {
 		 };
 }
 
-function removeFromListError(message) {
-	return { type: actionTypes.REMOVE_FROM_LIST_ERROR,
-			message
-		 };
-}
 
 function saveCurrentPath(path) {
 	return {
@@ -276,22 +270,12 @@ export function manualLogin(data) {
 
 		            //add user to users list of bar if user came here from add button on place cart
 		            if(getState().reducer.user.guestBar){
-		            	const addData = {
-				        	placeID: getState().reducer.user.guestBar,
-				        	userID: response.data.userID,
-				        	operation: 'ADD'
-				        }
-		            	dispatch(beginAddToList());
-					    
-						return axios.post('/places', addData)
-							.then(response => {
-								dispatch(addToListSuccess(addData.placeID, 'You have successfully added to the list!'));
-								dispatch(push("/return-from-success-login"));
-						        
-						    })
-						    .catch((err) => {
-						        dispatch(addToListError("Add to the bar request could not be completed"));
-						    });
+		            	const placeID = getState().reducer.user.guestBar,
+				        	userID = response.data.userID,
+				        	operation = 'ADD',
+				        	fromLogin = true;
+		            	return modifyList(placeID, userID, operation, dispatch, fromLogin);
+		    
 		            }  else {
 		            	dispatch(push("/return-from-success-login"));
 		            }
@@ -314,21 +298,12 @@ export function signUp(data) {
 				dispatch(signUpSuccess(data.username, response.data.userID, 'You have successfully registered an account!'));
 					//add user to users list in Place if user came here from add button on place cart
 		            if(getState().reducer.user.guestBar){
-		            	const addData = {
-				        	placeID: getState().reducer.user.guestBar,
-				        	userID: response.data.userID,
-				        	operation: 'ADD'
-				        }
-		            	dispatch(beginAddToList());
-					    
-						return axios.post('/places', addData)
-							.then(response => {
-								dispatch(addToListSuccess(addData.placeID, 'You have successfully added to the list!'));
-						        dispatch(push("/return-from-success-login"));
-						    })
-						    .catch((err) => {
-						        dispatch(addToListError("Add to the bar request could not be completed"));
-						    });
+		            	const placeID = getState().reducer.user.guestBar,
+				        	userID = response.data.userID,
+				        	operation = 'ADD',
+				        	fromSignup = true;
+		            	return modifyList(placeID, userID, operation, dispatch, fromSignup);
+		            	
 		            } else {
 		            	dispatch(push("/return-from-success-login"));
 		            }
@@ -424,7 +399,6 @@ export function showPlaces(service, address) {
 										})
 									.then(response => {
 										//make list of bars
-										console.log(response.data)
 										const locationBars = results.map(item => {
 											let photoUrl = item.photos && item.photos[0] && item.photos[0].getUrl && item.photos[0].getUrl instanceof Function && item.photos[0].getUrl({'maxWidth': 200, 'maxHeight': 200});
 											return {id: item.id, 
@@ -514,57 +488,64 @@ export function closeList(){
 export function addToList(placeID) {
 
     return (dispatch, getState) => {
-    	const {userID} = getState().reducer.user;
-    	// console.log(data);
-    	const data = { placeID, operation: 'ADD'};
+    	const {userID} = getState().reducer.user, 
+	    	operation = 'ADD';
 
-    	const addData = { ...data, ...{userID}};
-    	// console.log(addData);
-	    dispatch(beginAddToList());
+    	// const data = { placeID, operation: 'ADD'};
+    	return modifyList(placeID, userID, operation, dispatch);
+  //   	const addData = { ...data, ...{userID}};
+  //   	dispatch(beginAddToList());
 	    
-		return axios.post('/places', addData)
-			.then(response => {
+		// return axios.post('/places', addData)
+		// 	.then(response => {
 
-		        dispatch(addToListSuccess(placeID, 'You have successfully added to the list!'));
-		    })
-		    .catch((err) => {
-		    	if (err.response){
-		    		if(err.response.status == '401') {
-				        dispatch(logoutSuccess());
-				        dispatch(addToListError('You are not logged in'));
-				    }
-				    if(err.response.status == '403') {
-				        dispatch(addToListError('You are logged in to another account'));
-				    }
-		    	}
-		        dispatch(addToListError('Add to the bar request could not be completed'));
-		    });
+		//         dispatch(addToListSuccess(placeID, 'You have successfully added to the list!'));
+		//     })
+		//     .catch((err) => {
+		//     	if (err.response){
+		//     		if(err.response.status == '401') {
+		// 		        dispatch(logoutSuccess());
+		// 		        dispatch(addToListError('You are not logged in'));
+		// 		    }
+		// 		    if(err.response.status == '403') {
+		// 		        dispatch(addToListError('You are logged in to another account'));
+		// 		    }
+		//     	}
+		//         dispatch(addToListError('Add to the bar request could not be completed'));
+		//     });
 	};
 }
 
 export function removeFromList(placeID) {
 
     return (dispatch, getState) => {
-    	const {userID} = getState().reducer.user;
-    	const data = { placeID, operation: 'REMOVE'};
-    	const removeData = { ...data, ...{userID}};
-	    dispatch(beginRemoveFromList());
-		return axios.post('/places', removeData)
-			.then(response => {
-				dispatch(removeFromListSuccess(placeID, 'You have successfully removed from the list!'));
-		    })
-		    .catch((err) => {
-		    	if (err.response){
-		    		if(err.response.status == '401') {
-				        dispatch(logoutSuccess());
-				        dispatch(removeFromListError('You are not logged in'));
-				    }
-				    if(err.response.status == '403') {
-				        dispatch(removeFromListError('You are logged in to another account'));
-				    }
-		    	}
-		        dispatch(removeFromListError('Remove from the bar request could not be completed'));
-		    });
+
+    	const {userID} = getState().reducer.user, 
+	    	operation = 'REMOVE';
+
+    	// const data = { placeID, operation: 'ADD'};
+    	return modifyList(placeID, userID, operation, dispatch);
+
+  //   	const {userID} = getState().reducer.user;
+  //   	const data = { placeID, operation: 'REMOVE'};
+  //   	const removeData = { ...data, ...{userID}};
+	 //    dispatch(beginRemoveFromList());
+		// return axios.post('/places', removeData)
+		// 	.then(response => {
+		// 		dispatch(removeFromListSuccess(placeID, 'You have successfully removed from the list!'));
+		//     })
+		//     .catch((err) => {
+		//     	if (err.response){
+		//     		if(err.response.status == '401') {
+		// 		        dispatch(logoutSuccess());
+		// 		        dispatch(removeFromListError('You are not logged in'));
+		// 		    }
+		// 		    if(err.response.status == '403') {
+		// 		        dispatch(removeFromListError('You are logged in to another account'));
+		// 		    }
+		//     	}
+		//         dispatch(removeFromListError('Remove from the bar request could not be completed'));
+		//     });
 	};
 }
 
@@ -627,4 +608,31 @@ export function headerHeight(height) {
 	return { type: actionTypes.HEADER_HEIGHT,
 		height
 		 };
+}
+
+function modifyList(placeID, userID, operation, dispatch, fromLogin = false){
+	const data = {placeID, userID, operation};
+	const successMessage = operation === 'ADD' ? 'You have successfully added to the list!' : 'You have successfully removed from the list!';
+    const successAction = operation === 'ADD' ? addToListSuccess(data.placeID, successMessage)
+    											: removeFromListSuccess(data.placeID, successMessage);
+	dispatch(beginAddToList());
+	return axios.post('/places', data)
+			.then(response => {
+				dispatch(successAction);
+				if(fromLogin) dispatch(push("/return-from-success-login"));
+		        
+		    })
+		    .catch((err) => {
+		    	if (err.response){
+		    		if(err.response.status == '401') {
+				        dispatch(logoutSuccess());
+				        dispatch(modifyListError('You are not logged in'));
+				    }
+				    if(err.response.status == '403') {
+				        dispatch(modifyListError('You are logged in to another account'));
+				    }
+		    	}
+
+		        dispatch(modifyListError("Your request could not be completed"));
+		    });		
 }

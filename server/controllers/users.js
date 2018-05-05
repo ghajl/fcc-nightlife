@@ -3,7 +3,6 @@ import passport from "passport"
 import User from "../models/user"
 import Place from "../models/place"
 import axios from "axios";
-import fetch from 'isomorphic-unfetch'
 
 export function login(req, res, next) {
 	passport.authenticate("local", function(err, user, info) {		
