@@ -11,6 +11,9 @@ import Grid from 'material-ui/Grid';
 import withWidth from 'material-ui/utils/withWidth';
 import compose from 'recompose/compose';
 import Page from './Page';
+import * as Scroll from 'react-scroll';
+import { Link, Element , Events, animateScroll as scroll, scrollSpy, scroller } from 'react-scroll'
+ 
 
 
 
@@ -30,25 +33,28 @@ const styles = {
 	},
     placesList: {
 		maxWidth: '100%',
-		
+		'overflow-y': 'scroll',
 		'@media (min-width: 641px)': {
             borderRight: '.5rem solid #A8C256',
             width: '400px',
+            
+            // marginTop: '120px',
         },
 		'@media (max-width: 640px)': {
             width: '100%',
             flex: '1 0 auto', 
         },
+        // '@media (min-width: 641px)': {
+            
+        // },
+        // border: 'solid 1px',
 	},
 	carts: {
-		marginTop: '125px',
-  		'@media (min-width: 641px)': {
-            'overflow-y': 'scroll',
-            marginTop: '120px',
-        },
-        '@media (max-width: 640px)': {
+		// marginTop: '125px',
+  		// border: 'solid 1px',
+  //       '@media (max-width: 640px)': {
             marginTop: 0,
-        },
+        // },
 	},
 	item: {
 		margin: '20px',
@@ -64,22 +70,25 @@ const styles = {
 	searchBar: {
 		width: '100%',
 		height: '120px',
-		position: 'fixed',
-		backgroundColor: 'white',
+		// position: 'fixed',
+		// padding: '5px',
+		// marginBottom: '10px',
+		backgroundColor: '#FFD54F',
 		maxWidth: '100%',
-		top: '50px',
-		'z-index': 1000,
-		boxShadow: '1px 1px 10px #888888',
-		'@media (min-width: 600px)': {
-            top: '60px',
-        },
-        '@media (min-width: 641px)': {
-            width: 'inherit',
-        },
-        '@media (max-width: 640px)': {
+
+		// top: '50px',
+		// 'z-index': 1000,
+		// boxShadow: '1px 1px 10px #888888',
+		// '@media (min-width: 600px)': {
+  //           top: '60px',
+  //       },
+        // '@media (min-width: 641px)': {
+        //     width: 'inherit',
+        // },
+        // '@media (max-width: 640px)': {
             position: 'relative',
             top: 0,
-        },
+        // },
 	},
 	form: {
 		width: '80%',
@@ -95,20 +104,51 @@ class Places extends Component{
     	if(!this.placeLocation.loc){
     		props.replaceLocation(defaultLocation.address, props.location.pathname)
     	}
-		
+		this.placeCards = {};
 		this.state = {
 		    height: window.innerHeight - this.getMargin() 
 	    };
 	}
 	
+	componentDidMount() {
+
+	    // Events.scrollEvent.register('begin', function() {
+	    //   console.log("begin", arguments);
+	    // });
+
+	    // Events.scrollEvent.register('end', function() {
+	    //   console.log("end", arguments);
+	    // });
+	    // scrollSpy.update();
+	}
+
+	scrollToTop = () => {
+		console.log("sss")
+	    scroll.scrollToTop({containerId: 'ContainerElementID'});
+	}
+
+	scrollTo = (pos) => {
+	    scroll.scrollTo(pos - 150, {
+	        duration: 800,
+	        delay: 0,
+	        smooth: 'easeInOutQuart',
+	        containerId: 'ContainerElementID'
+	    })
+	}
+
 	showList = placeID => {
 		
 		this.props.showList(placeID);
 	}
 
 	//show choosed bar on map and in list of bar cards
-	markerClick = placeID => {
+	markerClick = (placeID, source = 'map') => {
+		if(source === 'map' && this.placeCards[placeID] && this.topElement){
+			const position = this.placeCards[placeID].getBoundingClientRect().top - this.topElement.getBoundingClientRect().top;
+			this.scrollTo(position);
+		}
 		this.props.highlightPlace(placeID);
+
 	}
 
 	getMargin = () => {
@@ -150,18 +190,22 @@ class Places extends Component{
         window.addEventListener('resize', this.handleWindowSizeChange);
     }
 
+    componentWillUnmount() {
+	    // Events.scrollEvent.remove('begin');
+	    // Events.scrollEvent.remove('end');
+	}
 
 	render() {
 		const { classes, bars, location} = this.props;
 		const {height} = this.state;
-		const sectionStyle = window.innerWidth <= 640 ? { flex: '1 0 auto',display: 'flex', flexDirection: 'column', } : { height: height - this.props.footerHeight}
+		const sectionStyle = window.innerWidth <= 640 ? { flex: '1 0 auto',display: 'flex', flexDirection: 'column', height: height - this.props.footerHeight} : { height: height - this.props.footerHeight}
 		const listStyle = window.innerWidth <= 640 ? { flex: '1 0 auto' } : { height: height - 120 - this.props.footerHeight}
 		const mapStyle = window.innerWidth <= 640 ? { height: 0 } : { height: height - this.props.footerHeight}
 		return (
 			<Page location={location}>
 			<div className={classes.root}>
-				<div className={classes.placesList} style={sectionStyle}>
-			        <div className={classes.searchBar}>
+				<div className={classes.placesList} style={sectionStyle} id='ContainerElementID'>
+			        <div className={classes.searchBar} ref={el => this.topElement = el}>
 					  	<div className={classes.form}>
 					  	
 					  	<SearchForm urlLocation={location} path={this.props.match.path} placeLocation={this.placeLocation.loc}/>
@@ -176,6 +220,8 @@ class Places extends Component{
 					            path={this.props.match.url}
 					            showList={this.showList}
 		            			markerClick={this.markerClick}
+		            			cardRef={el => this.placeCards[item.id] = el}
+
 					            />
 					        
 					      )}

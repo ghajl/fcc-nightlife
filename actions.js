@@ -490,29 +490,7 @@ export function addToList(placeID) {
     return (dispatch, getState) => {
     	const {userID} = getState().reducer.user, 
 	    	operation = 'ADD';
-
-    	// const data = { placeID, operation: 'ADD'};
     	return modifyList(placeID, userID, operation, dispatch);
-  //   	const addData = { ...data, ...{userID}};
-  //   	dispatch(beginAddToList());
-	    
-		// return axios.post('/places', addData)
-		// 	.then(response => {
-
-		//         dispatch(addToListSuccess(placeID, 'You have successfully added to the list!'));
-		//     })
-		//     .catch((err) => {
-		//     	if (err.response){
-		//     		if(err.response.status == '401') {
-		// 		        dispatch(logoutSuccess());
-		// 		        dispatch(addToListError('You are not logged in'));
-		// 		    }
-		// 		    if(err.response.status == '403') {
-		// 		        dispatch(addToListError('You are logged in to another account'));
-		// 		    }
-		//     	}
-		//         dispatch(addToListError('Add to the bar request could not be completed'));
-		//     });
 	};
 }
 
@@ -522,30 +500,7 @@ export function removeFromList(placeID) {
 
     	const {userID} = getState().reducer.user, 
 	    	operation = 'REMOVE';
-
-    	// const data = { placeID, operation: 'ADD'};
     	return modifyList(placeID, userID, operation, dispatch);
-
-  //   	const {userID} = getState().reducer.user;
-  //   	const data = { placeID, operation: 'REMOVE'};
-  //   	const removeData = { ...data, ...{userID}};
-	 //    dispatch(beginRemoveFromList());
-		// return axios.post('/places', removeData)
-		// 	.then(response => {
-		// 		dispatch(removeFromListSuccess(placeID, 'You have successfully removed from the list!'));
-		//     })
-		//     .catch((err) => {
-		//     	if (err.response){
-		//     		if(err.response.status == '401') {
-		// 		        dispatch(logoutSuccess());
-		// 		        dispatch(removeFromListError('You are not logged in'));
-		// 		    }
-		// 		    if(err.response.status == '403') {
-		// 		        dispatch(removeFromListError('You are logged in to another account'));
-		// 		    }
-		//     	}
-		//         dispatch(removeFromListError('Remove from the bar request could not be completed'));
-		//     });
 	};
 }
 

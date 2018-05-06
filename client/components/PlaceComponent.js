@@ -7,11 +7,21 @@ const styles = theme => ({
 	placeCart: {
 		maxWidth: '100%',
 		opacity: '.9',
-		boxShadow: '1px 1px 10px #888888',
-		margin: '5px',
+		// boxShadow: '1px 1px 10px #888888',
+		// margin: '5px',
+		backgroundColor: '#FAFAFA',
 		padding: '10px',
-		color: "#673AB7",
-		cursor: 'pointer'
+		marginTop: '10px',
+		color: "#757575",
+		// border: 'solid 1px',
+		cursor: 'pointer',
+		transition: '.4s',
+	},
+	placeName: {
+		color: "#000000"
+	},
+	rating: {
+		color: "#039BE5"
 	},
 	button: {
 		marginTop: "5px"
@@ -56,8 +66,8 @@ const PlaceComponent = (props) => {
         props.loginAndAdd(props.placeID);
     }
 	const cartClick = () => {
-
-        props.markerClick(props.placeID);
+		const source = 'notmap';
+        props.markerClick(props.placeID, source);
     }
 
     //make label about how many people are on the list of the specific bar
@@ -74,15 +84,15 @@ const PlaceComponent = (props) => {
     
     return (
 
-		<div onClick={cartClick} className={`${props.classes.placeCart} ${props.classes.text}`} style={props.isHighlighted ? {boxShadow: '1px 1px 20px #1A237E',} : {boxShadow: '1px 1px 10px #888888',}}>
+		<div ref={props.cardRef} onClick={cartClick} className={`${props.classes.placeCart} ${props.classes.text}`} style={props.isHighlighted ? {backgroundColor: '#E0E0E0'} : {}}>
 		
 			{props.photo && 
 			<img src={props.photo}/>
 			}
 			
-			<div>{props.name}</div>
+			<div className={props.classes.placeName}>{props.name}</div>
 			<div>Address: {props.address}</div>
-			{ props.rating && <div>Rating: {props.rating}</div>}
+			{ props.rating && <div>Rating: <span className={props.classes.rating}>{props.rating}</span></div>}
 			<div>Going: <GoingLabel /></div>
 			{ props.authenticated ? ( <div>
 				{props.isUserGoing ? (

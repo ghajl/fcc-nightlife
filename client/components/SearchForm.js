@@ -53,7 +53,7 @@ class SearchForm extends Component {
           <React.Fragment>
             <div style={{margin:5}} className={this.props.classes.text}>Enter location:</div>
             <PlacesAutocomplete inputProps={inputProps} styles={myStyles} onSelect={this.handleSelect}/>
-            <div style={{margin:5}}>
+            <div style={{marginTop:5}}>
             <Button raised color="primary" dense={true} onClick={this.handleFormSubmit}>
                 Show bars
             </Button>
