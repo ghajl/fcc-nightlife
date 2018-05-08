@@ -13,7 +13,7 @@ import compose from 'recompose/compose';
 import Page from './Page';
 import * as Scroll from 'react-scroll';
 import { Link, Element , Events, animateScroll as scroll, scrollSpy, scroller } from 'react-scroll'
- 
+import ArrowUpward from 'material-ui-icons/ArrowUpward'; 
 
 
 
@@ -28,40 +28,29 @@ const styles = {
 		'@media (max-width: 600px)': {
             marginTop: '50px',
         },
-		// alignItems: 'stretch'
-  //       
 	},
     placesList: {
 		maxWidth: '100%',
-		'overflow-y': 'scroll',
+		display: 'flex', flexDirection: 'column',
 		'@media (min-width: 641px)': {
             borderRight: '.5rem solid #A8C256',
             width: '400px',
-            
-            // marginTop: '120px',
+            'overflow-y': 'scroll',
         },
 		'@media (max-width: 640px)': {
             width: '100%',
             flex: '1 0 auto', 
         },
-        // '@media (min-width: 641px)': {
-            
-        // },
-        // border: 'solid 1px',
+        position:'relative'
 	},
 	carts: {
-		// marginTop: '125px',
-  		// border: 'solid 1px',
-  //       '@media (max-width: 640px)': {
-            marginTop: 0,
-        // },
+        marginTop: 0,
 	},
 	item: {
 		margin: '20px',
 	},
 	map: {
 		flexGrow: 1,
-		// marginTop: '60px',
 		'@media (max-width: 640px)': {
             width: 0,
             height: 0,
@@ -70,30 +59,42 @@ const styles = {
 	searchBar: {
 		width: '100%',
 		height: '120px',
-		// position: 'fixed',
-		// padding: '5px',
-		// marginBottom: '10px',
 		backgroundColor: '#FFD54F',
 		maxWidth: '100%',
-
-		// top: '50px',
-		// 'z-index': 1000,
-		// boxShadow: '1px 1px 10px #888888',
-		// '@media (min-width: 600px)': {
-  //           top: '60px',
-  //       },
-        // '@media (min-width: 641px)': {
-        //     width: 'inherit',
-        // },
-        // '@media (max-width: 640px)': {
-            position: 'relative',
-            top: 0,
-        // },
+        position: 'relative',
+        top: 0,
 	},
 	form: {
 		width: '80%',
 		padding: '10px',
 	},
+	upButtonWrapper: {
+		width: '52px',
+		height: '52px',
+		bottom: '10%',
+		right: '10%',
+		zIndex: 1000,
+		opacity: .4,
+		transition: '.6s',
+	},
+	upButton: {
+		width: '50px',
+		height: '50px',
+		position: 'fixed',
+		borderRadius: '50%',
+		backgroundColor: 'black',
+		cursor: 'pointer',
+		boxShadow: '1px 1px 6px rgba(0, 0, 0, .5)'
+	},
+	icon: {
+		fill: 'white',
+		width: '36px',
+		height: '36px',
+		position: 'absolute',
+		top: '50%',
+		left: '50%',
+		transform: 'translate(-50%, -50%)'
+	}
 }
 
 class Places extends Component{
@@ -105,26 +106,21 @@ class Places extends Component{
     		props.replaceLocation(defaultLocation.address, props.location.pathname)
     	}
 		this.placeCards = {};
+
 		this.state = {
-		    height: window.innerHeight - this.getMargin() 
+		    height: window.innerHeight - this.getMargin(),
+		    upwardButtonVisible: false 
 	    };
 	}
-	
-	componentDidMount() {
 
-	    // Events.scrollEvent.register('begin', function() {
-	    //   console.log("begin", arguments);
-	    // });
-
-	    // Events.scrollEvent.register('end', function() {
-	    //   console.log("end", arguments);
-	    // });
-	    // scrollSpy.update();
-	}
-
-	scrollToTop = () => {
-		console.log("sss")
-	    scroll.scrollToTop({containerId: 'ContainerElementID'});
+	scrollToTop = (width) => {
+		let id;
+		if(width <= 640) {
+			id = 'PageElementID'
+		} else {
+			id = 'PlacesListElementID'
+		}
+	    scroll.scrollToTop({containerId: id});
 	}
 
 	scrollTo = (pos) => {
@@ -132,7 +128,7 @@ class Places extends Component{
 	        duration: 800,
 	        delay: 0,
 	        smooth: 'easeInOutQuart',
-	        containerId: 'ContainerElementID'
+	        containerId: 'PlacesListElementID'
 	    })
 	}
 
@@ -186,25 +182,36 @@ class Places extends Component{
 	    });
     }
     
-    componentWillMount(){
-        window.addEventListener('resize', this.handleWindowSizeChange);
+    handleScroll = () => {
+    	if(this.topElement){
+    		if(this.topElement.getBoundingClientRect().top < -20 && !this.state.upwardButtonVisible) this.setState({upwardButtonVisible: true});
+    		else if(this.topElement.getBoundingClientRect().top >= -20 && this.state.upwardButtonVisible) this.setState({upwardButtonVisible: false})
+    	}
     }
 
-    componentWillUnmount() {
-	    // Events.scrollEvent.remove('begin');
-	    // Events.scrollEvent.remove('end');
-	}
+    componentWillMount(){
+        window.addEventListener('resize', this.handleWindowSizeChange);
+        window.addEventListener('scroll', this.handleScroll)
+    }
+
+    setPlacesListEvent = element => {
+    	if(element) element.addEventListener('scroll', this.handleScroll)
+    }
 
 	render() {
 		const { classes, bars, location} = this.props;
-		const {height} = this.state;
-		const sectionStyle = window.innerWidth <= 640 ? { flex: '1 0 auto',display: 'flex', flexDirection: 'column', height: height - this.props.footerHeight} : { height: height - this.props.footerHeight}
-		const listStyle = window.innerWidth <= 640 ? { flex: '1 0 auto' } : { height: height - 120 - this.props.footerHeight}
-		const mapStyle = window.innerWidth <= 640 ? { height: 0 } : { height: height - this.props.footerHeight}
+		const {height, upwardButtonVisible} = this.state;
+		const sectionStyle = window.innerWidth <= 640 ? {} : { height: height - this.props.footerHeight};
+		let upButtonWrapperStyle = window.innerWidth <= 640 ? {position: 'relative',width: 0, height: 0} : { position: 'absolute'};
+		upButtonWrapperStyle = upwardButtonVisible ? {...upButtonWrapperStyle, ...{visibility: 'visible'}} : {...upButtonWrapperStyle, ...{visibility: 'hidden', opacity: 0,}};
+		const upButtonStyle = window.innerWidth <= 640 ? {bottom: '10%',right: '10%',} : {};
+		const listStyle = window.innerWidth <= 640 ? { flex: '1 0 auto' } : { height: height - 120 - this.props.footerHeight};
+		const mapStyle = window.innerWidth <= 640 ? { height: 0 } : { height: height - this.props.footerHeight};
 		return (
-			<Page location={location}>
+			<Page location={location} id='PageElementID'>
 			<div className={classes.root}>
-				<div className={classes.placesList} style={sectionStyle} id='ContainerElementID'>
+				<div className={classes.placesList} style={sectionStyle} id='PlacesListElementID' ref={el => this.setPlacesListEvent(el)}>
+					
 			        <div className={classes.searchBar} ref={el => this.topElement = el}>
 					  	<div className={classes.form}>
 					  	
@@ -229,6 +236,9 @@ class Places extends Component{
 				  	
 				  	
 				  	</div>
+				  	<div className={classes.upButtonWrapper} style={upButtonWrapperStyle} >
+						<div className={classes.upButton} style={upButtonStyle} onClick={() => this.scrollToTop(window.innerWidth)}><ArrowUpward className={classes.icon} /></div>
+					</div>
 			  	</div>
 			  	<div className={classes.map} style={mapStyle}>
 				  	<MapComponent 
