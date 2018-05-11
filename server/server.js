@@ -150,7 +150,7 @@ app.all("*", (req, res, next) => {
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 		<meta name="viewport" content="user-scalable=0, initial-scale=1, minimum-scale=1, width=device-width, height=device-height">
 		<link type="text/css" rel="stylesheet" href="public/main.css">
-	    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"/>
+	    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500|Patrick+Hand+SC"/>
 	    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPQYCvM0i495Py8i7GV3wn2odaGbwGPPo&libraries=geometry,drawing,places"></script>
 
 	    <title>freeCodeCamp - Nightlife Coordination App</title>

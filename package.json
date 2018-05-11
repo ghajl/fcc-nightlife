@@ -9,9 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "set NODE_ENV=development&& babel server --out-dir lib/server && node lib/server/server.js",
-    "prestart": "babel server --out-dir lib/server",
     "start": "node lib/server/server.js",
-    "heroku-postbuild": "webpack -p --config webpack.prod.js --progress"
+    "heroku-postbuild": "webpack -p --config webpack.prod.js --progress && babel server --out-dir lib/server"
   },
   "author": "",
   "license": "ISC",

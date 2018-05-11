@@ -33,7 +33,7 @@ const styles = {
 		maxWidth: '100%',
 		display: 'flex', flexDirection: 'column',
 		'@media (min-width: 641px)': {
-            borderRight: '.5rem solid #A8C256',
+            // borderRight: '.5rem solid #A8C256',
             width: '400px',
             'overflow-y': 'scroll',
         },
@@ -41,7 +41,8 @@ const styles = {
             width: '100%',
             flex: '1 0 auto', 
         },
-        position:'relative'
+        position:'relative',
+        
 	},
 	carts: {
         marginTop: 0,
