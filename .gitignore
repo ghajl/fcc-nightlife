@@ -3,7 +3,4 @@ node_modules/
 coverage/
 dist/
 server/config.js
-# Elastic Beanstalk Files
-.elasticbeanstalk/*
-!.elasticbeanstalk/*.cfg.yml
-!.elasticbeanstalk/*.global.yml
+
