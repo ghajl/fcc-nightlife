@@ -14,148 +14,151 @@ import Menu, { MenuItem } from 'material-ui/Menu';
 import { ListItem } from 'material-ui/List';
 
 const styles = theme => ({
-    nav: {
-    	overflow: 'hidden',
-    },
-    logo: {
-    	flex: 1,
-    	'text-transform': 'none',
-    	fontWeight: 900,
-    	fontSize: '1.5em',
-    },
-    login: {
-    	margin: 5,
-    	
-    },
-    text: theme.typography.button,
-    title: {
-        color: theme.palette.text.secondary,
-    },
+  nav: {
+    overflow: 'hidden',
+  },
+  logo: {
+    flex: 1,
+    'text-transform': 'none',
+    fontWeight: 900,
+    fontSize: '1.5em',
+  },
+  login: {
+    margin: 5,
+  },
+  text: theme.typography.button,
+  title: {
+      color: theme.palette.text.secondary,
+  },
 })
 
 class Header extends Component{
-    constructor(){
-        super();
-        this.menuAnchorEl = null;
+  constructor() {
+    super();
+    this.menuAnchorEl = null;
+  }
+
+  handleMenu = event => {
+    event.preventDefault();
+    this.props.openLoginMenu();
+  };
+
+  handleMenuClose = () => {
+    this.props.closeLoginMenu();
+  };
+
+  logout = (event) => {
+    event.preventDefault();
+    this.handleMenuClose()
+    this.props.logOut();
+  };
+  
+  toLogIn = (event) => {
+    event.preventDefault();
+    this.handleMenuClose()
+    this.props.openLoginDialog()
+  };
+    
+  signUp = (event) => {
+    event.preventDefault();
+    this.handleMenuClose();
+    if (this.props.path.pathname !== '/signup') {
+      this.props.toSignUp(this.props.path);
     }
+  };
 
-    handleMenu = event => {
-        event.preventDefault();
-        this.props.openLoginMenu();
-    };
-
-    handleMenuClose = () => {
-        this.props.closeLoginMenu();
-        
-    };
-    
-
-    logout = (event) => {
-
-        event.preventDefault();
-        this.handleMenuClose()
-        this.props.logOut();
-    };
-    
-    toLogIn = (event) => {
-
-        event.preventDefault();
-        this.handleMenuClose()
-        this.props.openLoginDialog()
-        
-    };
-    
-    signUp = (event) => {
-
-        event.preventDefault();
-        this.handleMenuClose();
-        if(this.props.path.pathname != '/signup') this.props.toSignUp(this.props.path);
-        
-    };
-
-    render() {
-        const {classes, isAuthenticated, username, facebookProfile, ...props} = this.props;
-        const authenticatedUserName = facebookProfile && facebookProfile.givenName ? facebookProfile.givenName 
-                                                                : username ? username : 'Registered User';
-        const open = props.loginMenuOpen;
-        return (
-        <div className={classes.nav}>
-        	<AppBar color="default">
-        		<Toolbar>
-					<Typography color="secondary" component={Link} to="/" type="title" className={classes.logo}>
-		                BarCoordinator
-		            </Typography>
-                    { props.width == 'xs' ? (
-                        <IconButton
-                          aria-owns={open ? 'menu-appbar' : null}
-                          aria-haspopup="true"
-                          onClick={this.handleMenu}
-                          buttonRef={(el) => { this.menuAnchorEl = el; }}
-                          color="inherit"
-                        >
-                          <AccountBox />
-                        </IconButton>
-                        ) : (
-                        <React.Fragment>
-                        <div className={classes.text}>Hello, {authenticatedUserName}!</div>
-                        <div className={classes.login}>
-                            {isAuthenticated ? (
-
-                                    <Button component={Link} to="/logout" onClick={this.logout}>
-                                        LOG OUT
-                                    </Button>
-                                    ) : (
-                                    <React.Fragment>
-                                        <Button onClick={this.toLogIn}>
-                                            LOG IN
-                                        </Button>
-                                        <Button component={Link} to="/signup" onClick={this.signUp}>
-                                            SIGN UP
-                                        </Button>
-                                    </React.Fragment>
-                                    )}
-                            
-                            
-                        </div>
-                        
-                        </React.Fragment>
-                        )}
-
-                    <Menu
-                        id="menu-appbar"
-                        anchorEl={this.menuAnchorEl}
-                        anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                        }}
-                        transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                        }}
-                        open={open}
-                        onClose={this.handleMenuClose}
-
-                    >
-                        <ListItem className={classes.text}>{authenticatedUserName}</ListItem>
-                        {isAuthenticated ? (
-                            <MenuItem component={Link} to="/logout" onClick={this.logout} className={classes.text}>LOG OUT</MenuItem>
-                            
-                            ) : (
-                            <div>
-                                <MenuItem onClick={this.toLogIn} className={classes.text}>LOG IN</MenuItem>
-                                
-                                <MenuItem  component={Link} to="/signup" onClick={this.signUp} className={classes.text}>SIGN UP</MenuItem>
-                                
-                            </div>
-                        )}
-                    </Menu>
-        		</Toolbar>
-        	</AppBar>
-        	
-        	
-        </div>
-        ) 
-    }
+  render() {
+    const {classes, isAuthenticated, username, facebookProfile, ...props} = this.props;
+    const authenticatedUserName = facebookProfile != null && facebookProfile.givenName != null
+      ? facebookProfile.givenName 
+      : username || 'Registered User';
+    const open = props.loginMenuOpen;
+    return (
+      <div className={classes.nav}>
+        <AppBar color="default">
+          <Toolbar>
+            <Typography className={classes.logo} color="secondary" component={Link} to="/" type="title">
+              BarCoordinator
+            </Typography>
+              { props.width == 'xs' 
+                ? (
+                  <IconButton
+                    aria-owns={open ? 'menu-appbar' : null}
+                    aria-haspopup="true"
+                    onClick={this.handleMenu}
+                    buttonRef={(el) => { this.menuAnchorEl = el; }}
+                    color="inherit"
+                  >
+                    <AccountBox />
+                  </IconButton>
+                ) 
+                : (
+                  <React.Fragment>
+                    <div className={classes.text}>
+                      Hello, {authenticatedUserName}!
+                    </div>
+                    <div className={classes.login}>
+                      {isAuthenticated 
+                        ? (
+                          <Button component={Link} to="/logout" onClick={this.logout}>
+                            LOG OUT
+                          </Button>
+                        ) 
+                        : (
+                          <React.Fragment>
+                            <Button onClick={this.toLogIn}>
+                              LOG IN
+                            </Button>
+                            <Button component={Link} to="/signup" onClick={this.signUp}>
+                              SIGN UP
+                            </Button>
+                          </React.Fragment>
+                        )
+                      }
+                    </div>
+                  </React.Fragment>
+                )
+              }
+            <Menu
+              id="menu-appbar"
+              anchorEl={this.menuAnchorEl}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={open}
+              onClose={this.handleMenuClose}
+            >
+              <ListItem className={classes.text}>
+                {authenticatedUserName}
+              </ListItem>
+              {isAuthenticated 
+                ? (
+                  <MenuItem className={classes.text} component={Link} to="/logout" onClick={this.logout}>
+                    LOG OUT
+                  </MenuItem>
+                ) 
+                : (
+                  <div>
+                    <MenuItem className={classes.text} onClick={this.toLogIn}>
+                      LOG IN
+                    </MenuItem>
+                    <MenuItem className={classes.text} component={Link} to="/signup" onClick={this.signUp}>
+                      SIGN UP
+                    </MenuItem>
+                  </div>
+                )
+              }
+            </Menu>
+          </Toolbar>
+        </AppBar>
+      </div>
+    ) 
+  }
 }
 
 export default compose(withStyles(styles), withWidth())(Header);

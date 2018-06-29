@@ -21,14 +21,14 @@ let config = null;
 const isDev = process.env.NODE_ENV === "development";
 if(isDev) {
     config = require("./config").config;
-	app.use(webpackDevMiddleware(compiler, {
-	    publicPath: webpackConfig.output.publicPath
-	}));
-	app.use(webpackHotMiddleware(compiler));
-	app.use(cors({
-	    origin: 'http://localhost:3000/',
-	    credentials: true
-	}));
+  app.use(webpackDevMiddleware(compiler, {
+      publicPath: webpackConfig.output.publicPath
+  }));
+  app.use(webpackHotMiddleware(compiler));
+  app.use(cors({
+      origin: 'http://localhost:3000/',
+      credentials: true
+  }));
 }
 
 app.use('/public', express.static(process.cwd() + '/public'));
@@ -40,13 +40,13 @@ const mongoOptions = {
   reconnectInterval: 500, // Reconnect every 500ms
 };
 const connect = () => {
-	mongoose.connect(mongoDB, mongoOptions, (err, res) => {
-		if (err) {
-			console.log(`Error connecting`)
-		} else {
-			console.log(`Successfully connected`)
-		}
-	});
+  mongoose.connect(mongoDB, mongoOptions, (err, res) => {
+    if (err) {
+      console.log(`Error connecting`)
+    } else {
+      console.log(`Successfully connected`)
+    }
+  });
 }
 connect();
 mongoose.Promise = global.Promise;
@@ -59,17 +59,17 @@ db.on("disconnected", connect)
 
 passport.use(new LocalStrategy(
     function(username, password, cb) {
-	    User.findOne({ username: username }, function(err, user) {
-	        if (err) { return cb(err); }
-	        if (!user) return cb(null, false, { message: `User not found` })
-	        user.comparePassword(password, (err, isMatch) => {
-	 			if (isMatch) {
-	 				return cb(null, user)
-	 			} else {
-	 				return cb(null, false, { message: "Invalid username or password" })
-	 			}
+      User.findOne({ username: username }, function(err, user) {
+          if (err) { return cb(err); }
+          if (!user) return cb(null, false, { message: `User not found` })
+          user.comparePassword(password, (err, isMatch) => {
+        if (isMatch) {
+          return cb(null, user)
+        } else {
+          return cb(null, false, { message: "Invalid username or password" })
+        }
 
-	 		})
+      })
     });
 }));
 const facebookId = process.env.FACEBOOK_APP_ID || config.FACEBOOK_APP_ID;
@@ -82,18 +82,18 @@ passport.use(new FacebookStrategy({
   },
   function(accessToken, refreshToken, profile, cb) {
     User.findOne({ facebookID: profile.id }, function (err, user) {
-    	if(err) { 
-    		console.log(err);
-    		return cb(err); 
-    	}
-    	if(user) {
-    		return cb(null, user);
-    	}
-      	const newUser = new User();
-      	newUser.facebookID = profile.id;
-      	newUser.profile.givenName = profile.name && profile.name.givenName || '';
-      	newUser.profile.familyName = profile.name && profile.name.familyName || '';
-      	newUser.save((err) => {
+      if(err) { 
+        console.log(err);
+        return cb(err); 
+      }
+      if(user) {
+        return cb(null, user);
+      }
+        const newUser = new User();
+        newUser.facebookID = profile.id;
+        newUser.profile.givenName = profile.name && profile.name.givenName || '';
+        newUser.profile.familyName = profile.name && profile.name.familyName || '';
+        newUser.save((err) => {
             cb(err, newUser);
         });
     });
@@ -101,14 +101,14 @@ passport.use(new FacebookStrategy({
 ));
 
 
-passport.serializeUser((user, done) => {  	
-  	done(null, user.id)
+passport.serializeUser((user, done) => {    
+    done(null, user.id)
 })
 
 passport.deserializeUser((id, done) => {
-  	User.findById(id, (err, user) => {      
-  		done(err, user)
-  	})
+    User.findById(id, (err, user) => {      
+      done(err, user)
+    })
 })
 
 const MongoStore = connectMongo(session);
@@ -119,14 +119,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const sessionSecret = process.env.SESSION_SECRET || config.SESSION_SECRET;
 app.use(session({ 
-	secret: sessionSecret, 
-	resave: false,
+  secret: sessionSecret, 
+  resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 24 * 60 * 60 * 1000 },
-	store: new MongoStore({
-		url: mongoDB,
-		autoReconnect: true
-	})
+  store: new MongoStore({
+    url: mongoDB,
+    autoReconnect: true
+  })
 }));
 
 // Initialize Passport and restore authentication state, if any, from the
@@ -141,29 +141,29 @@ app.get('/privacypolicy', function(req, res) {
 
 initRoutes(app, passport);
 const bundlePath = isDev ? "/bundle.js" : "/dist/bundle.js";
-app.all("*", (req, res, next) => {	
+app.all("*", (req, res, next) => {  
 
-	const appHTML = 
-	`<!doctype html>
-	<html lang="">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-		<meta name="viewport" content="user-scalable=0, initial-scale=1, minimum-scale=1, width=device-width, height=device-height">
-		<link type="text/css" rel="stylesheet" href="public/main.css">
-	    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500|Patrick+Hand+SC"/>
-	    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPQYCvM0i495Py8i7GV3wn2odaGbwGPPo&libraries=geometry,drawing,places"></script>
+  const appHTML = 
+  `<!doctype html>
+  <html lang="">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta name="viewport" content="user-scalable=0, initial-scale=1, minimum-scale=1, width=device-width, height=device-height">
+    <link type="text/css" rel="stylesheet" href="public/main.css">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500|Patrick+Hand+SC"/>
+      <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPQYCvM0i495Py8i7GV3wn2odaGbwGPPo&libraries=geometry,drawing,places"></script>
 
-	    <title>freeCodeCamp - Nightlife Coordination App</title>
-		
-	</head>
-	<body>
-		<div id="root"></div>
+      <title>freeCodeCamp - Nightlife Coordination App</title>
+    
+  </head>
+  <body>
+    <div id="root"></div>
 
-		<script src=${bundlePath}></script>
-	</body>
-	</html>`
+    <script src=${bundlePath}></script>
+  </body>
+  </html>`
 
-	res.status(200).end(appHTML)
+  res.status(200).end(appHTML)
 
 })
 var port = process.env.PORT || 3000;
@@ -171,4 +171,4 @@ app.listen( port, function () {
     console.log('app listening on port ' + port + '\n');
 });
 
-		
+    
