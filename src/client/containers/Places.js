@@ -8,7 +8,7 @@ import {
 	replaceLocation 
 } from '../../actions';
 
-const mapStateToProps = ({reducer}) =>(
+const mapStateToProps = (reducer) =>(
 	{ 
 		bars: reducer.user.bars, 
 		lat: reducer.user.lat, 

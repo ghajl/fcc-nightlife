@@ -54,7 +54,11 @@ class Home extends Component{
 		    height: window.innerHeight - this.getMargin() 
 	    };
 	}
-
+  static fetchData(store) {
+    return new Promise((resolve, reject) => {
+    	console.log("home")
+    })
+  }
 	getMargin = () => {
 		return this.props.width == 'xs' ? 150 : 160
 	}

@@ -11,7 +11,7 @@ const isHighlighted = (placeID, highlightedID) => {
 	return placeID == highlightedID;
 }
 
-const mapStateToProps = ({reducer}, {data}) => {
+const mapStateToProps = (reducer, {data}) => {
 	return {
 		placeID: data.id,
 		photo: data.photoUrl,

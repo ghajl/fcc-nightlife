@@ -3,7 +3,6 @@ import passport from "passport"
 import User from "../models/user"
 import Place from "../models/place"
 import axios from "axios";
-import fetch from 'isomorphic-unfetch'
 
 export function login(req, res, next) {
 	passport.authenticate("local", function(err, user, info) {		
@@ -106,8 +105,6 @@ export function register(req, res, next) {
 
 //returns - if exist - users lists of bars currently found by search on client
 export function getUsersBarsData(req, res, next) {
-	console.log(req.user)
-	console.log(req.session)
 	if(!req.query.bars) return res.sendStatus(401);
 	const { bars } = req.query;
 	Place.find( {placeID: { $in: bars }}, 'placeID users', (err, docs) => {

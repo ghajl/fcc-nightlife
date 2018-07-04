@@ -18,6 +18,7 @@ import { withStyles } from 'material-ui/styles';
 import { CircularProgress } from 'material-ui/Progress';
 import getErrorMessages from '../helpers/InputCheck';
 import createRoutes from '../routes';
+import { renderRoutes } from 'react-router-config';
 
 const styles = theme => ({
     buttonProgress: {
@@ -81,26 +82,9 @@ class Root extends Component{
 		    <ConnectedRouter history={history}>
 		    <React.Fragment>
 			    
-		        {routes}
+		        {renderRoutes(this.props.route.routes)}
 		        
-		        <Route render={(props) => {
-		        	return (
-	                  	<LoginDialog
-			            	open={this.props.isOpen}
-			            	onSubmit={this.handleSubmit}
-			            	onSignUp={() => this.toSignUp(props.location)}
-				            onClose={this.handleClose}
-				            usernameErrorText={this.state.usernameErrorText}
-				            passwordErrorText={this.state.passwordErrorText}
-				        />
-				        )
-                }} /> 
-                <MessageDialog
-                	open={this.props.isOpenMessage}
-                	onClose={this.handleCloseMessage}
-			        message={this.props.message}
-                />
-                {this.props.loading && <CircularProgress size={160} className={classes.buttonProgress} />}
+		        
 		      </React.Fragment>
 		    </ConnectedRouter>
 		
@@ -117,3 +101,21 @@ export default connect(({reducer}) =>(
 		isOpenMessage: reducer.user.messageDialogOpen,
 		loading: reducer.user.isWaiting
 	}), { manualLogin, closeLoginDialog, openLoginDialog, toSignUp, closeMessage } )(withStyles(styles)(Root))
+// <Route render={(props) => {
+// 		        	return (
+// 	                  	<LoginDialog
+// 			            	open={this.props.isOpen}
+// 			            	onSubmit={this.handleSubmit}
+// 			            	onSignUp={() => this.toSignUp(props.location)}
+// 				            onClose={this.handleClose}
+// 				            usernameErrorText={this.state.usernameErrorText}
+// 				            passwordErrorText={this.state.passwordErrorText}
+// 				        />
+// 				        )
+//                 }} /> 
+//                 <MessageDialog
+//                 	open={this.props.isOpenMessage}
+//                 	onClose={this.handleCloseMessage}
+// 			        message={this.props.message}
+//                 />
+//                 {this.props.loading && <CircularProgress size={160} className={classes.buttonProgress} />}

@@ -8,7 +8,7 @@ import {
 	closeLoginMenu 
 } from '../../actions';
 
-const mapStateToProps = ({reducer}) =>(
+const mapStateToProps = (reducer) =>(
 	{
 		username: reducer.user.username, 
 		isAuthenticated: reducer.user.authenticated, 

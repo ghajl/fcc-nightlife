@@ -5,7 +5,7 @@ const isHighlighted = (placeID, highlightedID) => {
 	return placeID == highlightedID;
 }
 
-const mapStateToProps = ({reducer}, {placeID}) =>(
+const mapStateToProps = (reducer, {placeID}) =>(
 	{
 		isHighlighted: isHighlighted(placeID, reducer.user.highlighted)
 	}
