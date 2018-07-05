@@ -4,14 +4,14 @@ import mongoose from "mongoose";
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const PlaceSchema = new mongoose.Schema({
-	placeID: {
-		type: String,
-		unique: true	
-	},
-	users: [String]
-		
-	
-	
+  placeID: {
+    type: String,
+    unique: true  
+  },
+  users: [String]
+    
+  
+  
 })
 
 
