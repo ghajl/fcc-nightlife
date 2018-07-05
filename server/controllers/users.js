@@ -39,40 +39,50 @@ export function modifyPlaceList(req, res) {
   const barUsersData = { users: req.body.userID };
 
   if (req.body.operation === 'ADD') {
-    Place.findOneAndUpdate({ placeID: req.body.placeID }, { $addToSet: barUsersData }, { upsert: true }, (err) => {
-      if (err) {
-        return res.sendStatus(409);
-      }
-      
-      User.findByIdAndUpdate(req.user.id, {$addToSet: { places: req.body.placeID } }, (err) => {
+    Place.findOneAndUpdate(
+      { placeID: req.body.placeID },
+      { $addToSet: barUsersData },
+      { upsert: true },
+      (err) => {
         if (err) {
-          Place.update({placeID: req.body.placeID},{$pull: barUsersData }, (err) => {
-            if (err) {
-              return res.sendStatus(409);
-            }
-          })
           return res.sendStatus(409);
         }
-        return res.sendStatus(200);
-      })
-    })
+
+        User.findByIdAndUpdate(
+          req.user.id,
+          { $addToSet: { places: req.body.placeID } },
+          (usererr) => {
+            if (usererr) {
+              Place.update({ placeID: req.body.placeID }, { $pull: barUsersData }, (updateerr) => {
+                if (updateerr) {
+                  res.sendStatus(409);
+                  return;
+                }
+              });
+              return res.sendStatus(409);
+            }
+            return res.sendStatus(200);
+          },
+        );
+      },
+    );
   } else if (req.body.operation === 'REMOVE') {
-    Place.findOneAndUpdate({placeID: req.body.placeID}, {$pull: barUsersData }, (err) => { 
+    Place.findOneAndUpdate({ placeID: req.body.placeID }, { $pull: barUsersData }, (err) => {
       if (err) {
         return res.sendStatus(409);
       }
-      User.findByIdAndUpdate(req.user.id, {$pull: { places: req.body.placeID } },(err) => {
-        if (err) {
-          Place.update({placeID: req.body.placeID},{$addToSet: barUsersData }, (err) => {
-            if (err) {
+      User.findByIdAndUpdate(req.user.id, { $pull: { places: req.body.placeID } }, (usererr) => {
+        if (usererr) {
+          Place.update({ placeID: req.body.placeID }, { $addToSet: barUsersData }, (updateerr) => {
+            if (updateerr) {
               return res.sendStatus(409);
             }
-          })
+          });
           return res.sendStatus(409);
         }
         return res.sendStatus(200);
-      })
-    })
+      });
+    });
   } else {
     return res.sendStatus(400);
   }
@@ -80,32 +90,32 @@ export function modifyPlaceList(req, res) {
 
 export function register(req, res) {
   const newUser = new User({
-      username: req.body.username,
-      password: req.body.password
-  }); 
+    username: req.body.username,
+    password: req.body.password,
+  });
   User.findOne({ username: req.body.username }, (err, user) => {
     // is username already in use?
-    if (user) {     
+    if (user) {
       return res.sendStatus(409);
     }
     // create the new user
-    
-    return newUser.save((err, user) => {
-      if (err) {
+
+    return newUser.save((newerr, newuser) => {
+      if (newerr) {
         return res.sendStatus(401);
       }
-      return req.logIn(user, (loginErr) => {
+      return req.logIn(newuser, (loginErr) => {
         if (loginErr) return res.sendStatus(401);
-        return res.json({userID: user.id});
+        return res.json({ userID: newuser.id });
       });
-    })
-  })
+    });
+  });
 }
 
-//returns - if exist - users lists of bars currently found by search on client
+// returns - if exist - users lists of bars currently found by search on client
 export function getUsersBarsData(req, res) {
   if (!req.query.bars) return res.sendStatus(400);
-  
+
   const { bars } = req.query;
 
   Place.find( {placeID: { $in: bars }}, 'placeID users', (err, locationPlaces) => {
