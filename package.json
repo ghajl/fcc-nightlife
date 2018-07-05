@@ -20,12 +20,12 @@
     "@types/markerclustererplus": "^2.1.33",
     "axios": "^0.17.1",
     "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
+    "babel-core": "^6.26.3",
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "babel-register": "^6.26.0",
     "bcrypt-nodejs": "0.0.3",
@@ -34,6 +34,7 @@
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.4",
     "css-loader": "^0.28.8",
+    "eslint-config-airbnb": "^17.0.0",
     "express": "*",
     "express-session": "^1.15.6",
     "history": "^4.7.2",
@@ -45,6 +46,7 @@
     "passport": "^0.4.0",
     "passport-facebook": "^2.1.1",
     "passport-local": "^1.0.0",
+    "prop-types": "^15.6.2",
     "query-string": "^5.0.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
@@ -67,5 +69,13 @@
     "webpack-dev-server": "^2.9.7",
     "webpack-hot-middleware": "^2.21.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/react": "^16.4.6",
+    "babel-eslint": "^8.2.5",
+    "eslint": "^5.0.1",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-jsx-a11y": "^6.1.0",
+    "eslint-plugin-react": "^7.10.0",
+    "file-loader": "^1.1.11"
+  }
 }

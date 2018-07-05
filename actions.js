@@ -224,6 +224,7 @@ export function openLoginMenu() {
   return { type: actionTypes.OPEN_LOGIN_MENU };
 }
 
+
 export function closeLoginMenu() {
   return { type: actionTypes.CLOSE_LOGIN_MENU };
 }

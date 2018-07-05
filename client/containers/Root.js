@@ -16,67 +16,67 @@ import Modals from './Modals';
 
 
 class Root extends Component{
-	componentDidMount = () => {
-		this.props.fetchUserData();
+  componentDidMount = () => {
+    this.props.fetchUserData();
     }
-	
-	render() {
-		const { store, history, persistor, classes } = this.props;
-		return	(
-			
-		<Provider store={store}>
-		<PersistGate
-			
-	        persistor={persistor}>
-		    
-		    <ConnectedRouter history={history}>
-		    <React.Fragment>
-			    
-		        <Switch>
+  
+  render() {
+    const { store, history, persistor, classes } = this.props;
+    return  (
+      
+    <Provider store={store}>
+    <PersistGate
+      
+          persistor={persistor}>
+        
+        <ConnectedRouter history={history}>
+        <React.Fragment>
+          
+            <Switch>
 
-			        <Route exact path="/" 
-				        render={() => {
-				        	return (<Redirect to={`/location?loc=${defaultLocation.address}`} />)
-			        }}/>
-			        <Route path="/location" 
-				        render={(props) => {
-				        	this.props.saveReturnTo(props.location);
-				        	return (<Home {...props}/>)}
-			        }/>
-			        <Route path="/signup" 
-				        render={(props) => {
-				        	let {authenticated} = store.getState().reducer.user;
-				        	return authenticated ? (<Redirect to={'/'}/>) 
-				        						: (<Signup  {...props}/>)
-        					}
-				    }/>
-			        <Route path="/places" 
-				        render={(props) => {
-				        	this.props.saveReturnTo(props.location);
-				        	const {guestBar, userID} = store.getState().reducer.user;
-				        	if(userID && guestBar != null){
-				        		this.props.addToList(guestBar); 
-				        	}
-				        	
-				        	return (<Places {...props}/>)}
-		        	}/>
-			        	
-			        <Route path="/return-from-success-login" 
-				        render={() => {
-				        	const {returnPath} = store.getState().reducer.user;
-				        	return (<Redirect to={returnPath}/>)}
-			        }/>
-			        <Route component={NotFound} />
-		        </Switch>
-		        
-		        <Modals />
-		      </React.Fragment>
-		    </ConnectedRouter>
-		</PersistGate>
-		</Provider>
+              <Route exact path="/" 
+                render={() => {
+                  return (<Redirect to={`/location?loc=${defaultLocation.address}`} />)
+              }}/>
+              <Route path="/location" 
+                render={(props) => {
+                  this.props.saveReturnTo(props.location);
+                  return (<Home {...props}/>)}
+              }/>
+              <Route path="/signup" 
+                render={(props) => {
+                  let {authenticated} = store.getState().reducer.user;
+                  return authenticated ? (<Redirect to={'/'}/>) 
+                            : (<Signup  {...props}/>)
+                  }
+            }/>
+              <Route path="/places" 
+                render={(props) => {
+                  this.props.saveReturnTo(props.location);
+                  const {guestBar, userID} = store.getState().reducer.user;
+                  if(userID && guestBar != null){
+                    this.props.addToList(guestBar); 
+                  }
+                  
+                  return (<Places {...props}/>)}
+              }/>
+                
+              <Route path="/return-from-success-login" 
+                render={() => {
+                  const {returnPath} = store.getState().reducer.user;
+                  return (<Redirect to={returnPath}/>)}
+              }/>
+              <Route component={NotFound} />
+            </Switch>
+            
+            <Modals />
+          </React.Fragment>
+        </ConnectedRouter>
+    </PersistGate>
+    </Provider>
 
-		)
-	}
+    )
+  }
 }
 
 export default connect(({reducer}) =>({userID: reducer.user.userID}), { fetchUserData, saveReturnTo, addToList } )(Root)
