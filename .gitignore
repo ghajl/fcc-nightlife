@@ -3,4 +3,4 @@ node_modules/
 coverage/
 dist/
 server/config.js
-
+server/server.js

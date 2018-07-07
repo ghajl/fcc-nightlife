@@ -1,0 +1,8 @@
+const config = {
+  MONGOLAB_URI: 
+  FACEBOOK_APP_ID: 
+  FACEBOOK_APP_SECRET: 
+  SESSION_SECRET: 
+};
+
+export default config;
