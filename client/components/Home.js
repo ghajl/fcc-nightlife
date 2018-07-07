@@ -7,6 +7,7 @@ import qs from 'query-string';
 import {defaultLocation} from '../../util/locations';
 import withWidth from 'material-ui/utils/withWidth';
 import compose from 'recompose/compose';
+const util = require('util');
 
 const styles = {
   searchBar: {

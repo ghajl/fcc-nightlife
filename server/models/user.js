@@ -1,50 +1,60 @@
-import bcrypt from "bcrypt-nodejs";
-import mongoose from "mongoose";
+import bcrypt from 'bcrypt-nodejs';
+import mongoose from 'mongoose';
 
 const UserSchema = new mongoose.Schema({
-  username: { 
+  username: {
     type: String,
     unique: true,
-    sparse: true
+    sparse: true,
   },
   password: String,
-  places:[String] ,
+  places: [String],
   profile: {
-      givenName: String,
-      familyName: String
+    givenName: String,
+    familyName: String,
   },
-  facebookID: { 
+  facebookID: {
     type: String,
     unique: true,
-    sparse: true
+    sparse: true,
+  },
+});
+
+UserSchema.pre('save', function presave(next) {
+  const user = this;
+
+  if (!user.isModified('password')) {
+    next();
+    return;
   }
-})
-
-
-
-UserSchema.pre("save", function(next) {
-  var user = this;
-
-  if (!user.isModified("password")) return next()
 
   bcrypt.genSalt(10, (err, salt) => {
-    if (err) return next(err);
-    bcrypt.hash(user.password, salt, null, (err, hash) => {
-      if (err) return next(err)
-        
-      user.password = hash
+    if (err) {
+      next(err);
+      return;
+    }
+    bcrypt.hash(user.password, salt, null, (herr, hash) => {
+      if (herr) {
+        next(herr);
+        return;
+      }
+      user.password = hash;
+      next();
+    });
+  });
+});
 
-      next()
-    })
-  })
-})
 UserSchema.methods = {
-  comparePassword: function(candidatePassword, cb) {
+  comparePassword: function comparePassword(candidatePassword, cb) {
     bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
-      if (err) return cb(err)
-      cb(null, isMatch)
-    })
-  }
-}
+      if (err) {
+        cb(err);
+        return;
+      }
+      cb(null, isMatch);
+    });
+  },
+};
+
 const User = mongoose.model('User', UserSchema);
 export default User;
