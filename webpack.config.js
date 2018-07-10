@@ -16,7 +16,7 @@ const browserConfig = {
         test: /\.jsx?$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader'
+          loader: 'babel-loader',
         },
       },
       {
@@ -27,16 +27,16 @@ const browserConfig = {
         test: /\.(png|jpg|gif)$/,
         use: [
           {
-            loader: 'url-loader'
-          }
-        ]
-      }
-    ]
+            loader: 'url-loader',
+          },
+        ],
+      },
+    ],
   },
   plugins: [
     new webpack.DefinePlugin({
-      __isBrowser__: "true"
-    })
+      __isBrowser__: 'true',
+    }),
   ],
   devtool: 'source-map',
   resolve: {
@@ -51,72 +51,23 @@ const serverConfig = {
   output: {
     path: path.resolve(process.cwd(), 'server'),
     filename: 'server.js',
-    publicPath: '/server/'
+    publicPath: '/server/',
   },
   module: {
     rules: [
-      { 
-        test: /\.(js)$/, 
+      {
+        test: /\.(js)$/,
         use: {
-          loader: 'babel-loader', 
-        }
-      }
-    ]
+          loader: 'babel-loader',
+        },
+      },
+    ],
   },
   plugins: [
     new NodemonPlugin(),
     new webpack.DefinePlugin({
-      __isBrowser__: "false"
-    })
-  ]
+      __isBrowser__: 'false',
+    }),
+  ],
 };
 module.exports = [browserConfig, serverConfig];
-
-// module.exports = {
-//   entry: './index.js',
-//   output: {
-//     filename: 'bundle.js',
-//     path: path.resolve(process.cwd(),  'public'),
-//     publicPath: '/'
-//   },
-//   devServer: {
-//     port: 3000,
-//     contentBase: './dist',
-//     historyApiFallback: true,
-//   },
-//   module: {
-//     rules: [
-//       {
-//         test: /\.jsx?$/,
-//         exclude: /(node_modules)/,
-//         use: {
-//           loader: 'babel-loader',
-//           options: {
-//             presets: ['env', 'react'],
-//             plugins: ['transform-class-properties']
-//           }
-//         }
-//       },
-//       {
-//         test: /\.css$/,
-//         use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
-//       },
-//       {
-//         test: /\.(png|jpg|gif)$/,
-//         use: [
-//           {
-//             loader: 'url-loader',
-//             options: {
-//               limit: 8192
-//             }
-//           }
-//         ]
-//       }
-//     ]
-//   },
-//   resolve: {
-//     extensions: ['.js', '.jsx'],
-//   },
-// }
-
-

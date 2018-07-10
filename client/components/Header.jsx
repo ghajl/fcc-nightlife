@@ -167,12 +167,15 @@ class Header extends Component {
   }
 }
 
+
+export default compose(withStyles(styles), withWidth())(Header);
+
 Header.propTypes = {
   classes: PropTypes.shape({}).isRequired,
   path: PropTypes.shape({}).isRequired,
   isAuthenticated: PropTypes.bool.isRequired,
-  username: PropTypes.string.isRequired,
-  facebookProfile: PropTypes.shape({}).isRequired,
+  username: PropTypes.string,
+  facebookProfile: PropTypes.shape({}),
   loginMenuOpen: PropTypes.bool.isRequired,
   width: PropTypes.string.isRequired,
   openLoginMenu: PropTypes.func.isRequired,
@@ -181,5 +184,3 @@ Header.propTypes = {
   openLoginDialog: PropTypes.func.isRequired,
   toSignUp: PropTypes.func.isRequired,
 };
-
-export default compose(withStyles(styles), withWidth())(Header);

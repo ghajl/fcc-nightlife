@@ -1,0 +1,114 @@
+import React, { Component } from 'react';
+import injectSheet from 'react-jss';
+import qs from 'query-string';
+import withWidth from 'material-ui/utils/withWidth';
+import compose from 'recompose/compose';
+import PropTypes from 'prop-types';
+import Page from './Page';
+import HomeMap from '../containers/HomeMap';
+import SearchForm from '../containers/SearchForm';
+import { defaultLocation } from '../../util/locations';
+
+const styles = {
+  searchBar: {
+    width: '400px',
+    maxWidth: '80%',
+    height: '120px',
+    position: 'absolute',
+    backgroundColor: 'white',
+    opacity: '.9',
+    top: '170px',
+    left: '50%',
+    boxShadow: '5px 1px 10px #888888',
+    transform: 'translate(-50%, -50%)',
+  },
+  form: {
+    width: '80%',
+    padding: '10px',
+  },
+  map: {
+    marginTop: '60px',
+    '@media (max-width: 600px)': {
+      marginTop: '50px',
+    },
+    flex: '1 0 auto',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+};
+
+class Home extends Component {
+  constructor(props) {
+    super(props);
+    this.location = qs.parse(props.location.search);
+    // set location from url
+    if (!this.location.loc) {
+      props.replaceLocation(defaultLocation.address, props.location.pathname);
+    } else {
+      props.findLocation(this.location.loc);
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { location, replaceLocation, findLocation } = this.props;
+    if (location.search !== nextProps.location.search) {
+      this.location = qs.parse(nextProps.location.search);
+      // set location from url
+      if (!this.location.loc) {
+        replaceLocation(defaultLocation.address, location.pathname);
+      } else {
+        findLocation(this.location.loc);
+      }
+    }
+  }
+
+  // getMargin = () => {
+  //   const { width } = this.props;
+  //   if (width === 'xs') {
+  //     return 150;
+  //   }
+  //   return 160;
+  // }
+
+  render() {
+    const { location, classes, match } = this.props;
+    return (
+      <Page location={location}>
+        <div className={classes.map} id="content">
+          <HomeMap
+            isMarkerShown
+            containerElement={<div style={{ flex: '1 0 auto', display: 'flex', flexDirection: 'column' }} />}
+          />
+        </div>
+        <div className={classes.searchBar}>
+          <div className={classes.form}>
+            <SearchForm
+              urlLocation={location}
+              path={match.path}
+              placeLocation={this.location.loc}
+            />
+          </div>
+        </div>
+      </Page>
+    );
+  }
+}
+
+export default compose(injectSheet(styles), withWidth())(Home);
+
+Home.propTypes = {
+  classes: PropTypes.shape({
+    form: PropTypes.string.isRequired,
+    searchBar: PropTypes.string.isRequired,
+    map: PropTypes.string.isRequired,
+  }).isRequired,
+  location: PropTypes.shape({
+    search: PropTypes.string.isRequired,
+    pathname: PropTypes.string.isRequired,
+  }).isRequired,
+  match: PropTypes.shape({
+    path: PropTypes.string.isRequired,
+  }).isRequired,
+  replaceLocation: PropTypes.func.isRequired,
+  findLocation: PropTypes.func.isRequired,
+};
