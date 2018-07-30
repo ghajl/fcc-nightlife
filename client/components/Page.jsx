@@ -5,6 +5,28 @@ import Header from '../containers/Header';
 import Footer from '../containers/Footer';
 
 const styles = {
+  '@global': {
+    html: {
+      background: 'white',
+      height: '100%',
+      fontSize: '14px',
+    },
+    a: {
+      textDecoration: 'none !important',
+      outline: 'none',
+    },
+    body: {
+      margin: 0,
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100%',
+    },
+
+    'body > div:first-child': {
+      height: '100%',
+      flex: '1 0 auto',
+    },
+  },
   app: {
     display: 'flex',
     'flex-direction': 'column',

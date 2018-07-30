@@ -2,12 +2,15 @@ const path = require('path');
 const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 const NodemonPlugin = require('nodemon-webpack-plugin');
+const WebpackMd5Hash = require('webpack-md5-hash');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const browserConfig = {
-  entry: ['babel-polyfill', './index.js'],
+  entry: { main: ['babel-polyfill', './index.js'] },
   output: {
-    filename: 'bundle.js',
-    path: path.resolve(process.cwd(), 'dist'),
+    filename: '[name].[chunkhash].js',
+    path: path.resolve(__dirname, 'dist'),
     publicPath: '/dist/',
   },
   module: {
@@ -34,9 +37,17 @@ const browserConfig = {
     ],
   },
   plugins: [
+    new CleanWebpackPlugin('dist', {}),
     new webpack.DefinePlugin({
       __isBrowser__: 'true',
     }),
+    new HtmlWebpackPlugin({
+      inject: false,
+      hash: true,
+      template: './index.html',
+      filename: 'index.html',
+    }),
+    new WebpackMd5Hash(),
   ],
   devtool: 'source-map',
   resolve: {
@@ -45,12 +56,14 @@ const browserConfig = {
 };
 
 const serverConfig = {
-  entry: ['babel-polyfill', './server/index.js'],
+  entry: ['babel-polyfill', './server/app.js'],
   target: 'node',
   externals: [nodeExternals()],
   output: {
     path: path.resolve(process.cwd(), 'server'),
     filename: 'server.js',
+    library: 'server',
+    libraryTarget: 'commonjs2',
     publicPath: '/server/',
   },
   module: {
@@ -64,7 +77,7 @@ const serverConfig = {
     ],
   },
   plugins: [
-    new NodemonPlugin(),
+    new NodemonPlugin({ script: './server/index.js', watch: path.resolve('./server') }),
     new webpack.DefinePlugin({
       __isBrowser__: 'false',
     }),
