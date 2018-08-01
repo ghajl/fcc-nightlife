@@ -1,21 +1,21 @@
-import Places from "../components/Places"
 import { connect } from 'react-redux';
-import { 
-  findLocation, 
-  showPlaces, 
+import Places from '../components/Places';
+import {
+  findLocation,
+  showPlaces,
   showList,
-  setHeight, 
-  highlightPlace, 
-  replaceLocation 
+  highlightPlace,
+  replaceLocation,
 } from '../../actions';
 
-const mapStateToProps = ({reducer}) =>(
-  { 
-    bars: reducer.user.locationBars, 
-    lat: reducer.user.lat, 
+const mapStateToProps = ({ reducer }) => (
+  {
+    bars: reducer.user.locationBars,
+    lat: reducer.user.lat,
     lng: reducer.user.lng,
-    footerHeight: reducer.user.footerHeight 
   }
 );
 
-export default connect(mapStateToProps, { findLocation, showPlaces, showList, setHeight, highlightPlace, replaceLocation })(Places);
+export default connect(mapStateToProps, {
+  findLocation, showPlaces, showList, highlightPlace, replaceLocation,
+})(Places);

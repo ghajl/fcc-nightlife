@@ -1,18 +1,15 @@
-import PlaceComponent from "../components/PlaceComponent"
 import { connect } from 'react-redux';
-import { addToList, removeFromList, loginAndAdd, openLoginDialog } from '../../actions';
+import PlaceComponent from '../components/PlaceComponent';
+import {
+  addToList, removeFromList, loginAndAdd, openLoginDialog,
+} from '../../actions';
 
+const currentIsGoing = (barsOfUser, barID) => barsOfUser.indexOf(barID) !== -1;
 
-const currentIsGoing = (barsOfUser, barID) => {
-  return ~barsOfUser.indexOf(barID);
-}
+const isHighlighted = (placeID, highlightedID) => placeID === highlightedID;
 
-const isHighlighted = (placeID, highlightedID) => {
-  return placeID == highlightedID;
-}
-
-const mapStateToProps = ({reducer}, {data}) => {
-  return {
+const mapStateToProps = ({ reducer }, { data }) => (
+  {
     placeID: data.id,
     photo: data.photoUrl,
     name: data.name,
@@ -24,11 +21,9 @@ const mapStateToProps = ({reducer}, {data}) => {
     authenticated: reducer.user.authenticated,
     username: reducer.user.username,
     isHighlighted: isHighlighted(data.id, reducer.user.highlighted),
-    // cardRef: data.cardRef
   }
-}
+);
 
-
-
-
-export default connect(mapStateToProps, { addToList, removeFromList, loginAndAdd, openLoginDialog })(PlaceComponent);
+export default connect(mapStateToProps, {
+  addToList, removeFromList, loginAndAdd, openLoginDialog,
+})(PlaceComponent);

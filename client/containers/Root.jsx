@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Provider, connect } from 'react-redux';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { ConnectedRouter } from 'react-router-redux';
@@ -13,12 +14,13 @@ import Modals from './Modals';
 
 class Root extends Component {
   componentDidMount = () => {
-    this.props.fetchUserData();
+    const { dispatch } = this.props;
+    dispatch(fetchUserData());
   }
 
   render() {
     const {
-      store, history, persistor, classes,
+      store, history, persistor, dispatch,
     } = this.props;
     return (
       <Provider store={store}>
@@ -38,8 +40,8 @@ class Root extends Component {
                 <Route
                   path="/location"
                   render={(props) => {
-                    this.props.saveReturnTo(props.location);
-                    return (<Home {...props}/>);
+                    dispatch(saveReturnTo(props.location));
+                    return (<Home {...props} />);
                   }}
                 />
                 <Route
@@ -53,10 +55,10 @@ class Root extends Component {
                 <Route
                   path="/places"
                   render={(props) => {
-                    this.props.saveReturnTo(props.location);
+                    dispatch(saveReturnTo(props.location));
                     const { guestBar, userID } = store.getState().reducer.user;
                     if (userID && guestBar != null) {
-                      this.props.addToList(guestBar);
+                      dispatch(addToList(guestBar));
                     }
                     return (<Places {...props} />);
                   }}
@@ -65,7 +67,7 @@ class Root extends Component {
                   path="/return-from-success-login"
                   render={() => {
                     const { returnPath } = store.getState().reducer.user;
-                    return (<Redirect to={returnPath} />)
+                    return (<Redirect to={returnPath} />);
                   }}
                 />
                 <Route component={NotFound} />
@@ -80,4 +82,11 @@ class Root extends Component {
   }
 }
 
-export default connect(({ reducer }) => ({ userID: reducer.user.userID }), { fetchUserData, saveReturnTo, addToList })(Root);
+export default connect(({ reducer }) => ({ userID: reducer.user.userID }))(Root);
+
+Root.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  store: PropTypes.shape({}).isRequired,
+  history: PropTypes.shape({}).isRequired,
+  persistor: PropTypes.shape({}).isRequired,
+};

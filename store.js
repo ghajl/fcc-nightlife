@@ -1,38 +1,36 @@
-import { createStore, combineReducers, applyMiddleware } from 'redux'
+import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { routerReducer as router, routerMiddleware } from 'react-router-redux';
 import thunk from 'redux-thunk';
 import { persistStore, persistCombineReducers } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
 import sessionStorage from 'redux-persist/lib/storage/session';
-import user from './reducer'
+import user from './reducer';
 
 const config = {
   key: 'root',
   storage: sessionStorage,
-}
+};
 
 const combReducers = combineReducers({
   user,
-  router
+  router,
 });
 
-const reducers = persistCombineReducers(config, {reducer: combReducers});
+const reducers = persistCombineReducers(config, { reducer: combReducers });
 
 let persistor = null;
 
-export function configureStore (history){
+export function configureStore(history) {
   const middleware = [thunk, routerMiddleware(history)];
   const store = createStore(
     reducers,
     undefined,
-    applyMiddleware(...middleware)
+    applyMiddleware(...middleware),
   );
 
   persistor = persistStore(store);
-  return {store, persistor};
+  return { store, persistor };
 }
 
-export function getPersistor(){
+export function getPersistor() {
   return persistor;
 }
-

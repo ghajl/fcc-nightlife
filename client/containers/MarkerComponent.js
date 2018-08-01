@@ -1,15 +1,12 @@
-import MarkerComponent from "../components/MarkerComponent"
 import { connect } from 'react-redux';
+import MarkerComponent from '../components/MarkerComponent';
 
-const isHighlighted = (placeID, highlightedID) => {
-  return placeID == highlightedID;
-}
+const isHighlighted = (placeID, highlightedID) => placeID === highlightedID;
 
-const mapStateToProps = ({reducer}, {placeID}) =>(
+const mapStateToProps = ({ reducer }, { placeID }) => (
   {
-    isHighlighted: isHighlighted(placeID, reducer.user.highlighted)
+    isHighlighted: isHighlighted(placeID, reducer.user.highlighted),
   }
 );
-
 
 export default connect(mapStateToProps)(MarkerComponent);

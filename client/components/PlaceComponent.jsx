@@ -4,7 +4,7 @@ import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
 
 const styles = theme => ({
-  placeCart: {
+  placeCard: {
     maxWidth: '100%',
     opacity: '.9',
     backgroundColor: '#FAFAFA',
@@ -58,7 +58,7 @@ const PlaceComponent = ({ placeID, classes, ...props }) => {
     loginAndAdd(placeID);
   };
 
-  const cartClick = () => {
+  const cardClick = () => {
     const source = 'notmap';
     const { markerClick } = props;
     markerClick(placeID, source);
@@ -108,9 +108,9 @@ const PlaceComponent = ({ placeID, classes, ...props }) => {
   } = props;
   return (
     <div
-      className={`${classes.placeCart} ${classes.text}`}
+      className={`${classes.placeCard} ${classes.text}`}
       ref={cardRef}
-      onClick={cartClick}
+      onClick={cardClick}
       style={isHighlighted ? { backgroundColor: '#E0E0E0' } : {}}
     >
       {photo
@@ -195,7 +195,7 @@ PlaceComponent.propTypes = {
   address: PropTypes.string.isRequired,
   rating: PropTypes.number,
   authenticated: PropTypes.bool.isRequired,
-  isUserGoing: PropTypes.number.isRequired,
+  isUserGoing: PropTypes.bool.isRequired,
   usersInBar: PropTypes.number.isRequired,
   placeID: PropTypes.string.isRequired,
   addToList: PropTypes.func.isRequired,

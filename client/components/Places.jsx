@@ -2,19 +2,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import qs from 'query-string';
 import injectSheet from 'react-jss';
-import withWidth from 'material-ui/utils/withWidth';
-import compose from 'recompose/compose';
-import * as Scroll from 'react-scroll';
-import { Link, Element , Events, animateScroll as scroll, scrollSpy, scroller } from 'react-scroll';
-import ArrowUpward from 'material-ui-icons/ArrowUpward'; 
+import { animateScroll as scroll } from 'react-scroll';
+import ArrowUpward from 'material-ui-icons/ArrowUpward';
 import MapComponent from '../containers/MapComponent';
 import PlaceComponent from '../containers/PlaceComponent';
-import SearchForm from '../containers/SearchForm';
+import SearchBar from '../containers/SearchBar';
 import { defaultLocation } from '../../util/locations';
 import Page from './Page';
+import styleVariables from '../helpers/styleVariables';
 
 const styles = {
-  root: {
+  wrapper: {
     flex: '1 0 auto',
     display: 'flex',
     '@media (max-width: 640px)': {
@@ -25,23 +23,19 @@ const styles = {
       marginTop: '50px',
     },
   },
-  placesList: {
-    maxWidth: '100%',
+  listWrapper: {
     display: 'flex',
     flexDirection: 'column',
+    width: '100%',
+    position: 'relative',
+
     '@media (min-width: 641px)': {
-      // borderRight: '.5rem solid #A8C256',
       width: '400px',
       'overflow-y': 'scroll',
     },
     '@media (max-width: 640px)': {
-      width: '100%',
       flex: '1 0 auto',
     },
-    position: 'relative',
-  },
-  carts: {
-    marginTop: 0,
   },
   item: {
     margin: '20px',
@@ -53,26 +47,20 @@ const styles = {
       height: 0,
     },
   },
-  searchBar: {
-    width: '100%',
-    height: '120px',
-    backgroundColor: '#FFD54F',
-    maxWidth: '100%',
-    position: 'relative',
-    top: 0,
-  },
-  form: {
-    width: '80%',
-    padding: '10px',
-  },
   upButtonWrapper: {
-    width: '52px',
-    height: '52px',
     bottom: '10%',
     right: '10%',
     zIndex: 1000,
     opacity: 0.4,
     transition: '.6s',
+    position: 'relative',
+    width: 0,
+    height: 0,
+    '@media (min-width: 641px)': {
+      width: '52px',
+      height: '52px',
+      position: 'absolute',
+    },
   },
   upButton: {
     width: '50px',
@@ -82,6 +70,10 @@ const styles = {
     backgroundColor: 'black',
     cursor: 'pointer',
     boxShadow: '1px 1px 6px rgba(0, 0, 0, .5)',
+    '@media (max-width: 640px)': {
+      bottom: '10%',
+      right: '10%',
+    },
   },
   icon: {
     fill: 'white',
@@ -104,8 +96,8 @@ class Places extends Component {
       replaceLocation(defaultLocation.address, location.pathname);
     }
     this.placeCards = {};
+    this.searchBarRef = React.createRef();
     this.state = {
-      height: window.innerHeight - this.getMargin(),
       upwardButtonVisible: false,
     };
   }
@@ -113,11 +105,16 @@ class Places extends Component {
   componentWillMount() {
     window.addEventListener('resize', this.handleWindowSizeChange);
     window.addEventListener('scroll', this.handleScroll);
+    this.setState({
+      screen: {
+        height: this.getMainScreenHeight(),
+      },
+    });
   }
 
   componentWillReceiveProps(nextProps) {
     const { location, findLocation, showPlaces } = this.props;
-    if (location.search != nextProps.location.search) {
+    if (location.search != null && location.search !== nextProps.location.search) {
       this.placeLocation = qs.parse(nextProps.location.search);
       // if there is 'bar' parameter in url - show list of bars
       // if there is only 'loc' parameter - show location on the map
@@ -129,10 +126,20 @@ class Places extends Component {
     }
   }
 
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleWindowSizeChange);
+    window.removeEventListener('scroll', this.handleScroll);
+  }
 
-  getMargin = () => {
-    const { width } = this.props;
-    return width === 'xs' ? 50 : 60;
+  getMainScreenHeight = () => {
+    if (window) {
+      const header = window.innerWidth <= 600 ? 50 : 60;
+      const footer = window.innerWidth <= 319
+        ? styleVariables.footerHeightSm
+        : styleVariables.footerHeightLg;
+      return window.innerHeight - header - footer;
+    }
+    return 0;
   }
 
   setMap = (el) => {
@@ -147,7 +154,7 @@ class Places extends Component {
     }
   }
 
-  setPlacesListEvent = (element) => {
+  setScrollEvent = (element) => {
     if (element) {
       element.addEventListener('scroll', this.handleScroll);
     }
@@ -156,13 +163,13 @@ class Places extends Component {
   // show choosed bar on map and in list of bar cards
   markerClick = (placeID, source = 'map') => {
     const { highlightPlace } = this.props;
-    if (source === 'map' && this.placeCards[placeID] && this.topElement) {
-      const position = this.placeCards[placeID].getBoundingClientRect().top - this.topElement.getBoundingClientRect().top;
+    if (source === 'map' && this.placeCards[placeID] && this.searchBarRef) {
+      const position = this.placeCards[placeID].getBoundingClientRect().top
+      - this.searchBarRef.current.getBoundingClientRect().top;
       this.scrollTo(position);
     }
     highlightPlace(placeID);
   }
-
 
   showList = (placeID) => {
     const { showList } = this.props;
@@ -174,77 +181,77 @@ class Places extends Component {
       duration: 800,
       delay: 0,
       smooth: 'easeInOutQuart',
-      containerId: 'PlacesListElementID',
-    })
+      containerId: 'ListID',
+    });
   }
 
-  scrollToTop = (width) => {
+  scrollToTop = () => {
+    const width = window.innerWidth;
     let id;
     if (width <= 640) {
-      id = 'PageElementID';
+      id = 'PageID';
     } else {
-      id = 'PlacesListElementID';
+      id = 'ListID';
     }
     scroll.scrollToTop({ containerId: id });
   }
 
-
   handleWindowSizeChange = () => {
     this.setState({
-      height: window.innerHeight - this.getMargin(),
+      screen: {
+        height: this.getMainScreenHeight(),
+      },
     });
   }
 
   handleScroll = () => {
-    if (this.topElement) {
+    if (this.searchBarRef) {
       const { upwardButtonVisible } = this.state;
-      if (this.topElement.getBoundingClientRect().top < -20 && !upwardButtonVisible) {
+      if (upwardButtonVisible) {
+        if (this.searchBarRef.current.getBoundingClientRect().top >= -20) {
+          this.setState({ upwardButtonVisible: false });
+        }
+      } else if (this.searchBarRef.current.getBoundingClientRect().top < -20) {
         this.setState({ upwardButtonVisible: true });
-      } else if (this.topElement.getBoundingClientRect().top >= -20 && upwardButtonVisible) {
-        this.setState({ upwardButtonVisible: false });
       }
     }
   }
 
   render() {
     const {
-      classes, bars, location, footerHeight, match
+      classes, bars, location, match,
     } = this.props;
-    const { height, upwardButtonVisible } = this.state;
-    const sectionStyle = window.innerWidth <= 640 ? {} : { height: height - footerHeight };
-    let upButtonWrapperStyle = window.innerWidth <= 640 ? { position: 'relative', width: 0, height: 0 } : { position: 'absolute' };
-    upButtonWrapperStyle = upwardButtonVisible
-      ? { ...upButtonWrapperStyle, ...{ visibility: 'visible' } }
-      : { ...upButtonWrapperStyle, ...{ visibility: 'hidden', opacity: 0 } };
-    const upButtonStyle = window.innerWidth <= 640 ? { bottom: '10%', right: '10%' } : {};
-    const listStyle = window.innerWidth <= 640 ? { flex: '1 0 auto' } : { height: height - 120 - footerHeight };
-    const mapStyle = window.innerWidth <= 640 ? { height: 0 } : { height: height - footerHeight };
+    const { screen, upwardButtonVisible } = this.state;
+    const { height } = screen;
+    const listStyle = window.innerWidth <= 640 ? {} : { height };
+    const mapStyle = window.innerWidth <= 640 ? { height: 0 } : { height };
+    const upButtonWrapperStyle = upwardButtonVisible
+      ? { visibility: 'visible' }
+      : { visibility: 'hidden', opacity: 0 };
     return (
-      <Page location={location} id="PageElementID">
-        <div className={classes.root}>
-          <div className={classes.placesList} style={sectionStyle} id="PlacesListElementID" ref={el => this.setPlacesListEvent(el)}>
-            <div className={classes.searchBar} ref={(el) => { this.topElement = el; }}>
-              <div className={classes.form}>
-                <SearchForm urlLocation={location} path={match.path} placeLocation={this.placeLocation.loc} />
-              </div>
-            </div>
-            <div className={classes.carts} style={listStyle}>
-              { bars && bars.map((item, index) => (
-                <PlaceComponent
-                  key={index}
-                  data={item}
-                  path={match.url}
-                  showList={this.showList}
-                  markerClick={this.markerClick}
-                  cardRef={(el) => { this.placeCards[item.id] = el; }}
-                />
-              ))}
-            </div>
+      <Page location={location} id="PageID">
+        <div className={classes.wrapper}>
+          <div className={classes.listWrapper} style={listStyle} id="ListID" ref={el => this.setScrollEvent(el)}>
+            <SearchBar
+              urlLocation={location}
+              path={match.path}
+              placeLocation={this.placeLocation.loc}
+              searchBarRef={this.searchBarRef}
+            />
+            { bars && bars.map((item, index) => (
+              <PlaceComponent
+                key={index}
+                data={item}
+                path={match.url}
+                showList={this.showList}
+                markerClick={this.markerClick}
+                cardRef={(el) => { this.placeCards[item.id] = el; }}
+              />
+            ))}
             <div className={classes.upButtonWrapper} style={upButtonWrapperStyle}>
               <div
                 className={classes.upButton}
-                style={upButtonStyle}
-                onClick={() => this.scrollToTop(window.innerWidth)}
+                onClick={() => this.scrollToTop()}
               >
                 <ArrowUpward className={classes.icon} />
               </div>
@@ -265,4 +272,25 @@ class Places extends Component {
   }
 }
 
-export default compose(injectSheet(styles), withWidth())(Places);
+export default injectSheet(styles)(Places);
+
+Places.propTypes = {
+  location: PropTypes.shape({
+    search: PropTypes.string.isRequired,
+    pathname: PropTypes.string.isRequired,
+  }).isRequired,
+  classes: PropTypes.shape({}).isRequired,
+  bars: PropTypes.arrayOf(PropTypes.shape({})),
+  match: PropTypes.shape({
+    path: PropTypes.string.isRequired,
+  }).isRequired,
+  replaceLocation: PropTypes.func.isRequired,
+  findLocation: PropTypes.func.isRequired,
+  showPlaces: PropTypes.func.isRequired,
+  highlightPlace: PropTypes.func.isRequired,
+  showList: PropTypes.func.isRequired,
+};
+
+Places.defaultProps = {
+  bars: null,
+};

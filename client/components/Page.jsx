@@ -2,7 +2,7 @@ import React from 'react';
 import injectSheet from 'react-jss';
 import PropTypes from 'prop-types';
 import Header from '../containers/Header';
-import Footer from '../containers/Footer';
+import Footer from './Footer';
 
 const styles = {
   '@global': {
@@ -26,6 +26,9 @@ const styles = {
       height: '100%',
       flex: '1 0 auto',
     },
+    '*, *:before, *:after': {
+      boxSizing: 'border-box',
+    },
   },
   app: {
     display: 'flex',
@@ -33,10 +36,13 @@ const styles = {
     height: '100%',
   },
   content: {
-    flex: '1 0 auto',
+    flex: '1 1 auto',
     width: '100%',
     display: 'flex',
     'flex-direction': 'column',
+    '@media (max-width: 640px)': {
+      flexShrink: 0,
+    },
   },
 };
 
@@ -55,10 +61,7 @@ const Page = ({ classes, location, children }) => (
 export default injectSheet(styles)(Page);
 
 Page.propTypes = {
-  classes: PropTypes.shape({
-    app: PropTypes.string.isRequired,
-    content: PropTypes.string.isRequired,
-  }).isRequired,
+  classes: PropTypes.shape({}).isRequired,
   location: PropTypes.shape({}).isRequired,
   children: PropTypes.shape({}).isRequired,
 };

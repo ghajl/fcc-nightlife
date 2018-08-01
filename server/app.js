@@ -9,9 +9,11 @@ import connectMongo from 'connect-mongo';
 import initRoutes from './init/routes';
 import User from './models/user';
 
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+
 export default (appConfig = {}) => {
   const app = express();
-  const cors = require('cors');
 
   let config = null;
   const isDev = process.env.NODE_ENV === 'development';
@@ -97,7 +99,7 @@ export default (appConfig = {}) => {
 
   const MongoStore = connectMongo(session);
 
-  app.use(require('cookie-parser')());
+  app.use(cookieParser());
 
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));

@@ -1,5 +1,5 @@
-import React, {Component} from 'react'
-import Header from '../containers/Header'
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
 import { withStyles } from 'material-ui/styles';
@@ -23,34 +23,34 @@ const styles = theme => ({
     flexDirection: 'column',
     alignItems: 'center',
     width: 500,
-    maxWidth: '100%'
+    maxWidth: '100%',
   },
   form: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     width: 500,
-    maxWidth: '100%'
+    maxWidth: '100%',
   },
   textField: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
     width: 300,
-    maxWidth: '100%'
+    maxWidth: '100%',
   },
   menu: {
     width: 200,
   },
   button: {
-    marginTop:50
+    marginTop: 50,
   },
   fbLogin: {
-    textAlign:'center',
-    marginTop:50
-  }
+    textAlign: 'center',
+    marginTop: 50,
+  },
 });
 
-class Signup extends Component{
+class Signup extends Component {
   constructor() {
     super();
     this.usernameInput = null;
@@ -61,83 +61,85 @@ class Signup extends Component{
     };
   }
 
+  onSignupSubmit = (event) => {
+    event.preventDefault();
+    const username = this.usernameInput.value;
+    const password = this.passwordInput.value;
+    const { usernameError, passwordError } = getErrorMessages(username, password);
+    const { signUp } = this.props;
+    if (usernameError || passwordError) {
+      this.setState({
+        usernameErrorMessage: usernameError,
+        passwordErrorMessage: passwordError,
+      });
+    } else {
+      signUp({ username, password });
+    }
+  };
+
   handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       this.onSignupSubmit(event);
     }
   }
 
-  onSignupSubmit = (event) => {   
-    event.preventDefault()
-    const username = this.usernameInput.value;
-    const password = this.passwordInput.value;
-    const {usernameError, passwordError} = getErrorMessages(username, password);
-    if (usernameError || passwordError) {
-      this.setState({
-        usernameErrorMessage: usernameError,
-        passwordErrorMessage: passwordError,
-      })
-    } else {
-      this.props.signUp({ 
-        username,
-        password,
-      }) 
-    }
-  };
-
-  render(){
-    const { classes} = this.props;
-    
+  render() {
+    const { classes, location } = this.props;
+    const { usernameErrorMessage, passwordErrorMessage } = this.state;
     return (
-      <Page location={this.props.location}>
-        <div className={classes.root}>                 
+      <Page location={location}>
+        <div className={classes.root}>
           <div className={classes.container}>
-            <form className={classes.form} >
+            <form className={classes.form}>
               <TextField
-                className={classes.textField} 
+                className={classes.textField}
                 required
-                error={this.state.usernameErrorMessage.length > 0}
-                margin="dense"
+                error={usernameErrorMessage.length > 0}
                 id="username"
                 label="Username"
                 type="username"
-                helperText={this.state.usernameErrorMessage}
-                inputRef={(input) => { 
+                helperText={usernameErrorMessage}
+                inputRef={(input) => {
                   if (input) {
-                    this.usernameInput = input; 
-                    setTimeout(() => {this.usernameInput.focus()}, 300)
-                  }}
-                }
+                    this.usernameInput = input;
+                    setTimeout(() => { this.usernameInput.focus(); }, 300);
+                  }
+                }}
                 margin="normal"
                 onKeyPress={this.handleKeyPress}
               />
               <TextField
-                className={classes.textField} 
+                className={classes.textField}
                 required
-                error={this.state.passwordErrorMessage.length > 0}
-                margin="dense"
+                error={passwordErrorMessage.length > 0}
                 id="password"
                 label="Password"
                 type="password"
-                helperText={this.state.passwordErrorMessage}
+                helperText={passwordErrorMessage}
                 inputRef={(input) => { this.passwordInput = input; }}
                 margin="normal"
                 onKeyPress={this.handleKeyPress}
               />
-            </form> 
+            </form>
             <div className={classes.button}>
-            <Button raised color="accent" onClick={this.onSignupSubmit}>
-              sign up
-            </Button>
+              <Button raised color="accent" onClick={this.onSignupSubmit}>
+                sign up
+              </Button>
+            </div>
+            <div className={classes.fbLogin}>
+              <LogInWithFB />
+            </div>
           </div>
-          <div className={this.props.classes.fbLogin}>
-            <LogInWithFB />
-          </div>
-        </div>  
-      </div>
-    </Page>
-    )
+        </div>
+      </Page>
+    );
   }
 }
 
-export default withStyles(styles)(Signup)
+export default withStyles(styles)(Signup);
+
+Signup.propTypes = {
+  signUp: PropTypes.func.isRequired,
+  classes: PropTypes.shape({}).isRequired,
+  location: PropTypes.shape({}).isRequired,
+};

@@ -3,12 +3,21 @@ import PropTypes from 'prop-types';
 import injectSheet from 'react-jss';
 import compose from 'recompose/compose';
 import withWidth from 'material-ui/utils/withWidth';
+import styleVariables from '../helpers/styleVariables';
 
 const styles = {
   wrapper: {
     textAlign: 'center',
+    flexShrink: 0,
     backgroundColor: 'white',
     boxShadow: '0 -3px 7px -6px #222',
+    height: `${styleVariables.footerHeightSm}px`,
+    '@media (min-width: 320px)': {
+      height: `${styleVariables.footerHeightLg}px`,
+    },
+    '& *': {
+      boxSizing: 'content-box',
+    },
   },
   element: {
     display: 'inline-block',
@@ -61,7 +70,6 @@ const Footer = (props) => {
   return (
     <div
       className={classes.wrapper}
-      ref={(elem) => { if (elem) props.footerHeight(elem.offsetHeight + 1); }}
     >
       <div className={classes.container}>
         <div className={classes.element}>
@@ -97,7 +105,6 @@ const Footer = (props) => {
 
 Footer.propTypes = {
   classes: PropTypes.shape({}).isRequired,
-  footerHeight: PropTypes.func.isRequired,
 };
 
 export default compose(injectSheet(styles), withWidth())(Footer);

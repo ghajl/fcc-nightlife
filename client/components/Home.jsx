@@ -6,14 +6,13 @@ import compose from 'recompose/compose';
 import PropTypes from 'prop-types';
 import Page from './Page';
 import HomeMap from '../containers/HomeMap';
-import SearchForm from '../containers/SearchForm';
+import SearchBar from '../containers/SearchBar';
 import { defaultLocation } from '../../util/locations';
 
 const styles = {
   searchBar: {
     width: '400px',
     maxWidth: '80%',
-    height: '120px',
     position: 'absolute',
     backgroundColor: 'white',
     opacity: '.9',
@@ -21,10 +20,6 @@ const styles = {
     left: '50%',
     boxShadow: '5px 1px 10px #888888',
     transform: 'translate(-50%, -50%)',
-  },
-  form: {
-    width: '80%',
-    padding: '10px',
   },
   map: {
     marginTop: '60px',
@@ -62,33 +57,24 @@ class Home extends Component {
     }
   }
 
-  // getMargin = () => {
-  //   const { width } = this.props;
-  //   if (width === 'xs') {
-  //     return 150;
-  //   }
-  //   return 160;
-  // }
-
   render() {
     const { location, classes, match } = this.props;
     return (
       <Page location={location}>
-        <div className={classes.map} id="content">
-          <HomeMap
-            isMarkerShown
-            containerElement={<div style={{ flex: '1 0 auto', display: 'flex', flexDirection: 'column' }} />}
-          />
-        </div>
-        <div className={classes.searchBar}>
-          <div className={classes.form}>
-            <SearchForm
-              urlLocation={location}
-              path={match.path}
-              placeLocation={this.location.loc}
+        <React.Fragment>
+          <div className={classes.map} id="content">
+            <HomeMap
+              isMarkerShown
+              containerElement={<div style={{ flex: '1 0 auto', display: 'flex', flexDirection: 'column' }} />}
             />
           </div>
-        </div>
+          <SearchBar
+            urlLocation={location}
+            path={match.path}
+            placeLocation={this.location.loc}
+            className={classes.searchBar}
+          />
+        </React.Fragment>
       </Page>
     );
   }
@@ -97,11 +83,7 @@ class Home extends Component {
 export default compose(injectSheet(styles), withWidth())(Home);
 
 Home.propTypes = {
-  classes: PropTypes.shape({
-    form: PropTypes.string.isRequired,
-    searchBar: PropTypes.string.isRequired,
-    map: PropTypes.string.isRequired,
-  }).isRequired,
+  classes: PropTypes.shape({}).isRequired,
   location: PropTypes.shape({
     search: PropTypes.string.isRequired,
     pathname: PropTypes.string.isRequired,
