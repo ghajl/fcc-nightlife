@@ -20,7 +20,7 @@ const mapStateToProps = ({ reducer }, { data }) => (
     isUserGoing: currentIsGoing(reducer.user.userBars, data.id),
     authenticated: reducer.user.authenticated,
     username: reducer.user.username,
-    isHighlighted: isHighlighted(data.id, reducer.user.highlighted),
+    isHighlighted: isHighlighted(data.id, reducer.bar.highlighted),
   }
 );
 

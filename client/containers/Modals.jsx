@@ -110,12 +110,12 @@ class Modals extends Component {
 
 export default connect(({ reducer }) => (
   {
-    isLoginOpen: reducer.user.loginDialogOpen,
+    isLoginOpen: reducer.loginDialogOpen,
     message: reducer.user.message,
-    isMessageOpen: reducer.user.messageDialogOpen,
+    isMessageOpen: reducer.messageDialogOpen,
     loading: reducer.user.isWaiting,
-    isListOpen: reducer.user.listDialogOpen,
-    list: reducer.user.barUserslist,
+    isListOpen: reducer.listDialogOpen,
+    list: reducer.bar.barUserslist,
   }))(withStyles(styles)(Modals));
 
 Modals.propTypes = {

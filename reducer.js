@@ -69,6 +69,7 @@ export default function user(state = initialState, action) {
         isWaiting: false,
         authenticated: false,
         username: 'Guest',
+        userID: '',
         facebookProfile: null,
         userBars: [],
         highlighted: null,
@@ -166,20 +167,9 @@ export default function user(state = initialState, action) {
         guestBar: null,
       },
     };
-  case actionTypes.ADD_TO_LIST_SUCCESS:
+  case actionTypes.INCREMENT_VISITORS_COUNT:
   {
     const i = state.locationBars.findIndex(elem => elem.id === action.placeID);
-    // check if the current user already in the list - in the case
-    // of user pressed add button before login
-    if (state.userBars.indexOf(action.placeID) !== -1) {
-      return {
-        ...state,
-        ...{
-          isWaiting: false,
-          guestBar: null,
-        },
-      };
-    }
     const updateBar = { ...state.locationBars[i], ...{ users: state.locationBars[i].users + 1 } };
     const updateLocationBars = [
       ...state.locationBars.slice(0, i),
@@ -189,38 +179,65 @@ export default function user(state = initialState, action) {
     return {
       ...state,
       ...{
-        isWaiting: false,
-        message: [...state.message, action.message],
-        messageDialogOpen: true,
-        userBars: [...state.userBars, action.placeID],
         locationBars: updateLocationBars,
-        guestBar: null,
       },
     };
   }
-  case actionTypes.REMOVE_FROM_LIST_SUCCESS:
+  case actionTypes.ADD_BAR_TO_USER:
+    return {
+      ...state,
+      ...{
+        userBars: [...state.userBars, action.placeID],
+      },
+    };
+  case actionTypes.ADD_TO_LIST_SUCCESS:
+    return {
+      ...state,
+      ...{
+        isWaiting: false,
+        guestBar: null,
+      },
+    };
+  case actionTypes.DECREMENT_VISITORS_COUNT:
   {
-    // reduce number of users on the list of bar
+    // remove current user from the list of bar
     const i = state.locationBars.findIndex(elem => elem.id === action.placeID);
     const updateBar = { ...state.locationBars[i], ...{ users: state.locationBars[i].users - 1 } };
-    const updateLocationBars = [...state.locationBars.slice(0, i), updateBar, ...state.locationBars.slice(i + 1)];
-    // remove bar from list of bars of current user
+    const updateLocationBars = [
+      ...state.locationBars.slice(0, i),
+      updateBar,
+      ...state.locationBars.slice(i + 1),
+    ];
+
+    return {
+      ...state,
+      ...{
+        locationBars: updateLocationBars,
+      },
+    };
+  }
+  case actionTypes.REMOVE_BAR_FROM_USER:
+  {
     const updateUserBars = [...state.userBars];
     const index = updateUserBars.indexOf(action.placeID);
     if (index >= 0) {
       updateUserBars.splice(index, 1);
     }
+
+    return {
+      ...state,
+      ...{
+        userBars: updateUserBars,
+      },
+    };
+  }
+  case actionTypes.REMOVE_FROM_LIST_SUCCESS:
     return {
       ...state,
       ...{
         isWaiting: false,
-        message: [...state.message, action.message],
-        messageDialogOpen: true,
-        userBars: updateUserBars,
-        locationBars: updateLocationBars,
       },
     };
-  }
   case actionTypes.HIGHLIGHT_PLACE:
     return {
       ...state,

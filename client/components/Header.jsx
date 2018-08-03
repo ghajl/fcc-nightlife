@@ -49,21 +49,21 @@ class Header extends Component {
     closeLoginMenu();
   };
 
-  logout = (event) => {
+  handleLogOutClick = (event) => {
     const { logOut } = this.props;
     event.preventDefault();
     this.handleMenuClose();
     logOut();
   };
 
-  toLogIn = (event) => {
+  handleLogInClick = (event) => {
     const { openLoginDialog } = this.props;
     event.preventDefault();
     this.handleMenuClose();
     openLoginDialog();
   };
 
-  signUp = (event) => {
+  handleSignUpClick = (event) => {
     const { path, toSignUp } = this.props;
     event.preventDefault();
     this.handleMenuClose();
@@ -106,16 +106,16 @@ class Header extends Component {
                   <div className={classes.login}>
                     {isAuthenticated
                       ? (
-                        <Button component={Link} to="/logout" onClick={this.logout}>
+                        <Button component={Link} to="/logout" onClick={this.handleLogOutClick}>
                           LOG OUT
                         </Button>
                       )
                       : (
                         <React.Fragment>
-                          <Button onClick={this.toLogIn}>
+                          <Button onClick={this.handleLogInClick}>
                             LOG IN
                           </Button>
-                          <Button component={Link} to="/signup" onClick={this.signUp}>
+                          <Button component={Link} to="/signup" onClick={this.handleSignUpClick}>
                             SIGN UP
                           </Button>
                         </React.Fragment>
@@ -144,16 +144,16 @@ class Header extends Component {
               </ListItem>
               {isAuthenticated
                 ? (
-                  <MenuItem className={classes.text} component={Link} to="/logout" onClick={this.logout}>
+                  <MenuItem className={classes.text} component={Link} to="/logout" onClick={this.handleLogOutClick}>
                     LOG OUT
                   </MenuItem>
                 )
                 : (
                   <div>
-                    <MenuItem className={classes.text} onClick={this.toLogIn}>
+                    <MenuItem className={classes.text} onClick={this.handleLogInClick}>
                       LOG IN
                     </MenuItem>
-                    <MenuItem className={classes.text} component={Link} to="/signup" onClick={this.signUp}>
+                    <MenuItem className={classes.text} component={Link} to="/signup" onClick={this.handleSignUpClick}>
                       SIGN UP
                     </MenuItem>
                   </div>

@@ -5,7 +5,7 @@ const isHighlighted = (placeID, highlightedID) => placeID === highlightedID;
 
 const mapStateToProps = ({ reducer }, { placeID }) => (
   {
-    isHighlighted: isHighlighted(placeID, reducer.user.highlighted),
+    isHighlighted: isHighlighted(placeID, reducer.bar.highlighted),
   }
 );
 

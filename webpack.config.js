@@ -56,7 +56,7 @@ const browserConfig = {
 };
 
 const serverConfig = {
-  entry: ['babel-polyfill', './server/app.js'],
+  entry: ['babel-polyfill', './server/createServer.js'],
   target: 'node',
   externals: [nodeExternals()],
   output: {

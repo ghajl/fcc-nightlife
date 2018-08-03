@@ -2,6 +2,13 @@ import { push, replace } from 'react-router-redux';
 import axios from 'axios';
 import { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
 import { getPersistor } from './store';
+import { apiEndpoint } from './config/app';
+
+const axiosInstance = axios.create({
+  baseURL: apiEndpoint,
+  headers: { 'cache-control': 'no-cache' },
+});
+
 
 export const actionTypes = {
   MANUAL_LOGIN_USER: 'MANUAL_LOGIN_USER',
@@ -42,6 +49,10 @@ export const actionTypes = {
   SHOW_LIST_SUCCESS: 'SHOW_LIST_SUCCESS',
   SHOW_LIST_ERROR: 'SHOW_LIST_ERROR',
   CLOSE_USERS_LIST: 'CLOSE_USERS_LIST',
+  INCREMENT_VISITORS_COUNT: 'INCREMENT_VISITORS_COUNT',
+  DECREMENT_VISITORS_COUNT: 'DECREMENT_VISITORS_COUNT',
+  ADD_BAR_TO_USER: 'ADD_BAR_TO_USER',
+  REMOVE_BAR_FROM_USER: 'REMOVE_BAR_FROM_USER',
 };
 
 function beginFetchUserData() {
@@ -163,11 +174,36 @@ function beginAddToList() {
   return { type: actionTypes.ADD_TO_LIST };
 }
 
-function addToListSuccess(placeID, message) {
+function showMessage(message) {
   return {
-    type: actionTypes.ADD_TO_LIST_SUCCESS,
-    placeID,
+    type: actionTypes.SHOW_MESSAGE_DIALOG,
     message,
+  };
+}
+
+function incrementVisitorsCount(placeID) {
+  return {
+    type: actionTypes.INCREMENT_VISITORS_COUNT,
+    placeID,
+  };
+}
+
+function addBarToUser(placeID) {
+  return {
+    type: actionTypes.ADD_BAR_TO_USER,
+    placeID,
+  };
+}
+
+function addToListSuccess(placeID, message) {
+  return (dispatch, getState) => {
+    const { userBars } = getState().reducer.user;
+    if (userBars.indexOf(placeID) === -1) {
+      dispatch(incrementVisitorsCount(placeID));
+      dispatch(addBarToUser(placeID));
+      dispatch(showMessage(message));
+    }
+    dispatch({ type: actionTypes.ADD_TO_LIST_SUCCESS });
   };
 }
 
@@ -178,12 +214,29 @@ function modifyListError(message) {
   };
 }
 
-function removeFromListSuccess(placeID, message) {
-
+function decrementVisitorsCount(placeID) {
   return {
-    type: actionTypes.REMOVE_FROM_LIST_SUCCESS,
+    type: actionTypes.DECREMENT_VISITORS_COUNT,
     placeID,
-    message,
+  };
+}
+
+function removeBarFromUser(placeID) {
+  return {
+    type: actionTypes.REMOVE_BAR_FROM_USER,
+    placeID,
+  };
+}
+
+function removeFromListSuccess(placeID, message) {
+  return (dispatch, getState) => {
+    const { userBars } = getState().reducer.user;
+    if (userBars.indexOf(placeID) !== -1) {
+      dispatch(decrementVisitorsCount(placeID));
+      dispatch(removeBarFromUser(placeID));
+      dispatch(showMessage(message));
+    }
+    dispatch({ type: actionTypes.REMOVE_FROM_LIST_SUCCESS });
   };
 }
 
@@ -199,13 +252,6 @@ function saveGuestBar(placeID) {
   return {
     type: actionTypes.SAVE_GUEST_BAR,
     placeID,
-  };
-}
-
-function showMessage(message) {
-  return {
-    type: actionTypes.SHOW_MESSAGE_DIALOG,
-    message,
   };
 }
 
@@ -262,7 +308,7 @@ function modifyList(placeID, userID, operation, dispatch, fromLogin = false) {
     ? addToListSuccess(data.placeID, successMessage)
     : removeFromListSuccess(data.placeID, successMessage);
   dispatch(beginAddToList());
-  return axios.post('/places', data)
+  return axiosInstance.post('/places', data)
     .then(() => {
       dispatch(successAction);
       if (fromLogin) {
@@ -290,7 +336,7 @@ export function manualLogin(data) {
       ? getState().reducer.user.locationBars.map(bar => bar.id)
       : [];
     const loginData = { ...data, ...{ places } };
-    return axios.post('/login', loginData)
+    return axiosInstance.post('/login', loginData)
       .then((response) => {
         dispatch(loginSuccess(data.username, response.data.places, response.data.userID, 'You have been successfully logged in!'));
         // add user to users list of bar if user came here from add button on place card
@@ -312,7 +358,7 @@ export function manualLogin(data) {
 export function signUp(data) {
   return (dispatch, getState) => {
     dispatch(beginSignUp());
-    return axios.post('/signup', data)
+    return axiosInstance.post('/signup', data)
       .then((response) => {
         dispatch(signUpSuccess(data.username, response.data.userID, 'You have successfully registered an account!'));
         // add user to users list in Place if user came here from add button on place card
@@ -352,7 +398,7 @@ export function saveReturnTo(path) {
 export function logOut() {
   return (dispatch) => {
     dispatch(beginLogout());
-    return axios.get('/logout')
+    return axiosInstance.get('/logout')
       .then(() => {
         getPersistor().purge();
         dispatch(logoutSuccess());
@@ -393,7 +439,7 @@ export function showPlaces(service, address) {
         service.nearbySearch(request, (results, status) => {
           if (status === google.maps.places.PlacesServiceStatus.OK) {
             // get list of users registered in bars
-            return axios.get('/data', {
+            return axiosInstance.get('/data', {
               params: {
                 bars: results.map(item => item.id),
               },
@@ -446,7 +492,7 @@ export function showPlaces(service, address) {
 export function fetchUserData() {
   return (dispatch) => {
     dispatch(beginFetchUserData());
-    return axios.get('/user')
+    return axiosInstance.get('/user')
       .then((response) => {
         const { username, profile, userID } = response.data;
         dispatch(fetchUserDataSuccess(username, profile, userID));
@@ -460,7 +506,7 @@ export function fetchUserData() {
 export function showList(placeID) {
   return (dispatch) => {
     dispatch(beginShowList());
-    return axios.get('/userslist', { params: { placeID } })
+    return axiosInstance.get('/userslist', { params: { placeID } })
       .then((response) => {
         dispatch(showListSuccess(response.data.users));
       })

@@ -82,7 +82,10 @@ class Root extends Component {
   }
 }
 
-export default connect(({ reducer }) => ({ userID: reducer.user.userID }))(Root);
+export default connect(({ reducer }) => {
+  console.log(reducer.user.userID)
+  return { userID: reducer.user.userID }
+  })(Root);
 
 Root.propTypes = {
   dispatch: PropTypes.func.isRequired,

@@ -8,16 +8,16 @@ import bodyParser from 'body-parser';
 import connectMongo from 'connect-mongo';
 import initRoutes from './init/routes';
 import User from './models/user';
+import { isDebug } from '../config/app';
 
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
-export default (appConfig = {}) => {
+const server = (appConfig = {}) => {
   const app = express();
 
   let config = null;
-  const isDev = process.env.NODE_ENV === 'development';
-  if (isDev) {
+  if (isDebug) {
     config = require('./config').default;
   }
 
@@ -146,3 +146,9 @@ export default (appConfig = {}) => {
 
   return app;
 };
+
+const createServer = () => ({
+  withConfig: config => server(config),
+});
+
+export default createServer;
