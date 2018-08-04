@@ -29,11 +29,11 @@ export const actionTypes = {
   FIND_PLACES: 'FIND_PLACES',
   FIND_PLACES_SUCCESS: 'FIND_PLACES_SUCCESS',
   FIND_PLACES_ERROR: 'FIND_PLACES_ERROR',
-  ADD_TO_LIST: 'ADD_TO_LIST',
-  ADD_TO_LIST_SUCCESS: 'ADD_TO_LIST_SUCCESS',
-  MODIFY_LIST_ERROR: 'MODIFY_LIST_ERROR',
-  REMOVE_FROM_LIST: 'REMOVE_FROM_LIST',
-  REMOVE_FROM_LIST_SUCCESS: 'REMOVE_FROM_LIST_SUCCESS',
+  ADD_TO_VISITORS_LIST: 'ADD_TO_VISITORS_LIST',
+  ADD_TO_VISITORS_LIST_SUCCESS: 'ADD_TO_VISITORS_LIST_SUCCESS',
+  MODIFY_VISITORS_LIST_ERROR: 'MODIFY_VISITORS_LIST_ERROR',
+  REMOVE_FROM_VISITORS_LIST: 'REMOVE_FROM_VISITORS_LIST',
+  REMOVE_FROM_VISITORS_LIST_SUCCESS: 'REMOVE_FROM_VISITORS_LIST_SUCCESS',
   SAVE_PATH: 'SAVE_PATH',
   SAVE_GUEST_BAR: 'SAVE_GUEST_BAR',
   OPEN_LOGIN_DIALOG: 'OPEN_LOGIN_DIALOG',
@@ -45,15 +45,22 @@ export const actionTypes = {
   HIGHLIGHT_PLACE: 'HIGHLIGHT_PLACE',
   START_FACEBOOK_LOGIN: 'START_FACEBOOK_LOGIN',
   END_FACEBOOK_LOGIN: 'END_FACEBOOK_LOGIN',
-  BEGIN_SHOW_LIST: 'BEGIN_SHOW_LIST',
-  SHOW_LIST_SUCCESS: 'SHOW_LIST_SUCCESS',
-  SHOW_LIST_ERROR: 'SHOW_LIST_ERROR',
-  CLOSE_USERS_LIST: 'CLOSE_USERS_LIST',
+  BEGIN_SHOW_VISITORS_LIST: 'BEGIN_SHOW_VISITORS_LIST',
+  SHOW_VISITORS_LIST_SUCCESS: 'SHOW_VISITORS_LIST_SUCCESS',
+  SHOW_VISITORS_LIST_ERROR: 'SHOW_VISITORS_LIST_ERROR',
+  CLOSE_VISITORS_LIST: 'CLOSE_VISITORS_LIST',
   INCREMENT_VISITORS_COUNT: 'INCREMENT_VISITORS_COUNT',
   DECREMENT_VISITORS_COUNT: 'DECREMENT_VISITORS_COUNT',
   ADD_BAR_TO_USER: 'ADD_BAR_TO_USER',
   REMOVE_BAR_FROM_USER: 'REMOVE_BAR_FROM_USER',
 };
+
+function showMessage(message) {
+  return {
+    type: actionTypes.SHOW_MESSAGE_DIALOG,
+    message,
+  };
+}
 
 function beginFetchUserData() {
   return { type: actionTypes.FETCH_USER };
@@ -93,15 +100,15 @@ function loginError(message) {
   };
 }
 
+function beginSignUp() {
+  return { type: actionTypes.SIGNUP_USER };
+}
+
 function signUpError(message) {
   return {
     type: actionTypes.SIGNUP_ERROR_USER,
     message,
   };
-}
-
-function beginSignUp() {
-  return { type: actionTypes.SIGNUP_USER };
 }
 
 function signUpSuccess(username, userID, message) {
@@ -170,15 +177,8 @@ function searchPlacesError(message) {
   };
 }
 
-function beginAddToList() {
-  return { type: actionTypes.ADD_TO_LIST };
-}
-
-function showMessage(message) {
-  return {
-    type: actionTypes.SHOW_MESSAGE_DIALOG,
-    message,
-  };
+function beginAddToVisitorsList() {
+  return { type: actionTypes.ADD_TO_VISITORS_LIST };
 }
 
 function incrementVisitorsCount(placeID) {
@@ -195,7 +195,7 @@ function addBarToUser(placeID) {
   };
 }
 
-function addToListSuccess(placeID, message) {
+function addToVisitorsListSuccess(placeID, message) {
   return (dispatch, getState) => {
     const { userBars } = getState().reducer.user;
     if (userBars.indexOf(placeID) === -1) {
@@ -203,13 +203,13 @@ function addToListSuccess(placeID, message) {
       dispatch(addBarToUser(placeID));
       dispatch(showMessage(message));
     }
-    dispatch({ type: actionTypes.ADD_TO_LIST_SUCCESS });
+    dispatch({ type: actionTypes.ADD_TO_VISITORS_LIST_SUCCESS });
   };
 }
 
-function modifyListError(message) {
+function modifyVisitorsListError(message) {
   return {
-    type: actionTypes.MODIFY_LIST_ERROR,
+    type: actionTypes.MODIFY_VISITORS_LIST_ERROR,
     message,
   };
 }
@@ -228,7 +228,7 @@ function removeBarFromUser(placeID) {
   };
 }
 
-function removeFromListSuccess(placeID, message) {
+function removeFromVisitorsListSuccess(placeID, message) {
   return (dispatch, getState) => {
     const { userBars } = getState().reducer.user;
     if (userBars.indexOf(placeID) !== -1) {
@@ -236,7 +236,7 @@ function removeFromListSuccess(placeID, message) {
       dispatch(removeBarFromUser(placeID));
       dispatch(showMessage(message));
     }
-    dispatch({ type: actionTypes.REMOVE_FROM_LIST_SUCCESS });
+    dispatch({ type: actionTypes.REMOVE_FROM_VISITORS_LIST_SUCCESS });
   };
 }
 
@@ -283,31 +283,31 @@ export function startFacebookLogin() {
 export function endFacebookLogin() {
   return { type: actionTypes.END_FACEBOOK_LOGIN };
 }
-function beginShowList() {
-  return { type: actionTypes.BEGIN_SHOW_LIST };
+function beginShowVisitorsList() {
+  return { type: actionTypes.BEGIN_SHOW_VISITORS_LIST };
 }
-function showListSuccess(users) {
+function showVisitorsListSuccess(users) {
   return {
-    type: actionTypes.SHOW_LIST_SUCCESS,
+    type: actionTypes.SHOW_VISITORS_LIST_SUCCESS,
     users,
   };
 }
-function showListError(message) {
+function showVisitorsListError(message) {
   return {
-    type: actionTypes.SHOW_LIST_ERROR,
+    type: actionTypes.SHOW_VISITORS_LIST_ERROR,
     message,
   };
 }
 
-function modifyList(placeID, userID, operation, dispatch, fromLogin = false) {
+function modifyVisitorsList(placeID, userID, operation, dispatch, fromLogin = false) {
   const data = { placeID, userID, operation };
   const successMessage = operation === 'ADD'
     ? 'You have successfully added to the list!'
     : 'You have successfully removed from the list!';
   const successAction = operation === 'ADD'
-    ? addToListSuccess(data.placeID, successMessage)
-    : removeFromListSuccess(data.placeID, successMessage);
-  dispatch(beginAddToList());
+    ? addToVisitorsListSuccess(data.placeID, successMessage)
+    : removeFromVisitorsListSuccess(data.placeID, successMessage);
+  dispatch(beginAddToVisitorsList());
   return axiosInstance.post('/places', data)
     .then(() => {
       dispatch(successAction);
@@ -319,13 +319,13 @@ function modifyList(placeID, userID, operation, dispatch, fromLogin = false) {
       if (err.response) {
         if (err.response.status === '401') {
           dispatch(logoutSuccess());
-          dispatch(modifyListError('You are not logged in'));
+          dispatch(modifyVisitorsListError('You are not logged in'));
         }
         if (err.response.status === '403') {
-          dispatch(modifyListError('You are logged in to another account'));
+          dispatch(modifyVisitorsListError('You are logged in to another account'));
         }
       }
-      dispatch(modifyListError('Your request could not be completed'));
+      dispatch(modifyVisitorsListError('Your request could not be completed'));
     });
 }
 
@@ -345,9 +345,8 @@ export function manualLogin(data) {
           const { userID } = response.data;
           const operation = 'ADD';
           const fromLogin = true;
-          modifyList(placeID, userID, operation, dispatch, fromLogin);
+          modifyVisitorsList(placeID, userID, operation, dispatch, fromLogin);
         }
-        dispatch(push('/return-from-success-login'));
       })
       .catch(() => {
         dispatch(loginError('Invalid username or password'));
@@ -367,9 +366,8 @@ export function signUp(data) {
           const { userID } = response.data;
           const operation = 'ADD';
           const fromSignup = true;
-          modifyList(placeID, userID, operation, dispatch, fromSignup);
+          modifyVisitorsList(placeID, userID, operation, dispatch, fromSignup);
         }
-        dispatch(push('/return-from-success-login'));
       })
       .catch((err) => {
         if (err.response && err.response.status === '409') {
@@ -391,7 +389,7 @@ export function returnFromLogIn() {
 export function saveReturnTo(path) {
   return {
     type: actionTypes.SAVE_PATH,
-    path: path.pathname + path.search,
+    path,
   };
 }
 
@@ -471,10 +469,10 @@ export function showPlaces(service, address) {
                 if (err.response) {
                   if (err.response.status === '401') {
                     dispatch(logoutSuccess());
-                    dispatch(modifyListError('You are not logged in'));
+                    dispatch(modifyVisitorsListError('You are not logged in'));
                   }
                   if (err.response.status === '403') {
-                    dispatch(modifyListError('You are logged in to another account'));
+                    dispatch(modifyVisitorsListError('You are logged in to another account'));
                   }
                 }
                 dispatch(searchPlacesError('Unable to show results'));
@@ -503,36 +501,36 @@ export function fetchUserData() {
   };
 }
 
-export function showList(placeID) {
+export function showVisitorsList(placeID) {
   return (dispatch) => {
-    dispatch(beginShowList());
+    dispatch(beginShowVisitorsList());
     return axiosInstance.get('/userslist', { params: { placeID } })
       .then((response) => {
-        dispatch(showListSuccess(response.data.users));
+        dispatch(showVisitorsListSuccess(response.data.users));
       })
       .catch(() => {
-        dispatch(showListError('Unable to perform requested operation'));
+        dispatch(showVisitorsListError('Unable to perform requested operation'));
       });
   };
 }
 
-export function closeList() {
-  return { type: actionTypes.CLOSE_USERS_LIST };
+export function closeVisitorsList() {
+  return { type: actionTypes.CLOSE_VISITORS_LIST };
 }
 
-export function addToList(placeID) {
+export function addToVisitorsList(placeID) {
   return (dispatch, getState) => {
     const { userID } = getState().reducer.user;
     const operation = 'ADD';
-    modifyList(placeID, userID, operation, dispatch);
+    modifyVisitorsList(placeID, userID, operation, dispatch);
   };
 }
 
-export function removeFromList(placeID) {
+export function removeFromVisitorsList(placeID) {
   return (dispatch, getState) => {
     const { userID } = getState().reducer.user;
     const operation = 'REMOVE';
-    modifyList(placeID, userID, operation, dispatch);
+    modifyVisitorsList(placeID, userID, operation, dispatch);
   };
 }
 

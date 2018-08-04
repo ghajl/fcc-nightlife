@@ -3,7 +3,7 @@ import Places from '../components/Places';
 import {
   findLocation,
   showPlaces,
-  showList,
+  showVisitorsList,
   highlightPlace,
   replaceLocation,
 } from '../../actions';
@@ -17,5 +17,5 @@ const mapStateToProps = ({ reducer }) => (
 );
 
 export default connect(mapStateToProps, {
-  findLocation, showPlaces, showList, highlightPlace, replaceLocation,
+  findLocation, showPlaces, showVisitorsList, highlightPlace, replaceLocation,
 })(Places);

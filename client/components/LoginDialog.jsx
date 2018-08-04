@@ -58,7 +58,7 @@ class LoginDialog extends Component {
               <TextField
                 required
                 error={usernameErrorText.length > 0}
-                margin="dense"
+                margin="normal"
                 id="username"
                 label="Username"
                 type="username"
@@ -75,7 +75,7 @@ class LoginDialog extends Component {
               <TextField
                 required
                 error={passwordErrorText.length > 0}
-                margin="dense"
+                margin="normal"
                 id="password"
                 label="Password"
                 type="password"

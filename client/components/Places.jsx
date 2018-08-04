@@ -172,8 +172,8 @@ class Places extends Component {
   }
 
   showList = (placeID) => {
-    const { showList } = this.props;
-    showList(placeID);
+    const { showVisitorsList } = this.props;
+    showVisitorsList(placeID);
   }
 
   scrollTo = (pos) => {
@@ -288,7 +288,7 @@ Places.propTypes = {
   findLocation: PropTypes.func.isRequired,
   showPlaces: PropTypes.func.isRequired,
   highlightPlace: PropTypes.func.isRequired,
-  showList: PropTypes.func.isRequired,
+  showVisitorsList: PropTypes.func.isRequired,
 };
 
 Places.defaultProps = {

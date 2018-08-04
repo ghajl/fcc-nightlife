@@ -12,7 +12,7 @@ import {
   openLoginDialog,
   toSignUp,
   closeMessage,
-  closeList,
+  closeVisitorsList,
 } from '../../actions';
 import getErrorMessages from '../helpers/InputCheck';
 
@@ -72,7 +72,7 @@ class Modals extends Component {
 
   handleCloseList = () => {
     const { dispatch } = this.props;
-    dispatch(closeList());
+    dispatch(closeVisitorsList());
   }
 
   render() {

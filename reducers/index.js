@@ -9,6 +9,7 @@ const returnPath = (
   state = '/',
   action,
 ) => {
+  console.log(state)
   switch (action.type) {
   case actionTypes.SAVE_PATH:
     return action.path;
@@ -24,10 +25,10 @@ const guestBar = (
   switch (action.type) {
   case actionTypes.FETCH_USER_ERROR:
   case actionTypes.LOGOUT_SUCCESS_USER:
-  case actionTypes.MODIFY_LIST_ERROR:
+  case actionTypes.MODIFY_VISITORS_LIST_ERROR:
   case actionTypes.FIND_LOCATION_ERROR:
   case actionTypes.FIND_PLACES_ERROR:
-  case actionTypes.ADD_TO_LIST_SUCCESS:
+  case actionTypes.ADD_TO_VISITORS_LIST_SUCCESS:
     return null;
   case actionTypes.SAVE_GUEST_BAR:
     return action.placeID;
@@ -78,10 +79,10 @@ const messageDialogOpen = (
   case actionTypes.SIGNUP_SUCCESS_USER:
   case actionTypes.SIGNUP_ERROR_USER:
   case actionTypes.LOGIN_ERROR_USER:
-  case actionTypes.MODIFY_LIST_ERROR:
+  case actionTypes.MODIFY_VISITORS_LIST_ERROR:
   case actionTypes.FIND_LOCATION_ERROR:
   case actionTypes.FIND_PLACES_ERROR:
-  case actionTypes.SHOW_LIST_ERROR:
+  case actionTypes.SHOW_VISITORS_LIST_ERROR:
   case actionTypes.SHOW_MESSAGE_DIALOG:
     return true;
   default:
@@ -94,9 +95,9 @@ const listDialogOpen = (
   action,
 ) => {
   switch (action.type) {
-  case actionTypes.CLOSE_USERS_LIST:
+  case actionTypes.CLOSE_VISITORS_LIST:
     return false;
-  case actionTypes.SHOW_LIST_SUCCESS:
+  case actionTypes.SHOW_VISITORS_LIST_SUCCESS:
     return true;
   default:
     return state;

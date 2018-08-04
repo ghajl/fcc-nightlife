@@ -33,6 +33,7 @@ module.exports = {
         "semi": [
             "warn",
             "always"
-        ]
+        ],
+        "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }]
     }
 };

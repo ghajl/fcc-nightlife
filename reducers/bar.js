@@ -6,9 +6,9 @@ const barUserslist = (
   action,
 ) => {
   switch (action.type) {
-  case actionTypes.SHOW_LIST_SUCCESS:
+  case actionTypes.SHOW_VISITORS_LIST_SUCCESS:
     return action.users;
-  case actionTypes.CLOSE_USERS_LIST:
+  case actionTypes.CLOSE_VISITORS_LIST:
     return [];
   default:
     return state;

@@ -33,15 +33,15 @@ const PlaceComponent = ({ placeID, classes, ...props }) => {
   const add = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    const { addToList } = props;
-    addToList(placeID);
+    const { addToVisitorsList } = props;
+    addToVisitorsList(placeID);
   };
 
   const remove = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    const { removeFromList } = props;
-    removeFromList(placeID);
+    const { removeFromVisitorsList } = props;
+    removeFromVisitorsList(placeID);
   };
 
   const show = (event) => {
@@ -198,8 +198,8 @@ PlaceComponent.propTypes = {
   isUserGoing: PropTypes.bool.isRequired,
   usersInBar: PropTypes.number.isRequired,
   placeID: PropTypes.string.isRequired,
-  addToList: PropTypes.func.isRequired,
-  removeFromList: PropTypes.func.isRequired,
+  addToVisitorsList: PropTypes.func.isRequired,
+  removeFromVisitorsList: PropTypes.func.isRequired,
   showList: PropTypes.func.isRequired,
   loginAndAdd: PropTypes.func.isRequired,
   markerClick: PropTypes.func.isRequired,

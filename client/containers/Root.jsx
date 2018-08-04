@@ -8,14 +8,28 @@ import Home from './Home';
 import Signup from './Signup';
 import Places from './Places';
 import NotFound from '../components/NotFound';
-import { fetchUserData, saveReturnTo, addToList } from '../../actions';
+import { fetchUserData, saveReturnTo, addToVisitorsList } from '../../actions';
 import { defaultLocation } from '../../util/locations';
 import Modals from './Modals';
 
 class Root extends Component {
   componentDidMount = () => {
-    const { dispatch } = this.props;
+    const approvedReturnPath = ['location', 'places'];
+    const { dispatch, history } = this.props;
+    this.unlisten = history.listen((location) => {
+      const { pathname, search } = location;
+      for (let i = 0; i < approvedReturnPath.length; i++) {
+        if (pathname === `/${approvedReturnPath[i]}`) {
+          dispatch(saveReturnTo(`${pathname}${search}`));
+          break;
+        }
+      }
+    });
     dispatch(fetchUserData());
+  }
+
+  componentWillUnmount = () => {
+    this.unlisten();
   }
 
   render() {
@@ -39,26 +53,22 @@ class Root extends Component {
                 />
                 <Route
                   path="/location"
-                  render={(props) => {
-                    dispatch(saveReturnTo(props.location));
-                    return (<Home {...props} />);
-                  }}
+                  component={Home}
                 />
                 <Route
                   path="/signup"
                   render={(props) => {
                     const { authenticated } = store.getState().reducer.user;
-                    return authenticated ? (<Redirect to="/" />)
+                    return authenticated ? (<Redirect to="/return-from-success-login" />)
                       : (<Signup {...props} />);
                   }}
                 />
                 <Route
                   path="/places"
                   render={(props) => {
-                    dispatch(saveReturnTo(props.location));
                     const { guestBar, userID } = store.getState().reducer.user;
                     if (userID && guestBar != null) {
-                      dispatch(addToList(guestBar));
+                      dispatch(addToVisitorsList(guestBar));
                     }
                     return (<Places {...props} />);
                   }}
@@ -66,7 +76,7 @@ class Root extends Component {
                 <Route
                   path="/return-from-success-login"
                   render={() => {
-                    const { returnPath } = store.getState().reducer.user;
+                    const { returnPath } = store.getState().reducer;
                     return (<Redirect to={returnPath} />);
                   }}
                 />
@@ -82,10 +92,7 @@ class Root extends Component {
   }
 }
 
-export default connect(({ reducer }) => {
-  console.log(reducer.user.userID)
-  return { userID: reducer.user.userID }
-  })(Root);
+export default connect(({ reducer }) => ({ userID: reducer.user.userID }))(Root);
 
 Root.propTypes = {
   dispatch: PropTypes.func.isRequired,
