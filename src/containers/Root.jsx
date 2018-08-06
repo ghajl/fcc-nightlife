@@ -8,8 +8,10 @@ import Home from './Home';
 import Signup from './Signup';
 import Places from './Places';
 import NotFound from '../components/NotFound';
-import { fetchUserData, saveReturnTo, addToVisitorsList } from '../../actions';
-import { defaultLocation } from '../../util/locations';
+import fetchUserData from '../actions/fetch';
+import { saveReturnTo } from '../actions/url';
+import { addToVisitorsList } from '../actions/bar';
+import { defaultLocation } from '../util/locations';
 import Modals from './Modals';
 
 class Root extends Component {
@@ -66,7 +68,8 @@ class Root extends Component {
                 <Route
                   path="/places"
                   render={(props) => {
-                    const { guestBar, userID } = store.getState().reducer.user;
+                    const { userID } = store.getState().reducer.user;
+                    const { guestBar } = store.getState().reducer;
                     if (userID && guestBar != null) {
                       dispatch(addToVisitorsList(guestBar));
                     }

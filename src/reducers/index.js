@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import { routerReducer as router } from 'react-router-redux';
-import { actionTypes } from '../actions';
+import actionTypes from '../actions/types';
 import bar from './bar';
 import location from './location';
 import user from './user';
@@ -9,7 +9,6 @@ const returnPath = (
   state = '/',
   action,
 ) => {
-  console.log(state)
   switch (action.type) {
   case actionTypes.SAVE_PATH:
     return action.path;
@@ -27,11 +26,11 @@ const guestBar = (
   case actionTypes.LOGOUT_SUCCESS_USER:
   case actionTypes.MODIFY_VISITORS_LIST_ERROR:
   case actionTypes.FIND_LOCATION_ERROR:
-  case actionTypes.FIND_PLACES_ERROR:
+  case actionTypes.FIND_BARS_ERROR:
   case actionTypes.ADD_TO_VISITORS_LIST_SUCCESS:
     return null;
   case actionTypes.SAVE_GUEST_BAR:
-    return action.placeID;
+    return action.barID;
   default:
     return state;
   }
@@ -81,7 +80,7 @@ const messageDialogOpen = (
   case actionTypes.LOGIN_ERROR_USER:
   case actionTypes.MODIFY_VISITORS_LIST_ERROR:
   case actionTypes.FIND_LOCATION_ERROR:
-  case actionTypes.FIND_PLACES_ERROR:
+  case actionTypes.FIND_BARS_ERROR:
   case actionTypes.SHOW_VISITORS_LIST_ERROR:
   case actionTypes.SHOW_MESSAGE_DIALOG:
     return true;

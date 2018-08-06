@@ -1,7 +1,7 @@
 
 import passport from 'passport';
 import User from '../models/user';
-import Place from '../models/place';
+import Bar from '../models/bar';
 
 
 export function login(req, res, next) {
@@ -14,9 +14,9 @@ export function login(req, res, next) {
       if (loginErr) {
         return res.sendStatus(401);
       }
-      const currentBars = req.body.places;
-      const currentUserBars = currentBars.filter(barID => user.places.indexOf(barID) !== -1);
-      return res.json({ places: currentUserBars, userID: user.id });
+      const currentBars = req.body.bars;
+      const currentUserBars = currentBars.filter(barID => user.bars.indexOf(barID) !== -1);
+      return res.json({ bars: currentUserBars, userID: user.id });
     });
   })(req, res, next);
 }
@@ -31,15 +31,15 @@ export function logout(req, res) {
 
 // TODO: two phase commit
 async function addUserToBar(req, res) {
-  const { userID, placeID } = req.body;
+  const { userID, barID } = req.body;
   try {
-    await Place.findOneAndUpdate({ placeID }, { $addToSet: { users: userID } }, { upsert: true });
-    await User.findByIdAndUpdate(req.user.id, { $addToSet: { places: placeID } });
+    await Bar.findOneAndUpdate({ barID }, { $addToSet: { users: userID } }, { upsert: true });
+    await User.findByIdAndUpdate(req.user.id, { $addToSet: { bars: barID } });
     return res.sendStatus(200);
   } catch (err) {
     try {
-      await Place.findOneAndUpdate({ placeID }, { $pull: { users: userID } });
-      await User.findByIdAndUpdate(req.user.id, { $pull: { places: placeID } });
+      await Bar.findOneAndUpdate({ barID }, { $pull: { users: userID } });
+      await User.findByIdAndUpdate(req.user.id, { $pull: { bars: barID } });
       return res.sendStatus(409);
     } catch (e) {
       return res.sendStatus(409);
@@ -48,15 +48,15 @@ async function addUserToBar(req, res) {
 }
 
 async function removeUserFromBar(req, res) {
-  const { userID, placeID } = req.body;
+  const { userID, barID } = req.body;
   try {
-    await Place.findOneAndUpdate({ placeID }, { $pull: { users: userID } });
-    await User.findByIdAndUpdate(req.user.id, { $pull: { places: placeID } });
+    await Bar.findOneAndUpdate({ barID }, { $pull: { users: userID } });
+    await User.findByIdAndUpdate(req.user.id, { $pull: { bars: barID } });
     return res.sendStatus(200);
   } catch (err) {
     try {
-      await Place.findOneAndUpdate({ placeID }, { $addToSet: { users: userID } });
-      await User.findByIdAndUpdate(req.user.id, { $addToSet: { places: placeID } });
+      await Bar.findOneAndUpdate({ barID }, { $addToSet: { users: userID } });
+      await User.findByIdAndUpdate(req.user.id, { $addToSet: { bars: barID } });
       return res.sendStatus(409);
     } catch (e) {
       return res.sendStatus(409);
@@ -104,22 +104,23 @@ export async function register(req, res) {
   }
 }
 
-// returns - if exist - list of guests of bars on page
-export async function getUsersBarsData(req, res) {
+// returns number of visitors of each bar on page
+// and list of bars of current user
+export async function getBarsData(req, res) {
   const { bars } = req.query;
   if (bars == null) return res.sendStatus(400);
-  if (req.user == null) return res.sendStatus(401);
   try {
-    const locationPlaces = await Place.find({ placeID: { $in: bars } }, 'placeID users');
-    let currentUserBars = [];
-    currentUserBars = bars.filter(barID => req.user.places.indexOf(barID) !== -1);
-    const { username = null, profile = null, id } = req.user;
-    const placesUsersData = locationPlaces.map(place => (
-      { placeID: place.placeID, users: place.users.length }
+    const found = await Bar.find({ barID: { $in: bars } }, 'barID users');
+    const visitors = found.map(bar => (
+      { barID: bar.barID, count: bar.users.length }
     ));
-
+    const { username = null, profile = null, id = null } = req.user || {};
+    let currentUserBars = [];
+    if (req.user != null) {
+      currentUserBars = bars.filter(barID => req.user.bars.indexOf(barID) !== -1);
+    }
     return res.json({
-      placesUsersData,
+      visitors,
       currentUserBars,
       username,
       profile,
@@ -138,11 +139,11 @@ export function getUserData(req, res) {
   return res.json({ username, profile, userID: id });
 }
 
-export async function getUsersList(req, res) {
-  const { placeID } = req.query;
-  if (placeID == null) return res.sendStatus(400);
+export async function getVisitorsList(req, res) {
+  const { barID } = req.query;
+  if (barID == null) return res.sendStatus(400);
   try {
-    const data = await Place.findOne({ placeID }, 'users');
+    const data = await Bar.findOne({ barID }, 'users');
     if (data.users == null || data.users.length === 0) {
       throw new Error('no data');
     }
@@ -157,7 +158,7 @@ export async function getUsersList(req, res) {
       }
       return 'guest';
     });
-    return res.json({ users: result });
+    return res.json({ visitors: result });
   } catch (err) {
     return res.sendStatus(409);
   }

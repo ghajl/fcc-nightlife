@@ -1,13 +1,13 @@
 import { combineReducers } from 'redux';
-import { actionTypes } from '../actions';
+import actionTypes from '../actions/types';
 
-const barUserslist = (
+const visitors = (
   state = [],
   action,
 ) => {
   switch (action.type) {
   case actionTypes.SHOW_VISITORS_LIST_SUCCESS:
-    return action.users;
+    return action.visitors;
   case actionTypes.CLOSE_VISITORS_LIST:
     return [];
   default:
@@ -31,7 +31,7 @@ const highlighted = (
 };
 
 const barReducer = combineReducers({
-  barUserslist,
+  visitors,
   highlighted,
 });
 

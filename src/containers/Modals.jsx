@@ -6,14 +6,15 @@ import { CircularProgress } from 'material-ui/Progress';
 import LoginDialog from '../components/LoginDialog';
 import MessageDialog from '../components/MessageDialog';
 import UsersListDialog from '../components/UsersListDialog';
+import { manualLogin } from '../actions/user';
 import {
-  manualLogin,
   closeLoginDialog,
   openLoginDialog,
   toSignUp,
   closeMessage,
-  closeVisitorsList,
-} from '../../actions';
+} from '../actions/ui';
+import { closeVisitorsList } from '../actions/bar';
+
 import getErrorMessages from '../helpers/InputCheck';
 
 const styles = {
@@ -53,7 +54,7 @@ class Modals extends Component {
     }
   }
 
-  goToSignUp = (path) => {
+  goToSignUp = () => {
     const { dispatch } = this.props;
     dispatch(closeLoginDialog());
     dispatch(toSignUp());
@@ -115,7 +116,7 @@ export default connect(({ reducer }) => (
     isMessageOpen: reducer.messageDialogOpen,
     loading: reducer.user.isWaiting,
     isListOpen: reducer.listDialogOpen,
-    list: reducer.bar.barUserslist,
+    list: reducer.bar.visitors,
   }))(withStyles(styles)(Modals));
 
 Modals.propTypes = {

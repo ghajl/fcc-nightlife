@@ -1,20 +1,20 @@
 import { combineReducers } from 'redux';
-import { actionTypes } from '../actions';
+import actionTypes from '../actions/types';
 import { defaultLocation } from '../util/locations';
 
-const locationBars = (
+const bars = (
   state = null,
   action,
 ) => {
   switch (action.type) {
   case actionTypes.FIND_LOCATION_SUCCESS:
     return null;
-  case actionTypes.FIND_PLACES_SUCCESS:
-    return action.data;
+  case actionTypes.FIND_BARS_SUCCESS:
+    return action.bars;
   case actionTypes.INCREMENT_VISITORS_COUNT:
   {
-    const i = state.findIndex(elem => elem.id === action.placeID);
-    const updateBar = { ...state[i], ...{ users: state[i].users + 1 } };
+    const i = state.findIndex(elem => elem.id === action.barID);
+    const updateBar = { ...state[i], ...{ visitorsCount: state[i].visitorsCount + 1 } };
     const updateLocationBars = [
       ...state.slice(0, i),
       updateBar,
@@ -25,8 +25,8 @@ const locationBars = (
   case actionTypes.DECREMENT_VISITORS_COUNT:
   {
     // remove current user from the list of bar
-    const i = state.findIndex(elem => elem.id === action.placeID);
-    const updateBar = { ...state[i], ...{ users: state[i].users - 1 } };
+    const i = state.findIndex(elem => elem.id === action.barID);
+    const updateBar = { ...state[i], ...{ visitorsCount: state[i].visitorsCount - 1 } };
     const updateLocationBars = [
       ...state.slice(0, i),
       updateBar,
@@ -40,14 +40,14 @@ const locationBars = (
   }
 };
 
-const location = (
+const address = (
   state = defaultLocation.address,
   action,
 ) => {
   switch (action.type) {
   case actionTypes.FIND_LOCATION_SUCCESS:
-    return action.location;
-  case actionTypes.FIND_PLACES_SUCCESS:
+    return action.address;
+  case actionTypes.FIND_BARS_SUCCESS:
     return action.address;
   default:
     return state;
@@ -61,7 +61,7 @@ const lat = (
   switch (action.type) {
   case actionTypes.FIND_LOCATION_SUCCESS:
     return action.lat;
-  case actionTypes.FIND_PLACES_SUCCESS:
+  case actionTypes.FIND_BARS_SUCCESS:
     return action.lat;
   default:
     return state;
@@ -75,7 +75,7 @@ const lng = (
   switch (action.type) {
   case actionTypes.FIND_LOCATION_SUCCESS:
     return action.lng;
-  case actionTypes.FIND_PLACES_SUCCESS:
+  case actionTypes.FIND_BARS_SUCCESS:
     return action.lng;
   default:
     return state;
@@ -83,8 +83,8 @@ const lng = (
 };
 
 const locationReducer = combineReducers({
-  locationBars,
-  location,
+  bars,
+  address,
   lat,
   lng,
 });

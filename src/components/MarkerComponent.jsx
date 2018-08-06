@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Marker } from 'react-google-maps';
 import PropTypes from 'prop-types';
-import { RED_MARKER, BLUE_MARKER } from '../../util/icons';
+import { RED_MARKER, BLUE_MARKER } from '../util/icons';
 
 class MarkerComponent extends Component {
   state = {

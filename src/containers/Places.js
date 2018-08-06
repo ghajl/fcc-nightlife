@@ -2,20 +2,22 @@ import { connect } from 'react-redux';
 import Places from '../components/Places';
 import {
   findLocation,
-  showPlaces,
+  showBars,
+} from '../actions/location';
+import {
   showVisitorsList,
   highlightPlace,
-  replaceLocation,
-} from '../../actions';
+} from '../actions/bar';
+import { replaceLocation } from '../actions/url';
 
 const mapStateToProps = ({ reducer }) => (
   {
-    bars: reducer.location.locationBars,
+    bars: reducer.location.bars,
     lat: reducer.location.lat,
     lng: reducer.location.lng,
   }
 );
 
 export default connect(mapStateToProps, {
-  findLocation, showPlaces, showVisitorsList, highlightPlace, replaceLocation,
+  findLocation, showBars, showVisitorsList, highlightPlace, replaceLocation,
 })(Places);

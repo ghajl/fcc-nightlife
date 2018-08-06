@@ -1,12 +1,12 @@
 import { connect } from 'react-redux';
 import Header from '../components/Header';
+import { logOut } from '../actions/user';
 import {
-  logOut,
   toSignUp,
   openLoginDialog,
   openLoginMenu,
   closeLoginMenu,
-} from '../../actions';
+} from '../actions/ui';
 
 const mapStateToProps = ({ reducer }) => (
   {

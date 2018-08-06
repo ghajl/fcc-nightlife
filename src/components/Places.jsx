@@ -7,7 +7,7 @@ import ArrowUpward from 'material-ui-icons/ArrowUpward';
 import MapComponent from '../containers/MapComponent';
 import PlaceComponent from '../containers/PlaceComponent';
 import SearchBar from '../containers/SearchBar';
-import { defaultLocation } from '../../util/locations';
+import { defaultLocation } from '../util/locations';
 import Page from './Page';
 import styleVariables from '../helpers/styleVariables';
 
@@ -113,7 +113,7 @@ class Places extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { location, findLocation, showPlaces } = this.props;
+    const { location, findLocation, showBars } = this.props;
     if (location.search != null && location.search !== nextProps.location.search) {
       this.placeLocation = qs.parse(nextProps.location.search);
       // if there is 'bar' parameter in url - show list of bars
@@ -121,7 +121,7 @@ class Places extends Component {
       if (!this.placeLocation.bar && this.placeLocation.loc) {
         findLocation(this.placeLocation.loc);
       } else if (this.placeLocation.bar && this.placeLocation.loc) {
-        showPlaces(this.service, this.placeLocation.loc);
+        showBars(this.service, this.placeLocation.loc);
       }
     }
   }
@@ -144,12 +144,12 @@ class Places extends Component {
 
   setMap = (el) => {
     if (!this.map) {
-      const { location, showPlaces } = this.props;
+      const { location, showBars } = this.props;
       this.map = el;
       this.service = new google.maps.places.PlacesService(this.map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED);
       this.placeLocation = qs.parse(location.search);
       if (this.placeLocation.bar && this.placeLocation.loc) {
-        showPlaces(this.service, this.placeLocation.loc);
+        showBars(this.service, this.placeLocation.loc);
       }
     }
   }
@@ -286,7 +286,7 @@ Places.propTypes = {
   }).isRequired,
   replaceLocation: PropTypes.func.isRequired,
   findLocation: PropTypes.func.isRequired,
-  showPlaces: PropTypes.func.isRequired,
+  showBars: PropTypes.func.isRequired,
   highlightPlace: PropTypes.func.isRequired,
   showVisitorsList: PropTypes.func.isRequired,
 };

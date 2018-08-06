@@ -8,7 +8,7 @@ const UserSchema = new mongoose.Schema({
     sparse: true,
   },
   password: String,
-  places: [String],
+  bars: [String],
   profile: {
     givenName: String,
     familyName: String,

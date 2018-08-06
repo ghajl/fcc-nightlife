@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import Page from './Page';
 import HomeMap from '../containers/HomeMap';
 import SearchBar from '../containers/SearchBar';
-import { defaultLocation } from '../../util/locations';
+import { defaultLocation } from '../util/locations';
 
 const styles = {
   searchBar: {

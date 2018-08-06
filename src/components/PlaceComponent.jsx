@@ -29,56 +29,56 @@ const styles = theme => ({
   },
 });
 
-const PlaceComponent = ({ placeID, classes, ...props }) => {
+const PlaceComponent = ({ barID, classes, ...props }) => {
   const add = (event) => {
     event.preventDefault();
     event.stopPropagation();
     const { addToVisitorsList } = props;
-    addToVisitorsList(placeID);
+    addToVisitorsList(barID);
   };
 
   const remove = (event) => {
     event.preventDefault();
     event.stopPropagation();
     const { removeFromVisitorsList } = props;
-    removeFromVisitorsList(placeID);
+    removeFromVisitorsList(barID);
   };
 
   const show = (event) => {
     event.preventDefault();
     event.stopPropagation();
     const { showList } = props;
-    showList(placeID);
+    showList(barID);
   };
 
   const loginAdd = (event) => {
     event.preventDefault();
     event.stopPropagation();
     const { loginAndAdd } = props;
-    loginAndAdd(placeID);
+    loginAndAdd(barID);
   };
 
   const cardClick = () => {
     const source = 'notmap';
     const { markerClick } = props;
-    markerClick(placeID, source);
+    markerClick(barID, source);
   };
 
   // make label about how many people are on the list of the specific bar
   // if current user also in the list - subtract from  the number
   // and add label 'and me' or just 'me'
   // if only current user in the list
-  const getGoingCount = () => {
-    const { isUserGoing, usersInBar } = props;
+  const getVisitorsCount = () => {
+    const { isUserGoing, visitorsCount } = props;
     return isUserGoing
-      ? usersInBar - 1
-      : usersInBar;
+      ? visitorsCount - 1
+      : visitorsCount;
   };
 
   const GoingLabel = () => {
     const { isUserGoing } = props;
-    const goingNumber = getGoingCount();
-    const userOnTheListLabel = goingNumber <= 0
+    const visitorsCount = getVisitorsCount();
+    const userOnTheListLabel = visitorsCount <= 0
       ? (
         <span className={classes.me}>
           me
@@ -86,13 +86,13 @@ const PlaceComponent = ({ placeID, classes, ...props }) => {
       )
       : (
         <React.Fragment>
-          {`${goingNumber} `}
+          {`${visitorsCount} `}
           <span className={classes.me}>
             and me
           </span>
         </React.Fragment>
       );
-    const userNotOnTheListLabel = goingNumber === 0 ? '-' : goingNumber;
+    const userNotOnTheListLabel = visitorsCount === 0 ? '-' : visitorsCount;
 
     return isUserGoing
       ? userOnTheListLabel
@@ -156,7 +156,7 @@ const PlaceComponent = ({ placeID, classes, ...props }) => {
                 </div>
               )
             }
-            { getGoingCount() > 0
+            { getVisitorsCount() > 0
               && (
                 <div className={classes.button}>
                   <Button raised color="accent" dense onClick={show}>
@@ -196,8 +196,8 @@ PlaceComponent.propTypes = {
   rating: PropTypes.number,
   authenticated: PropTypes.bool.isRequired,
   isUserGoing: PropTypes.bool.isRequired,
-  usersInBar: PropTypes.number.isRequired,
-  placeID: PropTypes.string.isRequired,
+  visitorsCount: PropTypes.number.isRequired,
+  barID: PropTypes.string.isRequired,
   addToVisitorsList: PropTypes.func.isRequired,
   removeFromVisitorsList: PropTypes.func.isRequired,
   showList: PropTypes.func.isRequired,

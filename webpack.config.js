@@ -7,7 +7,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const browserConfig = {
-  entry: { main: ['babel-polyfill', './index.jsx'] },
+  entry: { main: ['babel-polyfill', './src/index.jsx'] },
   output: {
     filename: '[name].[chunkhash].js',
     path: path.resolve(__dirname, 'dist'),
