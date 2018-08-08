@@ -30,7 +30,8 @@ const styles = {
     position: 'relative',
 
     '@media (min-width: 641px)': {
-      width: '400px',
+      maxWidth: '400px',
+      width: '50%',
       'overflow-y': 'scroll',
     },
     '@media (max-width: 640px)': {

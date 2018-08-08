@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
+import Star from './Star';
 
 const styles = theme => ({
   placeCard: {
@@ -75,6 +76,24 @@ const PlaceComponent = ({ barID, classes, ...props }) => {
       : visitorsCount;
   };
 
+  const renderStars = (num) => {
+    const stars = [];
+    for (let i = 0; i < Math.floor(num); i++) {
+      stars.push(<Star
+        width="20"
+        color="#ffd10e"
+        percent="1"
+      />);
+    }
+    const percent = num % 1;
+    stars.push(<Star
+      width="20"
+      color="#ffd10e"
+      percent={percent}
+    />);
+    return stars;
+  };
+
   const GoingLabel = () => {
     const { isUserGoing } = props;
     const visitorsCount = getVisitorsCount();
@@ -126,10 +145,7 @@ const PlaceComponent = ({ barID, classes, ...props }) => {
       {rating
         && (
           <div>
-            {'Rating: '}
-            <span className={classes.rating}>
-              {rating}
-            </span>
+            {renderStars(rating)}
           </div>
         )
       }

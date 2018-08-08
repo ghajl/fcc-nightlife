@@ -25,14 +25,14 @@ const MapComponent = compose(
           ? marker.location.lat : marker.location.lat();
         const markerLng = typeof marker.location.lng === 'number'
           ? marker.location.lng : marker.location.lng();
-        const placeID = marker.id;
+        const barID = marker.id;
         return (
           <MarkerComponent
-            key={placeID}
+            key={barID}
             lat={markerLat}
             lng={markerLng}
-            placeID={placeID}
-            markerClick={() => markerClick(placeID)}
+            barID={barID}
+            markerClick={() => markerClick(barID)}
           />
         );
       })
