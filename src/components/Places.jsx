@@ -162,19 +162,23 @@ class Places extends Component {
   }
 
   // show choosed bar on map and in list of bar cards
-  markerClick = (placeID, source = 'map') => {
+  markerClick = (barID, source = 'map') => {
     const { highlightPlace } = this.props;
-    if (source === 'map' && this.placeCards[placeID] && this.searchBarRef) {
-      const position = this.placeCards[placeID].getBoundingClientRect().top
+    if (source === 'map' && this.placeCards[barID] && this.searchBarRef) {
+      const position = this.placeCards[barID].getBoundingClientRect().top
       - this.searchBarRef.current.getBoundingClientRect().top;
       this.scrollTo(position);
     }
-    highlightPlace(placeID);
+    highlightPlace(barID);
   }
 
-  showList = (placeID) => {
+  createCardRef = (barID, ref) => {
+    this.placeCards[barID] = ref;
+  }
+
+  showList = (barID) => {
     const { showVisitorsList } = this.props;
-    showVisitorsList(placeID);
+    showVisitorsList(barID);
   }
 
   scrollTo = (pos) => {
@@ -232,21 +236,21 @@ class Places extends Component {
     return (
       <Page location={location} id="PageID">
         <div className={classes.wrapper}>
-          <div className={classes.listWrapper} style={listStyle} id="ListID" ref={el => this.setScrollEvent(el)}>
+          <div className={classes.listWrapper} style={listStyle} id="ListID" ref={this.setScrollEvent}>
             <SearchBar
               urlLocation={location}
               path={match.path}
               placeLocation={this.placeLocation.loc}
               searchBarRef={this.searchBarRef}
             />
-            { bars && bars.map((item, index) => (
+            { bars && bars.map(item => (
               <PlaceComponent
-                key={index}
+                key={item.id}
                 data={item}
                 path={match.url}
                 showList={this.showList}
                 markerClick={this.markerClick}
-                cardRef={(el) => { this.placeCards[item.id] = el; }}
+                createCardRef={this.createCardRef}
               />
             ))}
             <div className={classes.upButtonWrapper} style={upButtonWrapperStyle}>

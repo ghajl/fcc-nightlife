@@ -18,6 +18,7 @@
   "dependencies": {
     "@types/googlemaps": "^3.30.4",
     "@types/markerclustererplus": "^2.1.33",
+    "@types/react": "^16.4.8",
     "axios": "^0.17.1",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
@@ -34,7 +35,6 @@
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.4",
     "css-loader": "^0.28.8",
-    "eslint-config-airbnb": "^17.0.0",
     "express": "*",
     "express-session": "^1.15.6",
     "history": "^4.7.2",
@@ -42,6 +42,7 @@
     "material-ui-icons": "^1.0.0-beta.17",
     "mongoose": "^4.13.9",
     "normalize.css": "^7.0.0",
+    "octal-number-loader": "^0.1.4",
     "passport": "^0.4.0",
     "passport-facebook": "^2.1.1",
     "passport-local": "^1.0.0",
@@ -62,16 +63,14 @@
     "redux-thunk": "^2.2.0",
     "ssri": "^5.2.2",
     "style-loader": "^0.19.1",
-    "uglifyjs-webpack-plugin": "^1.1.8",
     "url-loader": "^0.6.2",
-    "webpack-dev-server": "^2.9.7",
-    "webpack-hot-middleware": "^2.21.0"
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "@types/react": "^16.4.6",
     "babel-eslint": "^8.2.5",
     "clean-webpack-plugin": "^0.1.19",
     "eslint": "^5.0.1",
+    "eslint-config-airbnb": "^17.0.0",
     "eslint-plugin-import": "^2.13.0",
     "eslint-plugin-jsx-a11y": "^6.1.0",
     "eslint-plugin-react": "^7.10.0",

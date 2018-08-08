@@ -49,7 +49,7 @@ const browserConfig = {
     }),
     new WebpackMd5Hash(),
   ],
-  devtool: 'source-map',
+  // devtool: 'source-map',
   resolve: {
     extensions: ['.js', '.jsx'],
   },
@@ -58,7 +58,7 @@ const browserConfig = {
 const serverConfig = {
   entry: ['babel-polyfill', './server/createServer.js'],
   target: 'node',
-  externals: [nodeExternals()],
+  // externals: [nodeExternals()],
   output: {
     path: path.resolve(process.cwd(), 'server'),
     filename: 'server.js',
@@ -71,9 +71,13 @@ const serverConfig = {
       {
         test: /\.(js)$/,
         use: {
-          loader: 'babel-loader',
+          loader: 'babel-loader!octal-number-loader',
         },
       },
+      // {
+      //   test: /tar[\\\/].*\.js$/,
+      //   loader: 'babel-loader!octal-number-loader',
+      // },
     ],
   },
   plugins: [

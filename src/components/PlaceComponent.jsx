@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
+import uuidv1 from 'uuid/v1';
 import { withStyles } from 'material-ui/styles';
 import Star from './Star';
 
@@ -30,73 +31,62 @@ const styles = theme => ({
   },
 });
 
-const PlaceComponent = ({ barID, classes, ...props }) => {
-  const add = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    const { addToVisitorsList } = props;
-    addToVisitorsList(barID);
-  };
+class PlaceComponent extends Component {
+  cardRef = React.createRef();
 
-  const remove = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    const { removeFromVisitorsList } = props;
-    removeFromVisitorsList(barID);
-  };
-
-  const show = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    const { showList } = props;
-    showList(barID);
-  };
-
-  const loginAdd = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    const { loginAndAdd } = props;
-    loginAndAdd(barID);
-  };
-
-  const cardClick = () => {
-    const source = 'notmap';
-    const { markerClick } = props;
-    markerClick(barID, source);
-  };
+  componentDidMount = () => {
+    const { createCardRef, barID } = this.props;
+    createCardRef(barID, this.cardRef.current);
+  }
 
   // make label about how many people are on the list of the specific bar
   // if current user also in the list - subtract from  the number
   // and add label 'and me' or just 'me'
   // if only current user in the list
-  const getVisitorsCount = () => {
-    const { isUserGoing, visitorsCount } = props;
+  getVisitorsCount = () => {
+    const { isUserGoing, visitorsCount } = this.props;
     return isUserGoing
       ? visitorsCount - 1
       : visitorsCount;
   };
 
-  const renderStars = (num) => {
-    const stars = [];
-    for (let i = 0; i < Math.floor(num); i++) {
-      stars.push(<Star
-        width="20"
-        color="#ffd10e"
-        percent="1"
-      />);
-    }
-    const percent = num % 1;
-    stars.push(<Star
-      width="20"
-      color="#ffd10e"
-      percent={percent}
-    />);
-    return stars;
+  add = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const { addToVisitorsList, barID } = this.props;
+    addToVisitorsList(barID);
   };
 
-  const GoingLabel = () => {
-    const { isUserGoing } = props;
-    const visitorsCount = getVisitorsCount();
+  remove = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const { removeFromVisitorsList, barID } = this.props;
+    removeFromVisitorsList(barID);
+  };
+
+  show = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const { showList, barID } = this.props;
+    showList(barID);
+  };
+
+  loginAdd = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const { loginAndAdd, barID } = this.props;
+    loginAndAdd(barID);
+  };
+
+  cardClick = () => {
+    const source = 'notmap';
+    const { markerClick, barID } = this.props;
+    markerClick(barID, source);
+  };
+
+  GoingLabel = () => {
+    const { isUserGoing, classes } = this.props;
+    const visitorsCount = this.getVisitorsCount();
     const userOnTheListLabel = visitorsCount <= 0
       ? (
         <span className={classes.me}>
@@ -122,78 +112,100 @@ const PlaceComponent = ({ barID, classes, ...props }) => {
       );
   };
 
-  const {
-    cardRef, isHighlighted, photo, name, address, rating, authenticated, isUserGoing,
-  } = props;
-  return (
-    <div
-      className={`${classes.placeCard} ${classes.text}`}
-      ref={cardRef}
-      onClick={cardClick}
-      style={isHighlighted ? { backgroundColor: '#E0E0E0' } : {}}
-    >
-      {photo
-        && <img alt="" src={photo} />
-      }
-      <div className={classes.placeName}>
-        {name}
+  renderStars = (num) => {
+    const stars = [];
+    for (let i = 0; i < Math.floor(num); i++) {
+      stars.push(<Star
+        key={uuidv1()}
+        width="20"
+        color="#ffd10e"
+        percent="1"
+      />);
+    }
+    const percent = num % 1;
+    stars.push(<Star
+      key={uuidv1()}
+      width="20"
+      color="#ffd10e"
+      percent={percent}
+    />);
+    return stars;
+  };
+
+  render() {
+    const {
+      isHighlighted, photo, name, address, rating, authenticated, isUserGoing, classes,
+    } = this.props;
+    return (
+      <div
+        className={`${classes.placeCard} ${classes.text}`}
+        ref={this.cardRef}
+        onClick={this.cardClick}
+        style={isHighlighted ? { backgroundColor: '#E0E0E0' } : {}}
+      >
+        {photo
+          && <img alt="" src={photo} />
+        }
+        <div className={classes.placeName}>
+          {name}
+        </div>
+        <div>
+          {'Address: '}
+          {address}
+        </div>
+        {rating
+          && (
+            <div>
+              {this.renderStars(rating)}
+            </div>
+          )
+        }
+        <div>
+          {'Going: '}
+          <this.GoingLabel />
+        </div>
+        {authenticated
+          ? (
+            <React.Fragment>
+              {isUserGoing
+                ? (
+                  <div className={classes.button}>
+                    <Button raised color="accent" dense onClick={this.remove}>
+                      Remove
+                    </Button>
+                  </div>
+                )
+                : (
+                  <div className={classes.button}>
+                    <Button raised color="accent" dense onClick={this.add}>
+                      Add
+                    </Button>
+                  </div>
+                )
+              }
+              { this.getVisitorsCount() > 0
+                && (
+                  <div className={classes.button}>
+                    <Button raised color="accent" dense onClick={this.show}>
+                      List
+                    </Button>
+                  </div>
+                )
+              }
+            </React.Fragment>
+          )
+          : (
+            <React.Fragment>
+              <Button raised color="accent" dense onClick={this.loginAdd}>
+                  Add
+              </Button>
+            </React.Fragment>
+          )
+        }
       </div>
-      <div>
-        {'Address: '}
-        {address}
-      </div>
-      {rating
-        && (
-          <div>
-            {renderStars(rating)}
-          </div>
-        )
-      }
-      <div>
-        {'Going: '}
-        <GoingLabel />
-      </div>
-      {authenticated
-        ? (
-          <React.Fragment>
-            {isUserGoing
-              ? (
-                <div className={classes.button}>
-                  <Button raised color="accent" dense onClick={remove}>
-                    Remove
-                  </Button>
-                </div>
-              )
-              : (
-                <div className={classes.button}>
-                  <Button raised color="accent" dense onClick={add}>
-                    Add
-                  </Button>
-                </div>
-              )
-            }
-            { getVisitorsCount() > 0
-              && (
-                <div className={classes.button}>
-                  <Button raised color="accent" dense onClick={show}>
-                    List
-                  </Button>
-                </div>
-              )
-            }
-          </React.Fragment>
-        )
-        : (
-          <React.Fragment>
-            <Button raised color="accent" dense onClick={loginAdd}>
-                Add
-            </Button>
-          </React.Fragment>
-        )
-      }
-    </div>
-  );
-};
+    );
+  }
+}
 
 export default withStyles(styles)(PlaceComponent);
 
@@ -219,4 +231,5 @@ PlaceComponent.propTypes = {
   showList: PropTypes.func.isRequired,
   loginAndAdd: PropTypes.func.isRequired,
   markerClick: PropTypes.func.isRequired,
+  createCardRef: PropTypes.func.isRequired,
 };
