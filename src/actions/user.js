@@ -59,12 +59,13 @@ function logoutError() {
 export function manualLogin(data) {
   return (dispatch, getState) => {
     dispatch(beginLogin());
-    const bars = getState().reducer.location.locationBars != null
-      ? getState().reducer.location.locationBars.map(bar => bar.id)
+    const bars = getState().reducer.location.bars != null
+      ? getState().reducer.location.bars.map(bar => bar.id)
       : [];
     const loginData = { ...data, ...{ bars } };
     return axiosInstance.post('/login', loginData)
       .then((response) => {
+        console.log(response.data.bars)
         dispatch(loginSuccess(data.username, response.data.bars, response.data.userID, 'You have been successfully logged in!'));
         // add user to users list of bar if user came here from add button on place card
         if (getState().reducer.guestBar) {

@@ -21,7 +21,7 @@ const server = (appConfig = {}) => {
     config = require('./config').default;
   }
 
-  const mongoDB = process.env.MONGOLAB_URI || config.MONGOLAB_URI;
+  const mongoDB = process.env.BARCOORDINATOR_MONGOLAB_URI || config.BARCOORDINATOR_MONGOLAB_URI;
   const mongoOptions = {
     reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
     reconnectInterval: 500, // Reconnect every 500ms
@@ -58,8 +58,10 @@ const server = (appConfig = {}) => {
     });
   }));
 
-  const facebookId = process.env.FACEBOOK_APP_ID || config.FACEBOOK_APP_ID;
-  const facebookSecret = process.env.FACEBOOK_APP_SECRET || config.FACEBOOK_APP_SECRET;
+  const facebookId = process.env.BARCOORDINATOR_FACEBOOK_APP_ID
+  || config.BARCOORDINATOR_FACEBOOK_APP_ID;
+  const facebookSecret = process.env.BARCOORDINATOR_FACEBOOK_APP_SECRET
+  || config.BARCOORDINATOR_FACEBOOK_APP_SECRET;
   passport.use(new FacebookStrategy(
     {
       clientID: facebookId,
@@ -104,7 +106,7 @@ const server = (appConfig = {}) => {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
 
-  const sessionSecret = process.env.SESSION_SECRET || config.SESSION_SECRET;
+  const sessionSecret = process.env.BARCOORDINATOR_SESSION_SECRET || config.BARCOORDINATOR_SESSION_SECRET;
   app.use(session({
     secret: sessionSecret,
     resave: false,

@@ -144,7 +144,7 @@ class PlaceComponent extends Component {
         style={isHighlighted ? { backgroundColor: '#E0E0E0' } : {}}
       >
         {photo
-          && <img alt="" src={photo} />
+          && <img alt="Bar's image" src={photo} />
         }
         <div className={classes.placeName}>
           {name}

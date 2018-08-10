@@ -6,7 +6,11 @@ import {
 import { openLoginDialog } from '../actions/ui';
 import { loginAndAdd } from '../actions/user';
 
-const currentIsGoing = (barsOfUser, barID) => barsOfUser.indexOf(barID) !== -1;
+const currentIsGoing = (barsOfUser, barID) => {
+  console.log(barsOfUser)
+  console.log(barID)
+  return barsOfUser.indexOf(barID) !== -1;
+}
 
 const isHighlighted = (barID, highlightedID) => barID === highlightedID;
 

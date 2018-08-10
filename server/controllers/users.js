@@ -1,4 +1,3 @@
-
 import passport from 'passport';
 import User from '../models/user';
 import Bar from '../models/bar';
@@ -15,6 +14,7 @@ export function login(req, res, next) {
         return res.sendStatus(401);
       }
       const currentBars = req.body.bars;
+      console.log(currentBars)
       const currentUserBars = currentBars.filter(barID => user.bars.indexOf(barID) !== -1);
       return res.json({ bars: currentUserBars, userID: user.id });
     });

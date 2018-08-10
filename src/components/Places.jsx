@@ -6,6 +6,8 @@ import { animateScroll as scroll } from 'react-scroll';
 import ArrowUpward from 'material-ui-icons/ArrowUpward';
 import MapComponent from '../containers/MapComponent';
 import PlaceComponent from '../containers/PlaceComponent';
+import Card from './Card';
+import CardImage from './CardImage';
 import SearchBar from '../containers/SearchBar';
 import { defaultLocation } from '../util/locations';
 import Page from './Page';
@@ -244,14 +246,21 @@ class Places extends Component {
               searchBarRef={this.searchBarRef}
             />
             { bars && bars.map(item => (
-              <PlaceComponent
+              // <PlaceComponent
+              //   key={item.id}
+              //   data={item}
+              //   path={match.url}
+              //   showList={this.showList}
+              //   markerClick={this.markerClick}
+              //   createCardRef={this.createCardRef}
+              // />
+              <Card
                 key={item.id}
-                data={item}
-                path={match.url}
-                showList={this.showList}
-                markerClick={this.markerClick}
+                id={item.id}
                 createCardRef={this.createCardRef}
-              />
+              >
+                {item.photoUrl && <CardImage src={item.photoUrl} />}
+              </Card>
             ))}
             <div className={classes.upButtonWrapper} style={upButtonWrapperStyle}>
               <div

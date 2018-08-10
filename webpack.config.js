@@ -11,7 +11,7 @@ const browserConfig = {
   output: {
     filename: '[name].[chunkhash].js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '/dist/',
+    publicPath: '/barcoordinator/dist/',
   },
   module: {
     rules: [
@@ -58,7 +58,7 @@ const browserConfig = {
 const serverConfig = {
   entry: ['babel-polyfill', './server/createServer.js'],
   target: 'node',
-  // externals: [nodeExternals()],
+  externals: [nodeExternals()],
   output: {
     path: path.resolve(process.cwd(), 'server'),
     filename: 'server.js',
@@ -71,13 +71,9 @@ const serverConfig = {
       {
         test: /\.(js)$/,
         use: {
-          loader: 'babel-loader!octal-number-loader',
+          loader: 'babel-loader',
         },
       },
-      // {
-      //   test: /tar[\\\/].*\.js$/,
-      //   loader: 'babel-loader!octal-number-loader',
-      // },
     ],
   },
   plugins: [
