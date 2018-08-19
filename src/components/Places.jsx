@@ -55,7 +55,7 @@ const styles = {
     bottom: '10%',
     right: '10%',
     zIndex: 1000,
-    opacity: 0.4,
+    opacity: 0.7,
     transition: '.6s',
     position: 'relative',
     width: 0,
