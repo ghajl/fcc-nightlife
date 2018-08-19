@@ -9,6 +9,7 @@ import {
   highlightPlace,
 } from '../actions/bar';
 import { replaceLocation } from '../actions/url';
+import { showBasket } from '../actions/user';
 
 const mapStateToProps = ({ reducer }) => (
   {
@@ -19,5 +20,5 @@ const mapStateToProps = ({ reducer }) => (
 );
 
 export default connect(mapStateToProps, {
-  findLocation, showBars, showVisitorsList, highlightPlace, replaceLocation,
+  findLocation, showBars, showVisitorsList, highlightPlace, replaceLocation, showBasket,
 })(Places);

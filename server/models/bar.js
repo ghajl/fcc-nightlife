@@ -1,7 +1,11 @@
 import mongoose from 'mongoose';
 
 const BarSchema = new mongoose.Schema({
-  barID: {
+  barId: {
+    type: String,
+    unique: true,
+  },
+  placeId: {
     type: String,
     unique: true,
   },

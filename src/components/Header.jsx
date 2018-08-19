@@ -7,11 +7,14 @@ import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
 import IconButton from 'material-ui/IconButton';
 import AccountBox from 'material-ui-icons/AccountBox';
+import DirectionsWalk from 'material-ui-icons/DirectionsWalk';
 import { withStyles } from 'material-ui/styles';
 import withWidth from 'material-ui/utils/withWidth';
 import compose from 'recompose/compose';
 import Menu, { MenuItem } from 'material-ui/Menu';
-import { ListItem } from 'material-ui/List';
+import Badge from 'material-ui/Badge';
+import { ListItem, ListItemIcon } from 'material-ui/List';
+import BasketList from '../components/BasketList';
 
 const styles = theme => ({
   nav: {
@@ -22,13 +25,32 @@ const styles = theme => ({
     'text-transform': 'none',
     fontWeight: 900,
     fontSize: '1.5em',
+    color: '#fff',
   },
   login: {
     margin: 5,
   },
-  text: theme.typography.button,
-  title: {
-    color: theme.palette.text.secondary,
+  appBar: {
+    background: '#110E0E',
+    color: '#fff',
+  },
+  text: { ...theme.typography.button, ...{ color: 'white' } },
+  basket: {
+    color: 'white',
+    '@media (min-width: 641px)': {
+      marginRight: '2rem',
+    },
+  },
+  popUpMenu: {
+    background: '#110E0E',
+  },
+  icon: {
+    fontSize: '1.6rem',
+  },
+  badge: {
+    top: 1,
+    right: -20,
+    backgroundColor: 'green',
   },
 });
 
@@ -36,6 +58,7 @@ class Header extends Component {
   constructor() {
     super();
     this.menuAnchorEl = null;
+    this.basketAnchorEl = null;
   }
 
   handleMenu = (event) => {
@@ -64,26 +87,49 @@ class Header extends Component {
   };
 
   handleSignUpClick = (event) => {
-    const { path, toSignUp } = this.props;
+    const { location, toSignUp } = this.props;
     event.preventDefault();
     this.handleMenuClose();
-    if (path.pathname !== '/signup') {
-      toSignUp(path);
+    if (location.pathname !== '/signup') {
+      toSignUp(location);
     }
+  };
+
+  showBasket = (event) => {
+    const { showBasket } = this.props;
+    event.preventDefault();
+    this.basketAnchorEl = event.currentTarget;
+    showBasket();
+  };
+
+  handleCloseBasketList = (event) => {
+    const { closeBasket } = this.props;
+    event.preventDefault();
+    this.basketAnchorEl = null;
+    closeBasket();
   };
 
   render() {
     const {
-      classes, isAuthenticated, username, facebookProfile, loginMenuOpen, width,
+      classes,
+      isAuthenticated,
+      username,
+      facebookProfile,
+      loginMenuOpen,
+      width,
+      userBarsCount,
+      basketList,
+      basketOpen,
+      removeBar,
     } = this.props;
     const authenticatedUserName = facebookProfile != null && facebookProfile.givenName != null
       ? facebookProfile.givenName
       : username || 'Registered User';
     return (
       <div className={classes.nav}>
-        <AppBar color="default">
+        <AppBar className={classes.appBar}>
           <Toolbar>
-            <Typography className={classes.logo} color="secondary" component={Link} to="/" type="title">
+            <Typography className={classes.logo} component={Link} to="/" type="title">
               BarCoordinator
             </Typography>
             { width === 'xs'
@@ -100,22 +146,31 @@ class Header extends Component {
               )
               : (
                 <React.Fragment>
+                  {isAuthenticated
+                    && (
+                      <IconButton className={classes.basket} aria-label="Show my places" title="Show my places" onClick={this.showBasket}>
+                        <Badge badgeContent={userBarsCount} color="primary" classes={{ badge: classes.badge }}>
+                          <DirectionsWalk className={classes.icon} />
+                        </Badge>
+                      </IconButton>
+                    )
+                  }
                   <div className={classes.text}>
                     {`Hello, ${authenticatedUserName} !`}
                   </div>
                   <div className={classes.login}>
                     {isAuthenticated
                       ? (
-                        <Button component={Link} to="/logout" onClick={this.handleLogOutClick}>
+                        <Button className={classes.text} component={Link} to="/logout" onClick={this.handleLogOutClick}>
                           LOG OUT
                         </Button>
                       )
                       : (
                         <React.Fragment>
-                          <Button onClick={this.handleLogInClick}>
+                          <Button className={classes.text} onClick={this.handleLogInClick}>
                             LOG IN
                           </Button>
-                          <Button component={Link} to="/signup" onClick={this.handleSignUpClick}>
+                          <Button className={classes.text} component={Link} to="/signup" onClick={this.handleSignUpClick}>
                             SIGN UP
                           </Button>
                         </React.Fragment>
@@ -127,6 +182,7 @@ class Header extends Component {
             }
             <Menu
               id="menu-appbar"
+              classes={{ paper: classes.popUpMenu }}
               anchorEl={this.menuAnchorEl}
               anchorOrigin={{
                 vertical: 'top',
@@ -144,22 +200,38 @@ class Header extends Component {
               </ListItem>
               {isAuthenticated
                 ? (
-                  <MenuItem className={classes.text} component={Link} to="/logout" onClick={this.handleLogOutClick}>
-                    LOG OUT
-                  </MenuItem>
+                  <React.Fragment>
+                    <MenuItem onClick={this.showBasket}>
+                      <ListItemIcon className={classes.text} aria-label="Show my places" title="Show my places">
+                        <Badge badgeContent={userBarsCount} color="primary" classes={{ badge: classes.badge }}>
+                          <DirectionsWalk />
+                        </Badge>
+                      </ListItemIcon>
+                    </MenuItem>
+                    <MenuItem className={classes.text} component={Link} to="/logout" onClick={this.handleLogOutClick}>
+                      LOG OUT
+                    </MenuItem>
+                  </React.Fragment>
                 )
                 : (
-                  <div>
+                  <React.Fragment>
                     <MenuItem className={classes.text} onClick={this.handleLogInClick}>
                       LOG IN
                     </MenuItem>
                     <MenuItem className={classes.text} component={Link} to="/signup" onClick={this.handleSignUpClick}>
                       SIGN UP
                     </MenuItem>
-                  </div>
+                  </React.Fragment>
                 )
               }
             </Menu>
+            <BasketList
+              basketList={basketList}
+              open={basketOpen}
+              onClose={this.handleCloseBasketList}
+              anchorEl={this.basketAnchorEl}
+              removeBar={removeBar}
+            />
           </Toolbar>
         </AppBar>
       </div>
@@ -172,15 +244,26 @@ export default compose(withStyles(styles), withWidth())(Header);
 
 Header.propTypes = {
   classes: PropTypes.shape({}).isRequired,
-  path: PropTypes.shape({}).isRequired,
+  location: PropTypes.shape({}).isRequired,
   isAuthenticated: PropTypes.bool.isRequired,
   username: PropTypes.string,
   facebookProfile: PropTypes.shape({}),
   loginMenuOpen: PropTypes.bool.isRequired,
+  basketOpen: PropTypes.bool.isRequired,
   width: PropTypes.string.isRequired,
+  userBarsCount: PropTypes.number.isRequired,
+  basketList: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  showBasket: PropTypes.func.isRequired,
+  closeBasket: PropTypes.func.isRequired,
   openLoginMenu: PropTypes.func.isRequired,
   closeLoginMenu: PropTypes.func.isRequired,
+  removeBar: PropTypes.func.isRequired,
   logOut: PropTypes.func.isRequired,
   openLoginDialog: PropTypes.func.isRequired,
   toSignUp: PropTypes.func.isRequired,
+};
+
+Header.defaultProps = {
+  facebookProfile: {},
+  username: '',
 };

@@ -46,10 +46,10 @@ const styles = {
   },
 };
 
-const Page = ({ classes, location, children }) => (
+const Page = ({ classes, children, ...props }) => (
   <div className={classes.app}>
     <Header
-      path={location}
+      {...props}
     />
     <div className={classes.content}>
       {children}
@@ -62,6 +62,5 @@ export default injectSheet(styles)(Page);
 
 Page.propTypes = {
   classes: PropTypes.shape({}).isRequired,
-  location: PropTypes.shape({}).isRequired,
   children: PropTypes.shape({}).isRequired,
 };

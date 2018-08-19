@@ -70,7 +70,7 @@ const server = (appConfig = {}) => {
       profileFields: ['id', 'name'],
     },
     (accessToken, refreshToken, profile, cb) => {
-      User.findOne({ facebookID: profile.id }, (err, user) => {
+      User.findOne({ facebookId: profile.id }, (err, user) => {
         if (err) {
           return cb(err);
         }
@@ -78,7 +78,7 @@ const server = (appConfig = {}) => {
           return cb(null, user);
         }
         const newUser = new User();
-        newUser.facebookID = profile.id;
+        newUser.facebookId = profile.id;
         newUser.profile.givenName = (profile.name && profile.name.givenName) || '';
         newUser.profile.familyName = (profile.name && profile.name.familyName) || '';
         return newUser.save((usererr) => {

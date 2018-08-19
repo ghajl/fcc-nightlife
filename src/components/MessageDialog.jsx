@@ -7,6 +7,7 @@ import Dialog, {
   DialogContentText,
 } from 'material-ui/Dialog';
 import { withStyles } from 'material-ui/styles';
+import uuidv1 from 'uuid/v1';
 
 const styles = {
   button: {
@@ -23,11 +24,14 @@ const MessageDialog = ({
   >
     <DialogContent>
       {message
-        && message.map((msg, index) => (
-          <DialogContentText key={index}>
-            {msg}
-          </DialogContentText>
-        ))
+        && message.map((msg) => {
+          const key = uuidv1();
+          return (
+            <DialogContentText key={key}>
+              {msg}
+            </DialogContentText>
+          );
+        })
       }
     </DialogContent>
     <DialogActions className={classes.button}>

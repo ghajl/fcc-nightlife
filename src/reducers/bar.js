@@ -21,7 +21,7 @@ const highlighted = (
 ) => {
   switch (action.type) {
   case actionTypes.HIGHLIGHT_PLACE:
-    return action.barID;
+    return action.barId;
   case actionTypes.LOGOUT_SUCCESS_USER:
   case actionTypes.FETCH_USER_ERROR:
     return null;

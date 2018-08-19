@@ -13,7 +13,7 @@ const UserSchema = new mongoose.Schema({
     givenName: String,
     familyName: String,
   },
-  facebookID: {
+  facebookId: {
     type: String,
     unique: true,
     sparse: true,

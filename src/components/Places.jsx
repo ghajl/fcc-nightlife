@@ -4,14 +4,15 @@ import qs from 'query-string';
 import injectSheet from 'react-jss';
 import { animateScroll as scroll } from 'react-scroll';
 import ArrowUpward from 'material-ui-icons/ArrowUpward';
-import MapComponent from '../containers/MapComponent';
-import PlaceComponent from '../containers/PlaceComponent';
-import Card from './Card';
-import CardImage from './CardImage';
+import uuidv1 from 'uuid/v1';
+import Map from '../containers/Map';
+import CardWrapper from '../containers/CardWrapper';
+import Splitter from './Splitter';
 import SearchBar from '../containers/SearchBar';
 import { defaultLocation } from '../util/locations';
 import Page from './Page';
 import styleVariables from '../helpers/styleVariables';
+import Star from './Star';
 
 const styles = {
   wrapper: {
@@ -30,7 +31,7 @@ const styles = {
     flexDirection: 'column',
     width: '100%',
     position: 'relative',
-
+    backgroundColor: '#193150',
     '@media (min-width: 641px)': {
       maxWidth: '400px',
       width: '50%',
@@ -98,7 +99,7 @@ class Places extends Component {
     if (!this.placeLocation.loc) {
       replaceLocation(defaultLocation.address, location.pathname);
     }
-    this.placeCards = {};
+    this.barCards = {};
     this.searchBarRef = React.createRef();
     this.state = {
       upwardButtonVisible: false,
@@ -116,15 +117,15 @@ class Places extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { location, findLocation, showBars } = this.props;
+    const { location, showBars, replaceLocation } = this.props;
     if (location.search != null && location.search !== nextProps.location.search) {
       this.placeLocation = qs.parse(nextProps.location.search);
-      // if there is 'bar' parameter in url - show list of bars
-      // if there is only 'loc' parameter - show location on the map
-      if (!this.placeLocation.bar && this.placeLocation.loc) {
-        findLocation(this.placeLocation.loc);
-      } else if (this.placeLocation.bar && this.placeLocation.loc) {
+      // // if there is 'bar' parameter in url - show list of bars
+      // // if there is only 'loc' parameter - show location on the map
+      if (this.service && this.placeLocation.loc) {
         showBars(this.service, this.placeLocation.loc);
+      } else {
+        replaceLocation(defaultLocation.address, location.pathname);
       }
     }
   }
@@ -157,38 +158,44 @@ class Places extends Component {
     }
   }
 
+
   setScrollEvent = (element) => {
     if (element) {
       element.addEventListener('scroll', this.handleScroll);
     }
   }
 
+  showBasket = () => {
+    const { showBasket } = this.props;
+    showBasket(this.service);
+  }
+
   // show choosed bar on map and in list of bar cards
-  markerClick = (barID, source = 'map') => {
+  markerClick = (barId) => {
     const { highlightPlace } = this.props;
-    if (source === 'map' && this.placeCards[barID] && this.searchBarRef) {
-      const position = this.placeCards[barID].getBoundingClientRect().top
+    if (this.barCards[barId] && this.searchBarRef) {
+      const position = this.barCards[barId].getBoundingClientRect().top
       - this.searchBarRef.current.getBoundingClientRect().top;
       this.scrollTo(position);
     }
-    highlightPlace(barID);
+    highlightPlace(barId);
   }
 
-  createCardRef = (barID, ref) => {
-    this.placeCards[barID] = ref;
+  createCardRef = (barId, ref) => {
+    this.barCards[barId] = ref;
   }
 
-  showList = (barID) => {
+  showList = (barId) => {
     const { showVisitorsList } = this.props;
-    showVisitorsList(barID);
+    showVisitorsList(barId);
   }
 
   scrollTo = (pos) => {
-    scroll.scrollTo(pos - 150, {
+    scroll.scrollTo(pos, {
       duration: 800,
       delay: 0,
       smooth: 'easeInOutQuart',
-      containerId: 'ListID',
+      containerId: 'ListId',
     });
   }
 
@@ -196,9 +203,9 @@ class Places extends Component {
     const width = window.innerWidth;
     let id;
     if (width <= 640) {
-      id = 'PageID';
+      id = 'PageId';
     } else {
-      id = 'ListID';
+      id = 'ListId';
     }
     scroll.scrollToTop({ containerId: id });
   }
@@ -235,32 +242,35 @@ class Places extends Component {
     const upButtonWrapperStyle = upwardButtonVisible
       ? { visibility: 'visible' }
       : { visibility: 'hidden', opacity: 0 };
+
+    const mapContainer = (<div style={{ height: 'inherit', width: 'inherit' }} />);
+    const mapLoadingElement = (<div style={{ height: '100%' }} />);
+    const mapElement = (<div style={{ height: '100%', opacity: '.8' }} />);
+
     return (
-      <Page location={location} id="PageID">
+      <Page showBasket={this.showBasket} location={location} id="PageId">
         <div className={classes.wrapper}>
-          <div className={classes.listWrapper} style={listStyle} id="ListID" ref={this.setScrollEvent}>
+          <div className={classes.listWrapper} style={listStyle} id="ListId" ref={this.setScrollEvent}>
             <SearchBar
               urlLocation={location}
               path={match.path}
               placeLocation={this.placeLocation.loc}
               searchBarRef={this.searchBarRef}
             />
-            { bars && bars.map(item => (
-              // <PlaceComponent
-              //   key={item.id}
-              //   data={item}
-              //   path={match.url}
-              //   showList={this.showList}
-              //   markerClick={this.markerClick}
-              //   createCardRef={this.createCardRef}
-              // />
-              <Card
-                key={item.id}
-                id={item.id}
-                createCardRef={this.createCardRef}
-              >
-                {item.photoUrl && <CardImage src={item.photoUrl} />}
-              </Card>
+            { bars && bars.map((item, index) => (
+              <div key={item.id}>
+                {index > 0 && <Splitter />}
+                <CardWrapper
+                  createCardRef={this.createCardRef}
+                  id={item.id}
+                  placeId={item.placeId}
+                  photoUrl={item.photoUrl}
+                  name={item.name}
+                  address={item.address}
+                  rating={item.rating}
+                  visitorsCount={item.visitorsCount}
+                />
+              </div>
             ))}
             <div className={classes.upButtonWrapper} style={upButtonWrapperStyle}>
               <div
@@ -272,12 +282,14 @@ class Places extends Component {
             </div>
           </div>
           <div className={classes.map} style={mapStyle}>
-            <MapComponent
+            <Map
               isMarkerShown
               markers={bars}
-              mapRef={el => this.setMap(el)}
+              setMap={this.setMap}
               markerClick={this.markerClick}
-              containerElement={<div style={{ height: 'inherit', width: 'inherit' }} />}
+              containerElement={mapContainer}
+              loadingElement={mapLoadingElement}
+              mapElement={mapElement}
             />
           </div>
         </div>
@@ -299,7 +311,7 @@ Places.propTypes = {
     path: PropTypes.string.isRequired,
   }).isRequired,
   replaceLocation: PropTypes.func.isRequired,
-  findLocation: PropTypes.func.isRequired,
+  showBasket: PropTypes.func.isRequired,
   showBars: PropTypes.func.isRequired,
   highlightPlace: PropTypes.func.isRequired,
   showVisitorsList: PropTypes.func.isRequired,

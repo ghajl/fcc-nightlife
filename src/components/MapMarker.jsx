@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { Marker } from 'react-google-maps';
 import PropTypes from 'prop-types';
 import { RED_MARKER, BLUE_MARKER } from '../util/icons';
 
-class MarkerComponent extends Component {
+class MapMarker extends PureComponent {
   state = {
     animation: null,
   };
@@ -19,16 +19,23 @@ class MarkerComponent extends Component {
     }
   }
 
+  markerClick = () => {
+    const {
+      barId, markerClick,
+    } = this.props;
+    markerClick(barId);
+  }
+
   render() {
     const {
-      isHighlighted, lat, lng, markerClick,
+      isHighlighted, lat, lng,
     } = this.props;
     const { animation } = this.state;
     const markerIcon = isHighlighted ? RED_MARKER : BLUE_MARKER;
     return (
       <Marker
         position={{ lat, lng }}
-        onClick={markerClick}
+        onClick={this.markerClick}
         icon={markerIcon}
         animation={animation}
       />
@@ -36,11 +43,12 @@ class MarkerComponent extends Component {
   }
 }
 
-export default MarkerComponent;
+export default MapMarker;
 
-MarkerComponent.propTypes = {
+MapMarker.propTypes = {
   lat: PropTypes.number.isRequired,
   lng: PropTypes.number.isRequired,
+  barId: PropTypes.string.isRequired,
   isHighlighted: PropTypes.bool.isRequired,
   markerClick: PropTypes.func.isRequired,
 };

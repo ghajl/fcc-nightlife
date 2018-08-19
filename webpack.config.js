@@ -5,13 +5,14 @@ const NodemonPlugin = require('nodemon-webpack-plugin');
 const WebpackMd5Hash = require('webpack-md5-hash');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const { basename } = require('./config/app');
 
 const browserConfig = {
   entry: { main: ['babel-polyfill', './src/index.jsx'] },
   output: {
     filename: '[name].[chunkhash].js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '/barcoordinator/dist/',
+    publicPath: `${basename}/dist/`,
   },
   module: {
     rules: [

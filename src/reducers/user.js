@@ -2,12 +2,12 @@ import { combineReducers } from 'redux';
 import actionTypes from '../actions/types';
 
 const isWaiting = (
-  state = false,
+  state = 0,
   action,
 ) => {
   switch (action.type) {
-  case actionTypes.REMOVE_FROM_VISITORS_LIST:
-  case actionTypes.ADD_TO_VISITORS_LIST:
+  case actionTypes.BEGIN_ADD_BAR:
+  case actionTypes.BEGIN_REMOVE_BAR:
   case actionTypes.FIND_LOCATION:
   case actionTypes.FIND_BARS:
   case actionTypes.LOGOUT_USER:
@@ -16,6 +16,7 @@ const isWaiting = (
   case actionTypes.MANUAL_LOGIN_USER:
   case actionTypes.BEGIN_SHOW_VISITORS_LIST:
   case actionTypes.START_FACEBOOK_LOGIN:
+  case actionTypes.BEGIN_SHOW_BASKET:
     return true;
   case actionTypes.LOGIN_SUCCESS_USER:
   case actionTypes.SIGNUP_SUCCESS_USER:
@@ -28,14 +29,18 @@ const isWaiting = (
   case actionTypes.FETCH_USER_ERROR:
   case actionTypes.FIND_LOCATION_SUCCESS:
   case actionTypes.FIND_BARS_SUCCESS:
-  case actionTypes.MODIFY_VISITORS_LIST_ERROR:
+  case actionTypes.ADD_BAR_ERROR:
+  case actionTypes.REMOVE_BAR_ERROR:
   case actionTypes.FIND_LOCATION_ERROR:
   case actionTypes.FIND_BARS_ERROR:
   case actionTypes.SHOW_VISITORS_LIST_SUCCESS:
   case actionTypes.SHOW_VISITORS_LIST_ERROR:
   case actionTypes.END_FACEBOOK_LOGIN:
-  case actionTypes.ADD_TO_VISITORS_LIST_SUCCESS:
-  case actionTypes.REMOVE_FROM_VISITORS_LIST_SUCCESS:
+  case actionTypes.ADD_BAR_SUCCESS:
+  case actionTypes.REMOVE_BAR_SUCCESS:
+  case actionTypes.SHOW_BASKET_SUCCESS:
+  case actionTypes.SHOW_BASKET_ERROR:
+  case actionTypes.ZERO_RESULTS_SEARCH_ERROR:
     return false;
   default:
     return state;
@@ -59,13 +64,13 @@ const authenticated = (
   case actionTypes.SESSION_EXPIRED:
     return false;
   case actionTypes.FIND_PLACES_SUCCESS:
-    return action.userID != null;
+    return action.userId != null;
   default:
     return state;
   }
 };
 
-const userID = (
+const userId = (
   state = '',
   action,
 ) => {
@@ -73,13 +78,13 @@ const userID = (
   case actionTypes.FETCH_USER_SUCCESS:
   case actionTypes.LOGIN_SUCCESS_USER:
   case actionTypes.SIGNUP_SUCCESS_USER:
-    return action.userID;
+    return action.userId;
   case actionTypes.LOGOUT_SUCCESS_USER:
   case actionTypes.SESSION_EXPIRED:
   case actionTypes.FETCH_USER_ERROR:
     return '';
   case actionTypes.FIND_BARS_SUCCESS:
-    return action.userID || '';
+    return action.userId || '';
   default:
     return state;
   }
@@ -134,11 +139,14 @@ const message = (
   case actionTypes.SIGNUP_SUCCESS_USER:
   case actionTypes.SIGNUP_ERROR_USER:
   case actionTypes.LOGIN_ERROR_USER:
-  case actionTypes.MODIFY_VISITORS_LIST_ERROR:
+  case actionTypes.ADD_BAR_ERROR:
+  case actionTypes.REMOVE_BAR_ERROR:
   case actionTypes.FIND_LOCATION_ERROR:
   case actionTypes.FIND_BARS_ERROR:
   case actionTypes.SHOW_VISITORS_LIST_ERROR:
   case actionTypes.SHOW_MESSAGE_DIALOG:
+  case actionTypes.SHOW_BASKET_ERROR:
+  case actionTypes.ZERO_RESULTS_SEARCH_ERROR:
     return [...state, action.message];
   case actionTypes.CLOSE_MESSAGE_DIALOG:
     return [];
@@ -152,21 +160,21 @@ const bars = (
   action,
 ) => {
   switch (action.type) {
-  case actionTypes.FETCH_USER_SUCCESS:
   case actionTypes.FETCH_USER_ERROR:
   case actionTypes.SESSION_EXPIRED:
   case actionTypes.LOGOUT_SUCCESS_USER:
     return [];
   case actionTypes.LOGIN_SUCCESS_USER:
+  case actionTypes.FETCH_USER_SUCCESS:
     return action.bars || [];
   case actionTypes.FIND_BARS_SUCCESS:
-    return action.userBars;
+    return action.userBars || [];
   case actionTypes.ADD_BAR_TO_USER:
-    return [...state, action.barID];
+    return [...state, action.barId];
   case actionTypes.REMOVE_BAR_FROM_USER:
   {
     const updateUserBars = [...state];
-    const index = updateUserBars.indexOf(action.barID);
+    const index = updateUserBars.indexOf(action.barId);
     if (index >= 0) {
       updateUserBars.splice(index, 1);
     }
@@ -178,14 +186,41 @@ const bars = (
   }
 };
 
+const basket = (
+  state = [],
+  action,
+) => {
+  switch (action.type) {
+  case actionTypes.FETCH_USER_ERROR:
+  case actionTypes.SESSION_EXPIRED:
+  case actionTypes.LOGOUT_SUCCESS_USER:
+  case actionTypes.SHOW_BASKET_ERROR:
+    return [];
+  case actionTypes.SHOW_BASKET_SUCCESS:
+    return action.basketList || [];
+  case actionTypes.REMOVE_BAR_FROM_USER:
+  {
+    const updateUserBars = [...state];
+    const index = updateUserBars.findIndex(elem => elem.barId === action.barId);
+    if (index >= 0) {
+      updateUserBars.splice(index, 1);
+    }
+    return updateUserBars;
+  }
+  default:
+    return state;
+  }
+};
+
 const userReducer = combineReducers({
   isWaiting,
   authenticated,
-  userID,
+  userId,
   username,
   facebookProfile,
   message,
   bars,
+  basket,
 });
 
 export default userReducer;

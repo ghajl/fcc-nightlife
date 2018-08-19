@@ -8,9 +8,9 @@ export function setLocation(address, pathname) {
   };
 }
 
-export function replaceLocation(address, pathname) {
+export function replaceLocation(address) {
   return (dispatch) => {
-    dispatch(replace(`${pathname}?loc=${address}`));
+    dispatch(replace(`/places?loc=${address}&bar=show`));
   };
 }
 

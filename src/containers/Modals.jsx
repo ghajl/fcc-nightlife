@@ -5,8 +5,7 @@ import { withStyles } from 'material-ui/styles';
 import { CircularProgress } from 'material-ui/Progress';
 import LoginDialog from '../components/LoginDialog';
 import MessageDialog from '../components/MessageDialog';
-import UsersListDialog from '../components/UsersListDialog';
-import { manualLogin } from '../actions/user';
+import VisitorsListDialog from '../components/VisitorsListDialog';
 import {
   closeLoginDialog,
   openLoginDialog,
@@ -14,7 +13,7 @@ import {
   closeMessage,
 } from '../actions/ui';
 import { closeVisitorsList } from '../actions/bar';
-
+import { closeBasket, manualLogin } from '../actions/user';
 import getErrorMessages from '../helpers/InputCheck';
 
 const styles = {
@@ -71,20 +70,31 @@ class Modals extends Component {
     dispatch(closeMessage());
   }
 
-  handleCloseList = () => {
+  handleCloseVisitorsList = () => {
     const { dispatch } = this.props;
     dispatch(closeVisitorsList());
   }
 
+  handleCloseBasketList = () => {
+    const { dispatch } = this.props;
+    dispatch(closeBasket());
+  }
+
   render() {
     const {
-      classes, isLoginOpen, isMessageOpen, message, list, isListOpen, loading,
+      classes,
+      loginOpen,
+      messageOpen,
+      message,
+      visitorsList,
+      visitorsListOpen,
+      loading,
     } = this.props;
     const { usernameErrorText, passwordErrorText } = this.state;
     return (
       <React.Fragment>
         <LoginDialog
-          open={isLoginOpen}
+          open={loginOpen}
           onSubmit={this.handleSubmitLogin}
           onSignUp={() => this.goToSignUp()}
           onClose={this.handleCloseLogin}
@@ -93,15 +103,15 @@ class Modals extends Component {
         />
 
         <MessageDialog
-          open={isMessageOpen}
+          open={messageOpen}
           onClose={this.handleCloseMessage}
           message={message}
         />
 
-        <UsersListDialog
-          usersList={list}
-          open={isListOpen}
-          onClose={this.handleCloseList}
+        <VisitorsListDialog
+          visitorsList={visitorsList}
+          open={visitorsListOpen}
+          onClose={this.handleCloseVisitorsList}
         />
         {loading && <CircularProgress size={160} className={classes.buttonProgress} />}
       </React.Fragment>
@@ -111,21 +121,23 @@ class Modals extends Component {
 
 export default connect(({ reducer }) => (
   {
-    isLoginOpen: reducer.loginDialogOpen,
+    loginOpen: reducer.loginDialogOpen,
     message: reducer.user.message,
-    isMessageOpen: reducer.messageDialogOpen,
+    messageOpen: reducer.messageDialogOpen,
     loading: reducer.user.isWaiting,
-    isListOpen: reducer.listDialogOpen,
-    list: reducer.bar.visitors,
+    visitorsListOpen: reducer.listDialogOpen,
+    visitorsList: reducer.bar.visitors,
+    basketOpen: reducer.basketDialogOpen,
+    basketList: reducer.user.basket,
   }))(withStyles(styles)(Modals));
 
 Modals.propTypes = {
   dispatch: PropTypes.func.isRequired,
   classes: PropTypes.shape({}).isRequired,
-  isLoginOpen: PropTypes.bool.isRequired,
-  isMessageOpen: PropTypes.bool.isRequired,
+  loginOpen: PropTypes.bool.isRequired,
+  messageOpen: PropTypes.bool.isRequired,
   message: PropTypes.arrayOf(PropTypes.string).isRequired,
-  list: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-  isListOpen: PropTypes.bool.isRequired,
+  visitorsList: PropTypes.arrayOf(PropTypes.string).isRequired,
+  visitorsListOpen: PropTypes.bool.isRequired,
   loading: PropTypes.bool.isRequired,
 };

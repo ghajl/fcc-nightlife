@@ -1,15 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import injectSheet from 'react-jss';
-import compose from 'recompose/compose';
-import withWidth from 'material-ui/utils/withWidth';
 import styleVariables from '../helpers/styleVariables';
 
 const styles = {
   wrapper: {
     textAlign: 'center',
     flexShrink: 0,
-    backgroundColor: 'white',
+    backgroundColor: '#110E0E',
     boxShadow: '0 -3px 7px -6px #222',
     height: `${styleVariables.footerHeightSm}px`,
     '@media (min-width: 320px)': {
@@ -33,23 +31,19 @@ const styles = {
     transition: '.4s',
     borderRadius: '50%',
     border: '1px solid',
-    borderColor: 'gray',
+    borderColor: 'white',
     padding: '5px',
     margin: '.5em',
     width: '24px',
     height: '24px',
-    '&:hover': {
-      borderColor: 'black',
-      backgroundColor: 'black',
-      fill: 'white',
+    '.can-hover &:hover ': {
+      borderColor: 'white',
+      backgroundColor: 'white',
+      fill: 'black',
     },
   },
   a: {
-    color: 'gray',
-    fill: 'gray',
-    '&:hover': {
-      color: 'black',
-    },
+    fill: 'white',
   },
   item: {
     display: 'flex',
@@ -107,4 +101,4 @@ Footer.propTypes = {
   classes: PropTypes.shape({}).isRequired,
 };
 
-export default compose(injectSheet(styles), withWidth())(Footer);
+export default injectSheet(styles)(Footer);

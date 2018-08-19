@@ -4,19 +4,18 @@ import { Provider, connect } from 'react-redux';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { ConnectedRouter } from 'react-router-redux';
 import { PersistGate } from 'redux-persist/lib/integration/react';
-import Home from './Home';
 import Signup from './Signup';
 import Places from './Places';
 import NotFound from '../components/NotFound';
-import fetchUserData from '../actions/fetch';
+import fetchUserData from '../actions/user';
 import { saveReturnTo } from '../actions/url';
-import { addToVisitorsList } from '../actions/bar';
+import { addBar } from '../actions/bar';
 import { defaultLocation } from '../util/locations';
 import Modals from './Modals';
 
 class Root extends Component {
   componentDidMount = () => {
-    const approvedReturnPath = ['location', 'places'];
+    const approvedReturnPath = ['places'];
     const { dispatch, history } = this.props;
     this.unlisten = history.listen((location) => {
       const { pathname, search } = location;
@@ -27,6 +26,10 @@ class Root extends Component {
         }
       }
     });
+    const canHover = !(matchMedia('(hover: none)').matches);
+    if (canHover) {
+      document.body.classList.add('can-hover');
+    }
     dispatch(fetchUserData());
   }
 
@@ -50,12 +53,8 @@ class Root extends Component {
                   exact
                   path="/"
                   render={() => (
-                    <Redirect to={`/location?loc=${defaultLocation.address}`} />
+                    <Redirect to={`/places?loc=${defaultLocation.address}&bar=show`} />
                   )}
-                />
-                <Route
-                  path="/location"
-                  component={Home}
                 />
                 <Route
                   path="/signup"
@@ -68,10 +67,10 @@ class Root extends Component {
                 <Route
                   path="/places"
                   render={(props) => {
-                    const { userID } = store.getState().reducer.user;
+                    const { userId } = store.getState().reducer.user;
                     const { guestBar } = store.getState().reducer;
-                    if (userID && guestBar != null) {
-                      dispatch(addToVisitorsList(guestBar));
+                    if (userId && guestBar != null) {
+                      dispatch(addBar(guestBar));
                     }
                     return (<Places {...props} />);
                   }}
@@ -95,7 +94,7 @@ class Root extends Component {
   }
 }
 
-export default connect(({ reducer }) => ({ userID: reducer.user.userID }))(Root);
+export default connect(({ reducer }) => ({ userId: reducer.user.userId }))(Root);
 
 Root.propTypes = {
   dispatch: PropTypes.func.isRequired,

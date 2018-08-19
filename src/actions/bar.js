@@ -3,28 +3,32 @@ import { axiosInstance } from '../../config/app';
 import actionTypes from './types';
 import { showMessage } from './ui';
 
-function addBarToUser(barID) {
+function addBarToUser(barId) {
   return {
     type: actionTypes.ADD_BAR_TO_USER,
-    barID,
+    barId,
   };
 }
 
-function removeBarFromUser(barID) {
+function removeBarFromUser(barId) {
   return {
     type: actionTypes.REMOVE_BAR_FROM_USER,
-    barID,
+    barId,
   };
 }
 
-function beginAddToVisitorsList() {
-  return { type: actionTypes.ADD_TO_VISITORS_LIST };
+function beginAddBar() {
+  return { type: actionTypes.BEGIN_ADD_BAR };
 }
 
-function incrementVisitorsCount(barID) {
+function beginRemoveBar() {
+  return { type: actionTypes.BEGIN_REMOVE_BAR };
+}
+
+function incrementVisitorsCount(barId) {
   return {
     type: actionTypes.INCREMENT_VISITORS_COUNT,
-    barID,
+    barId,
   };
 }
 
@@ -32,41 +36,48 @@ function sessionExpired() {
   return { type: actionTypes.SESSION_EXPIRED };
 }
 
-function addToVisitorsListSuccess(barID, message) {
+function addBarSuccess(barId, message) {
   return (dispatch, getState) => {
     const { bars } = getState().reducer.user;
-    if (bars.indexOf(barID) === -1) {
-      dispatch(incrementVisitorsCount(barID));
-      dispatch(addBarToUser(barID));
+    if (bars.indexOf(barId) === -1) {
+      dispatch(incrementVisitorsCount(barId));
+      dispatch(addBarToUser(barId));
       dispatch(showMessage(message));
     }
-    dispatch({ type: actionTypes.ADD_TO_VISITORS_LIST_SUCCESS });
+    dispatch({ type: actionTypes.ADD_BAR_SUCCESS });
   };
 }
 
-function modifyVisitorsListError(message) {
+function addBarError(message) {
   return {
-    type: actionTypes.MODIFY_VISITORS_LIST_ERROR,
+    type: actionTypes.ADD_BAR_ERROR,
     message,
   };
 }
 
-function decrementVisitorsCount(barID) {
+function removeBarError(message) {
   return {
-    type: actionTypes.DECREMENT_VISITORS_COUNT,
-    barID,
+    type: actionTypes.REMOVE_BAR_ERROR,
+    message,
   };
 }
 
-function removeFromVisitorsListSuccess(barID, message) {
+function decrementVisitorsCount(barId) {
+  return {
+    type: actionTypes.DECREMENT_VISITORS_COUNT,
+    barId,
+  };
+}
+
+function removeBarSuccess(barId, message) {
   return (dispatch, getState) => {
     const { bars } = getState().reducer.user;
-    if (bars.indexOf(barID) !== -1) {
-      dispatch(decrementVisitorsCount(barID));
-      dispatch(removeBarFromUser(barID));
+    if (bars.indexOf(barId) !== -1) {
+      dispatch(decrementVisitorsCount(barId));
+      dispatch(removeBarFromUser(barId));
       dispatch(showMessage(message));
     }
-    dispatch({ type: actionTypes.REMOVE_FROM_VISITORS_LIST_SUCCESS });
+    dispatch({ type: actionTypes.REMOVE_BAR_SUCCESS });
   };
 }
 
@@ -87,10 +98,10 @@ function showVisitorsListError(message) {
   };
 }
 
-export function showVisitorsList(barID) {
+export function showVisitorsList(barId) {
   return (dispatch) => {
     dispatch(beginShowVisitorsList());
-    return axiosInstance.get('/visitors', { params: { barID } })
+    return axiosInstance.get('/visitors', { params: { barId } })
       .then((response) => {
         dispatch(showVisitorsListSuccess(response.data.visitors));
       })
@@ -100,41 +111,63 @@ export function showVisitorsList(barID) {
   };
 }
 
-export function modifyVisitorsList(barID, userID, operation, dispatch, fromLogin = false) {
-  const data = { barID, userID, operation };
-  const successMessage = operation === 'ADD'
-    ? 'You have successfully added to the list!'
-    : 'You have successfully removed from the list!';
-  const successAction = operation === 'ADD'
-    ? addToVisitorsListSuccess(data.barID, successMessage)
-    : removeFromVisitorsListSuccess(data.barID, successMessage);
-  dispatch(beginAddToVisitorsList());
-  return axiosInstance.post('/places', data)
-    .then(() => {
-      dispatch(successAction);
-      if (fromLogin) {
-        dispatch(push('/return-from-success-login'));
-      }
-    })
-    .catch((err) => {
-      if (err.response) {
-        if (err.response.status === '401') {
-          dispatch(sessionExpired());
-          dispatch(modifyVisitorsListError('You are not logged in'));
+export function addBar(barId, fromLogin = false) {
+  return (dispatch, getState) => {
+    const { userId } = getState().reducer.user;
+    const { bars } = getState().reducer.location;
+    const i = bars.findIndex(elem => elem.id === barId);
+    const { placeId } = bars[i];
+    const data = {
+      barId, placeId, userId,
+    };
+    const successMessage = 'You have successfully added to the list!';
+    dispatch(beginAddBar());
+    return axiosInstance.post('/addBar', data)
+      .then(() => {
+        dispatch(addBarSuccess(data.barId, successMessage));
+        if (fromLogin) {
+          dispatch(push('/return-from-success-login'));
         }
-        if (err.response.status === '403') {
-          dispatch(modifyVisitorsListError('You are logged in to another account'));
+      })
+      .catch((err) => {
+        if (err.response) {
+          if (err.response.status === '401') {
+            dispatch(sessionExpired());
+            dispatch(addBarError('You are not logged in'));
+          }
+          if (err.response.status === '403') {
+            dispatch(addBarError('You are logged in to another account'));
+          }
         }
-      }
-      dispatch(modifyVisitorsListError('Your request could not be completed'));
-    });
+        dispatch(addBarError('Your request could not be completed'));
+      });
+  };
 }
 
-export function addToVisitorsList(barID) {
+export function removeBar(barId, placeId) {
   return (dispatch, getState) => {
-    const { userID } = getState().reducer.user;
-    const operation = 'ADD';
-    modifyVisitorsList(barID, userID, operation, dispatch);
+    const { userId } = getState().reducer.user;
+    const data = {
+      barId, placeId, userId,
+    };
+    const successMessage = 'You have successfully removed from the list!';
+    dispatch(beginRemoveBar());
+    return axiosInstance.post('/removeBar', data)
+      .then(() => {
+        dispatch(removeBarSuccess(data.barId, successMessage));
+      })
+      .catch((err) => {
+        if (err.response) {
+          if (err.response.status === '401') {
+            dispatch(sessionExpired());
+            dispatch(removeBarError('You are not logged in'));
+          }
+          if (err.response.status === '403') {
+            dispatch(removeBarError('You are logged in to another account'));
+          }
+        }
+        dispatch(removeBarError('Your request could not be completed'));
+      });
   };
 }
 
@@ -142,17 +175,9 @@ export function closeVisitorsList() {
   return { type: actionTypes.CLOSE_VISITORS_LIST };
 }
 
-export function removeFromVisitorsList(barID) {
-  return (dispatch, getState) => {
-    const { userID } = getState().reducer.user;
-    const operation = 'REMOVE';
-    modifyVisitorsList(barID, userID, operation, dispatch);
-  };
-}
-
-export function highlightPlace(barID) {
+export function highlightPlace(barId) {
   return {
     type: actionTypes.HIGHLIGHT_PLACE,
-    barID,
+    barId,
   };
 }

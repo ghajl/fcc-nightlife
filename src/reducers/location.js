@@ -8,12 +8,13 @@ const bars = (
 ) => {
   switch (action.type) {
   case actionTypes.FIND_LOCATION_SUCCESS:
+  case actionTypes.ZERO_RESULTS_SEARCH_ERROR:
     return null;
   case actionTypes.FIND_BARS_SUCCESS:
     return action.bars;
   case actionTypes.INCREMENT_VISITORS_COUNT:
   {
-    const i = state.findIndex(elem => elem.id === action.barID);
+    const i = state.findIndex(elem => elem.id === action.barId);
     const updateBar = { ...state[i], ...{ visitorsCount: state[i].visitorsCount + 1 } };
     const updateLocationBars = [
       ...state.slice(0, i),
@@ -25,15 +26,18 @@ const bars = (
   case actionTypes.DECREMENT_VISITORS_COUNT:
   {
     // remove current user from the list of bar
-    const i = state.findIndex(elem => elem.id === action.barID);
-    const updateBar = { ...state[i], ...{ visitorsCount: state[i].visitorsCount - 1 } };
-    const updateLocationBars = [
-      ...state.slice(0, i),
-      updateBar,
-      ...state.slice(i + 1),
-    ];
+    const i = state.findIndex(elem => elem.id === action.barId);
+    if (i >= 0) {
+      const updateBar = { ...state[i], ...{ visitorsCount: state[i].visitorsCount - 1 } };
+      const updateLocationBars = [
+        ...state.slice(0, i),
+        updateBar,
+        ...state.slice(i + 1),
+      ];
 
-    return updateLocationBars;
+      return updateLocationBars;
+    }
+    return state;
   }
   default:
     return state;

@@ -1,35 +1,36 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 
-const styles = theme => ({
+const styles = {
   card: {
     width: '100%',
     height: '100%',
-    backgroundColor: 'grey',
+    backgroundColor: '#193150',
     position: 'relative',
-    cursor: 'pointer',
-    // overflow: 'hidden',
+    fontFamily: 'Poiret One, cursive',
   },
-});
+};
 
-class Card extends Component {
-  cardRef = React.createRef();
-
-  componentDidMount = () => {
-    const { createCardRef, id } = this.props;
-    createCardRef(id, this.cardRef.current);
-  }
-
+class Card extends PureComponent {
   render() {
     const {
-      classes, style, className, children, ...props
+      classes, style, className, children, src, ...props
     } = this.props;
+    const imgStyle = src
+      ? {
+        backgroundImage: `url(${src})`,
+        backgroundColor: 'gray',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        paddingTop: '15rem',
+      }
+      : {};
     return (
       <div
-        ref={this.cardRef}
         className={`${classes.card} ${className}`}
-        style={{ ...style }}
+        style={{ ...imgStyle, ...style }}
         {...props}
       >
         {children}
@@ -45,12 +46,13 @@ Card.propTypes = {
   children: PropTypes.node.isRequired,
   classes: PropTypes.shape({}),
   style: PropTypes.shape({}),
-  createCardRef: PropTypes.func.isRequired,
+  src: PropTypes.string,
   id: PropTypes.string.isRequired,
 };
 
 Card.defaultProps = {
   className: '',
+  src: '',
   classes: {},
   style: {},
 };

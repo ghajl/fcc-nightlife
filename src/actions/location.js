@@ -26,7 +26,7 @@ function beginBarsSearch() {
   return { type: actionTypes.FIND_BARS };
 }
 
-function barsSearchSuccess(bars, address, lat, lng, userBars, username, profile, userID) {
+function barsSearchSuccess(bars, address, lat, lng, userBars, username, profile, userId) {
   return {
     type: actionTypes.FIND_BARS_SUCCESS,
     bars,
@@ -36,13 +36,20 @@ function barsSearchSuccess(bars, address, lat, lng, userBars, username, profile,
     userBars,
     username,
     profile,
-    userID,
+    userId,
   };
 }
 
 function barsSearchError(message) {
   return {
     type: actionTypes.FIND_BARS_ERROR,
+    message,
+  };
+}
+
+function zeroResultsSearchError(message) {
+  return {
+    type: actionTypes.ZERO_RESULTS_SEARCH_ERROR,
     message,
   };
 }
@@ -77,7 +84,7 @@ export function showBars(service, address) {
         service.nearbySearch(request, (results, status) => {
           if (status === google.maps.places.PlacesServiceStatus.OK) {
             // get number of visitors
-            return axiosInstance.get('/data', {
+            return axiosInstance.get('/currentUserPlacesData', {
               params: {
                 bars: results.map(item => item.id),
               },
@@ -92,6 +99,7 @@ export function showBars(service, address) {
                     && item.photos[0].getUrl({ maxWidth: 200, maxHeight: 200 });
                   return {
                     id: item.id,
+                    placeId: item.place_id,
                     name: item.name,
                     photoUrl,
                     rating: item.rating,
@@ -103,15 +111,18 @@ export function showBars(service, address) {
                 });
                 // add number of users on the list
                 response.data.visitors.forEach((bar) => {
-                  const i = locationBars.findIndex(elem => elem.id === bar.barID);
+                  const i = locationBars.findIndex(elem => elem.id === bar.barId);
                   locationBars[i].visitorsCount = bar.count;
                 });
-                const { username = null, profile = null, userID = null } = response.data;
-                dispatch(barsSearchSuccess(locationBars, address, lat, lng, response.data.currentUserBars, username, profile, userID));
+                const { username = null, profile = null, userId = null } = response.data;
+                dispatch(barsSearchSuccess(locationBars, address, lat, lng, response.data.currentUserBars, username, profile, userId));
               })
               .catch(() => {
                 dispatch(barsSearchError('Unable to show results'));
               });
+          }
+          if (status === google.maps.places.PlacesServiceStatus.ZERO_RESULTS) {
+            return dispatch(zeroResultsSearchError('Sorry, no matches were found'));
           }
           dispatch(barsSearchError('Unable to show results'));
         });

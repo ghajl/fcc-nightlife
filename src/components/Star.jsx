@@ -14,8 +14,9 @@ const drawStar = (canvas, radius, color, fillPercent) => {
   let y = radius;
   const step = Math.PI / 5;
   const lineWidth = radius / 3.5;
-  const indent = lineWidth * 2;
-  const fillRight = indent + (2 * radius - 2 * indent) * fillPercent;
+  const indent = lineWidth * 1.5;
+  const innerArea = radius * 2 - (indent * 2);
+  const fillRight = indent + innerArea * fillPercent;
   ctx.fillStyle = color;
   ctx.fillRect(0, 0, fillRight, 60);
 

@@ -3,18 +3,12 @@ import { routerMiddleware } from 'react-router-redux';
 import thunk from 'redux-thunk';
 import { persistStore, persistCombineReducers } from 'redux-persist';
 import sessionStorage from 'redux-persist/lib/storage/session';
-// import user from './reducer';
 import rootReducer from './reducers';
 
 const config = {
   key: 'root',
   storage: sessionStorage,
 };
-
-// const combReducers = combineReducers({
-//   user,
-//   router,
-// });
 
 const reducers = persistCombineReducers(config, { reducer: rootReducer });
 

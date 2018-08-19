@@ -24,13 +24,14 @@ const guestBar = (
   switch (action.type) {
   case actionTypes.FETCH_USER_ERROR:
   case actionTypes.LOGOUT_SUCCESS_USER:
-  case actionTypes.MODIFY_VISITORS_LIST_ERROR:
+  case actionTypes.ADD_BAR_ERROR:
   case actionTypes.FIND_LOCATION_ERROR:
   case actionTypes.FIND_BARS_ERROR:
   case actionTypes.ADD_TO_VISITORS_LIST_SUCCESS:
+  case actionTypes.ADD_BAR_SUCCESS:
     return null;
   case actionTypes.SAVE_GUEST_BAR:
-    return action.barID;
+    return action.barId;
   default:
     return state;
   }
@@ -78,11 +79,13 @@ const messageDialogOpen = (
   case actionTypes.SIGNUP_SUCCESS_USER:
   case actionTypes.SIGNUP_ERROR_USER:
   case actionTypes.LOGIN_ERROR_USER:
-  case actionTypes.MODIFY_VISITORS_LIST_ERROR:
+  case actionTypes.ADD_BAR_ERROR:
+  case actionTypes.REMOVE_BAR_ERROR:
   case actionTypes.FIND_LOCATION_ERROR:
   case actionTypes.FIND_BARS_ERROR:
   case actionTypes.SHOW_VISITORS_LIST_ERROR:
   case actionTypes.SHOW_MESSAGE_DIALOG:
+  case actionTypes.ZERO_RESULTS_SEARCH_ERROR:
     return true;
   default:
     return state;
@@ -103,6 +106,20 @@ const listDialogOpen = (
   }
 };
 
+const basketDialogOpen = (
+  state = false,
+  action,
+) => {
+  switch (action.type) {
+  case actionTypes.CLOSE_BASKET:
+    return false;
+  case actionTypes.SHOW_BASKET_SUCCESS:
+    return true;
+  default:
+    return state;
+  }
+};
+
 const rootReducer = combineReducers({
   router,
   bar,
@@ -114,6 +131,7 @@ const rootReducer = combineReducers({
   loginMenuOpen,
   messageDialogOpen,
   listDialogOpen,
+  basketDialogOpen,
 });
 
 export default rootReducer;

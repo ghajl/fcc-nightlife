@@ -1,14 +1,24 @@
 import {
-  login, logout, register, modifyPlaceList, getBarsData, getUserData, getVisitorsList,
+  login,
+  logout,
+  register,
+  getUserData,
+  getVisitorsList,
+  addBar,
+  removeBar,
+  getUserPlacesData,
+  getUserBasket,
 } from '../controllers/users';
 
 export default (app, passport) => {
   app.post('/login', login);
   app.get('/logout', logout);
   app.post('/signup', register);
-  app.post('/places', modifyPlaceList);
-  app.get('/data', getBarsData);
-  app.get('/user', getUserData);
+  app.post('/addBar', addBar);
+  app.post('/removeBar', removeBar);
+  app.get('/currentUserPlacesData', getUserPlacesData);
+  app.get('/currentUser', getUserData);
+  app.get('/currentUserBasket', getUserBasket);
   app.get('/visitors', getVisitorsList);
   app.get('/auth/facebook', passport.authenticate('facebook'));
   app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/signup' }), (req, res) => {
